@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DiLinhMenu Platform
 
-## Getting Started
+A multi-tenant order and loyalty platform for cafes and restaurants in Di Linh, Vietnam.
 
-First, run the development server:
+## Tech Stack
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Vanilla CSS + CSS Modules
+- **Database/Auth:** Supabase
+- **Language:** TypeScript
+- **Testing:** Jest
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Setup Instructions
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Supabase Setup**
+   - Create a project on Supabase.
+   - Run the SQL files in `supabase/migrations/` sequentially in the SQL Editor.
+   - Update `.env.local` with your `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+4. **Testing**
+   ```bash
+   npm test
+   ```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Key Features
+- **Tenant Isolation:** Data is separated by `shop_id` with Row Level Security.
+- **Dynamic Theming:** Each shop can configure its primary color.
+- **Loyalty System:** Earn points based on spending and level up through 4 ranks (Thành viên, Bạc, Vàng, Kim cương) with respective discounts.
+- **QR Ordering:** Direct QR code access to specific tables `q/[short_code]`.
+- **OTP Login:** Frictionless login using Phone + OTP via Supabase Auth.

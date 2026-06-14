@@ -8,6 +8,7 @@ interface BadgeProps {
   size?: 'sm' | 'md';
   rankColor?: 'member' | 'silver' | 'gold' | 'diamond';
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export default function Badge({
@@ -16,8 +17,9 @@ export default function Badge({
   size = 'md',
   rankColor,
   className = '',
+  style,
 }: BadgeProps) {
-  const customStyle = variant === 'rank' && rankColor ? { backgroundColor: RANK_COLORS[rankColor], color: 'white' } : {};
+  const customStyle = { ...style, ...(variant === 'rank' && rankColor ? { backgroundColor: RANK_COLORS[rankColor], color: 'white' } : {}) };
 
   return (
     <span
