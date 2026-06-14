@@ -1,0 +1,51 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* Sizes */
+.sm {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+}
+
+.md {
+  font-size: var(--font-size-xs);
+  padding: 0.25rem 0.75rem;
+}
+
+/* Variants */
+.default {
+  background-color: var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+
+.success {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.warning {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.error {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+.info {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.rank {
+  /* Colors injected via inline style based on rank */
+  background-color: var(--color-rank-member);
+  color: white;
+}
