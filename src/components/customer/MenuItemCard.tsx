@@ -12,7 +12,7 @@ interface MenuItemCardProps {
 
 export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
   return (
-    <Card padding="none" className="flex overflow-hidden h-[120px]">
+    <Card padding="none" variant="glass" className="flex overflow-hidden h-[120px] hover-lift">
       {/* Image Side */}
       {item.image_url ? (
         <div className="w-[120px] h-full flex-shrink-0 bg-gray-100">
@@ -33,7 +33,7 @@ export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
       <div className="flex flex-col flex-grow p-3 justify-between">
         <div>
           <div className="flex justify-between items-start gap-2">
-            <h3 className="font-semibold text-[var(--color-text)] line-clamp-2 text-sm">
+            <h3 className="font-heading font-semibold text-[var(--color-text)] line-clamp-2 text-sm">
               {item.name}
             </h3>
             {item.is_featured && <Badge variant="warning" size="sm">Hot</Badge>}

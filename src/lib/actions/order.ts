@@ -4,6 +4,10 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { calculatePoints, determineRank } from '@/lib/utils/points';
 
 export async function completeOrder(orderId: string) {
+  if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    return { success: true, earnedPoints: 150 };
+  }
+
   const supabase = await createServerSupabaseClient();
 
   try {

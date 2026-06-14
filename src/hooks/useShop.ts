@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Shop, ShopTable, MenuCategory, MenuItem, Promotion, UserShopMembership } from '@/lib/types/database';
+import { MOCK_SHOP, MOCK_TABLES, MOCK_CATEGORIES, MOCK_ITEMS, MOCK_PROMOTIONS, MOCK_MEMBERSHIP } from '@/lib/mockData';
 
 export function useShop(slug: string, tableNumber?: string) {
   const [shop, setShop] = useState<Shop | null>(null);
@@ -20,6 +21,34 @@ export function useShop(slug: string, tableNumber?: string) {
     const fetchShopData = async () => {
       try {
         setLoading(true);
+
+        if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+          // Simulate network delay
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          
+          if (slug !== MOCK_SHOP.slug) throw new Error('Shop not found');
+          setShop(MOCK_SHOP);
+          
+          if (tableNumber) {
+            const t = MOCK_TABLES.find(t => t.table_number === parseInt(tableNumber));
+            if (t) setTable(t);
+          }
+          
+          setCategories(MOCK_CATEGORIES);
+          setItems(MOCK_ITEMS);
+          setPromotions(MOCK_PROMOTIONS);
+          
+          const { data: { session } } = await supabase.auth.getSession();
+          // In mock mode with fake auth, we check if there's a real session or we just fake it if auth is mocked
+          // But to keep it simple, we'll just check if user exists.
+          // Wait, useAuth handles auth mocking. If we have a user (from mock), we set membership.
+          // We will rely on useAuth state, but since this is an effect, we just check local storage for mock user.
+          const mockUserStr = localStorage.getItem('mock_user');
+          if (mockUserStr || session?.user) {
+            setMembership(MOCK_MEMBERSHIP);
+          }
+          return;
+        }
 
         // 1. Fetch shop
         const { data: shopData, error: shopError } = await supabase

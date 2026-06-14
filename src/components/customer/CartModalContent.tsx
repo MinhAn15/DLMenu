@@ -21,7 +21,7 @@ export default function CartModalContent({ items, subtotal, onUpdateQuantity, on
         {items.map((item, index) => (
           <div key={`${item.menuItem.id}-${index}`} className="flex justify-between py-3 border-b border-gray-100 last:border-0">
             <div className="flex-1">
-              <h4 className="font-semibold text-sm">{item.menuItem.name}</h4>
+              <h4 className="font-heading font-semibold text-sm">{item.menuItem.name}</h4>
               <div className="text-[var(--color-primary)] font-medium mt-1">
                 {formatVND(item.menuItem.price)}
               </div>

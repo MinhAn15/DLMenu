@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'react-hot-toast';
+import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-heading' });
 
 export const metadata: Metadata = {
   title: 'DiLinhMenu — Đặt món & Tích điểm',
@@ -21,8 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi">
-      <body>
+  return (
+    <html lang="vi" className={`${inter.variable} ${outfit.variable}`}>
+      <body className="bg-gradient font-sans antialiased">
         {children}
         <Toaster
           position="top-center"

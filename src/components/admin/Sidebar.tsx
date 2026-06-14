@@ -19,9 +19,9 @@ export default function Sidebar() {
   const { signOut } = useAuth();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 flex flex-col hidden md:flex">
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-[var(--color-primary)]">DiLinhMenu</h1>
+    <aside className="w-64 glass h-screen sticky top-0 flex flex-col hidden md:flex border-r-0">
+      <div className="p-6 border-b border-[var(--glass-border)]">
+        <h1 className="font-heading text-2xl font-bold text-[var(--color-primary)] tracking-tight">DiLinhMenu</h1>
         <p className="text-sm text-gray-500">Quản lý cửa hàng</p>
       </div>
 

@@ -21,6 +21,7 @@ export default function Button({
 }: ButtonProps) {
   const classes = [
     styles.button,
+    'active-press',
     styles[variant],
     styles[size],
     fullWidth ? styles.fullWidth : '',

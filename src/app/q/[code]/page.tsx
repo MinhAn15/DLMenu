@@ -1,7 +1,13 @@
-import { redirect } from 'next/navigation';
+import { redirect, notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export default async function QrRedirectPage({ params }: { params: { code: string } }) {
+  if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    if (params.code === 'QCM-01') return redirect('/s/quan-cafe-mai/t/1');
+    if (params.code === 'QCM-02') return redirect('/s/quan-cafe-mai/t/2');
+    notFound();
+  }
+
   // Wait for the cookies API
   const supabase = await createServerSupabaseClient();
   

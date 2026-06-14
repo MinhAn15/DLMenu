@@ -1,33 +1,35 @@
 import React from 'react';
-import styles from './Card.module.css';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  elevated?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
-  onClick?: () => void;
+  variant?: 'default' | 'glass';
+  className?: string;
 }
 
 export default function Card({
   children,
-  elevated = false,
   padding = 'md',
-  onClick,
+  variant = 'default',
   className = '',
   ...props
 }: CardProps) {
-  const classes = [
-    styles.card,
-    elevated ? styles.elevated : '',
-    styles[`padding-${padding}`],
-    onClick ? styles.clickable : '',
-    className,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const paddingClasses = {
+    none: '',
+    sm: 'p-3',
+    md: 'p-5',
+    lg: 'p-8',
+  };
+
+  const bgClass = variant === 'glass' 
+    ? 'glass' 
+    : 'bg-[var(--color-surface)] shadow-[var(--shadow-sm)] border border-[var(--color-border-light)]';
 
   return (
-    <div className={classes} onClick={onClick} {...props}>
+    <div
+      className={`rounded-[var(--radius-xl)] ${bgClass} ${paddingClasses[padding]} ${className}`}
+      {...props}
+    >
       {children}
     </div>
   );

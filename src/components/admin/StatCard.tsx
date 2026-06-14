@@ -11,12 +11,12 @@ interface StatCardProps {
 
 export default function StatCard({ title, value, trend, trendLabel, icon }: StatCardProps) {
   return (
-    <Card className="flex flex-col gap-2">
+    <Card variant="glass" className="flex flex-col gap-2 hover-lift">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-gray-500">{title}</h3>
         {icon && <span className="text-xl">{icon}</span>}
       </div>
-      <div className="text-2xl font-bold">{value}</div>
+      <div className="font-heading text-3xl font-bold text-gray-900">{value}</div>
       {trend !== undefined && (
         <div className="flex items-center gap-2 mt-1">
           <span
