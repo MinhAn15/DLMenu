@@ -7,9 +7,30 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-heading' });
 
 export const metadata: Metadata = {
-  title: 'DiLinhMenu — Đặt món & Tích điểm',
-  description: 'Quét QR, đặt món nhanh, tích điểm nhận ưu đãi tại quán yêu thích ở Di Linh',
+  title: {
+    default: 'DiLinhMenu — Quét QR, Đặt Món, Tích Điểm',
+    template: '%s | DiLinhMenu',
+  },
+  description: 'Nền tảng đặt món QR Code và chăm sóc khách hàng cho quán cà phê & nhà hàng tại Di Linh, Lâm Đồng. Tích điểm tự động, khuyến mãi, quản lý realtime.',
   manifest: '/manifest.json',
+  keywords: ['đặt món', 'QR code', 'quán cà phê', 'Di Linh', 'tích điểm', 'loyalty', 'POS', 'quản lý quán'],
+  authors: [{ name: 'DiLinhMenu' }],
+  openGraph: {
+    type: 'website',
+    locale: 'vi_VN',
+    siteName: 'DiLinhMenu',
+    title: 'DiLinhMenu — Quét QR, Đặt Món, Tích Điểm',
+    description: 'Số hóa quán cà phê với QR ordering, loyalty tự động, dashboard realtime. Miễn phí cho quán nhỏ.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DiLinhMenu — Quét QR, Đặt Món, Tích Điểm',
+    description: 'Nền tảng quản lý quán cà phê thông minh tại Di Linh',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport: Viewport = {
@@ -25,8 +46,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-  return (
     <html lang="vi" className={`${inter.variable} ${outfit.variable}`}>
+      <head>
+        {/* Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'DiLinhMenu',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web',
+              description: 'Nền tảng đặt món QR Code và chăm sóc khách hàng cho quán cà phê',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'VND',
+              },
+            }),
+          }}
+        />
+      </head>
       <body className="bg-gradient font-sans antialiased">
         {children}
         <Toaster
