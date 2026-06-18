@@ -59,6 +59,7 @@ export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
             }}
             disabled={!item.is_available}
             variant={item.is_available ? 'primary' : 'secondary'}
+            className="rounded-full px-4 min-h-[44px] min-w-[44px] flex items-center justify-center font-bold"
             style={!item.is_available ? { opacity: 0.5 } : {}}
           >
             {item.is_available ? 'Thêm' : 'Hết'}

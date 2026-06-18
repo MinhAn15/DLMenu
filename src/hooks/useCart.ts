@@ -37,6 +37,11 @@ export function useCart(shopId?: string, maxCartItems: number = 20, maxOrderValu
   }, [items, shopId, isLoaded]);
 
   const addItem = (menuItem: MenuItem, quantity: number = 1, note: string = '') => {
+    // Haptic feedback for touch devices
+    if (typeof window !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+    
     setItems((prevItems) => {
       // Anti-Spam Protection
       const currentCount = prevItems.reduce((sum, i) => sum + i.quantity, 0);

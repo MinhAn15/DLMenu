@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useShop } from '@/hooks/useShop';
 import { useCart } from '@/hooks/useCart';
@@ -7,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { createOrder } from '@/lib/actions/customerOrder';
 import { resolveDiscount } from '@/lib/utils/discount';
 import Spinner from '@/components/ui/Spinner';
+import Skeleton from '@/components/ui/Skeleton';
 import MenuItemCard from '@/components/customer/MenuItemCard';
 import CartBar from '@/components/customer/CartBar';
 import Modal from '@/components/ui/Modal';
@@ -30,6 +32,10 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   );
   const { items: cartItems, subtotal, itemCount, addItem, updateQuantity, clearCart } = useCart(shop?.id, shop?.max_cart_items, shop?.max_order_value);
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -38,8 +44,31 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
-        <Spinner size="lg" />
+      <div className="min-h-screen bg-[var(--color-bg)]">
+        {/* Header Skeleton */}
+        <div className="h-40 w-full relative">
+          <Skeleton height="100%" borderRadius={0} />
+          <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
+            <Skeleton width="64px" height="64px" circle />
+            <div>
+              <Skeleton width="150px" height="24px" className="mb-2" />
+              <Skeleton width="80px" height="20px" />
+            </div>
+          </div>
+        </div>
+        {/* Categories Skeleton */}
+        <div className="container py-3 flex gap-4 mt-6">
+          <Skeleton width="80px" height="32px" borderRadius="16px" />
+          <Skeleton width="100px" height="32px" borderRadius="16px" />
+          <Skeleton width="70px" height="32px" borderRadius="16px" />
+        </div>
+        {/* Items Skeleton */}
+        <div className="container py-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Skeleton height="120px" />
+          <Skeleton height="120px" />
+          <Skeleton height="120px" />
+          <Skeleton height="120px" />
+        </div>
       </div>
     );
   }
@@ -137,12 +166,23 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
               {table && <p className="text-sm font-medium drop-shadow-md bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm inline-block mt-1">Bàn {table.table_number}</p>}
             </div>
           </div>
-          {/* User Profile Area */}
-          <div
-            className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition"
-            onClick={() => !user && setIsLoginOpen(true)}
-          >
-            {user ? '👤' : <span className="text-xs font-bold">Log in</span>}
+          {/* Actions Area */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+            {mounted && (
+              <div
+                className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                title="Đổi giao diện Sáng/Tối"
+              >
+                {theme === 'dark' ? '🌞' : '🌙'}
+              </div>
+            )}
+            <div
+              className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition"
+              onClick={() => !user && setIsLoginOpen(true)}
+            >
+              {user ? '👤' : <span className="text-xs font-bold">Log in</span>}
+            </div>
           </div>
         </div>
       </header>
