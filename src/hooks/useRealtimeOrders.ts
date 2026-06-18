@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import toast from 'react-hot-toast';
 import type { Order, OrderItem, MenuItem, ShopTable, Profile } from '@/lib/types/database';
 
 export interface OrderWithDetails extends Order {
@@ -13,10 +14,14 @@ export interface OrderWithDetails extends Order {
 export function useRealtimeOrders(shopId: string | undefined) {
   const [orders, setOrders] = useState<OrderWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const fetchOrders = useCallback(async () => {
-    if (!shopId) return;
+    if (!shopId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
 
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       await new Promise(r => setTimeout(r, 300));
@@ -82,7 +87,15 @@ export function useRealtimeOrders(shopId: string | undefined) {
   }, [shopId, supabase]);
 
   useEffect(() => {
+    // Initial fetch
     fetchOrders();
+
+    // Polling every 15 seconds (Fallback / Sync)
+    const interval = setInterval(() => {
+      fetchOrders();
+    }, 15000);
+
+    return () => clearInterval(interval);
   }, [fetchOrders]);
 
   // Realtime subscription
@@ -94,8 +107,15 @@ export function useRealtimeOrders(shopId: string | undefined) {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'orders', filter: `shop_id=eq.${shopId}` },
-        () => {
-          // Re-fetch all orders on any change for simplicity
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newOrder = payload.new as Order;
+            toast.success(`🔔 Đơn hàng mới: ${newOrder.order_number}`, {
+              duration: 5000,
+              icon: '🔔',
+            });
+          }
+          // Fetch lại để update giao diện
           fetchOrders();
         }
       )

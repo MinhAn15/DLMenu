@@ -1,0 +1,21 @@
+{
+  "admin": {
+    "sidebar": {
+      "overview": "Tổng quan",
+      "shops": "Quản lý Quán",
+      "menu": "Kho Menu",
+      "tables": "Bàn & QR",
+      "orders": "Đơn hàng",
+      "users": "Người dùng",
+      "settings": "Cài đặt"
+    },
+    "settings": {
+      "title": "Cài đặt Hệ thống",
+      "appearance": "Giao diện",
+      "language": "Ngôn ngữ",
+      "light": "Sáng",
+      "dark": "Tối",
+      "system": "Hệ thống"
+    }
+  }
+}

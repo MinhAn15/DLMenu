@@ -55,7 +55,7 @@ export function useShop(slug: string, tableNumber?: string) {
           .from('shops')
           .select('*')
           .eq('slug', slug)
-          .eq('is_active', true)
+          .eq('status', 'active')
           .single();
 
         if (shopError || !shopData) throw new Error('Shop not found');
@@ -69,36 +69,40 @@ export function useShop(slug: string, tableNumber?: string) {
             .select('*')
             .eq('shop_id', currentShop.id)
             .eq('table_number', parseInt(tableNumber))
-            .eq('is_active', true)
             .single();
           if (tableData) setTable(tableData as ShopTable);
         }
 
         // 3. Fetch menu categories and items in parallel
-        const [catsRes, itemsRes, promosRes] = await Promise.all([
+        const [catsRes, promosRes] = await Promise.all([
           supabase
             .from('menu_categories')
             .select('*')
             .eq('shop_id', currentShop.id)
-            .eq('is_active', true)
-            .order('sort_order'),
-          supabase
-            .from('menu_items')
-            .select('*')
-            .eq('shop_id', currentShop.id)
-            .eq('is_available', true)
             .order('sort_order'),
           supabase
             .from('promotions')
             .select('*')
             .eq('shop_id', currentShop.id)
             .eq('is_active', true)
-            .lte('starts_at', new Date().toISOString())
-            .gte('ends_at', new Date().toISOString()),
+            .lte('start_date', new Date().toISOString())
+            .gte('end_date', new Date().toISOString()),
         ]);
 
-        if (catsRes.data) setCategories(catsRes.data as MenuCategory[]);
-        if (itemsRes.data) setItems(itemsRes.data as MenuItem[]);
+        if (catsRes.data) {
+          setCategories(catsRes.data as MenuCategory[]);
+          const categoryIds = catsRes.data.map(c => c.id);
+          if (categoryIds.length > 0) {
+            const { data: itemsData } = await supabase
+              .from('menu_items')
+              .select('*')
+              .in('category_id', categoryIds)
+              .eq('is_available', true)
+              .order('sort_order');
+            if (itemsData) setItems(itemsData as MenuItem[]);
+          }
+        }
+        
         if (promosRes.data) setPromotions(promosRes.data as Promotion[]);
 
         // 4. Fetch membership if user is logged in

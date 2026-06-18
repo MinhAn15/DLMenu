@@ -1,0 +1,88 @@
+/* [project]/src/components/ui/Badge.module.css [app-client] (css) */
+.Badge-module__H8aylq__badge {
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  display: inline-flex;
+}
+
+.Badge-module__H8aylq__sm {
+  padding: .15rem .5rem;
+  font-size: .7rem;
+}
+
+.Badge-module__H8aylq__md {
+  font-size: var(--font-size-xs);
+  padding: .25rem .75rem;
+}
+
+.Badge-module__H8aylq__default {
+  background-color: var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+
+.Badge-module__H8aylq__success {
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+.Badge-module__H8aylq__warning {
+  color: #92400e;
+  background-color: #fef3c7;
+}
+
+.Badge-module__H8aylq__error {
+  color: #991b1b;
+  background-color: #fee2e2;
+}
+
+.Badge-module__H8aylq__info {
+  color: #1e40af;
+  background-color: #dbeafe;
+}
+
+.Badge-module__H8aylq__rank {
+  background-color: var(--color-rank-member);
+  color: #fff;
+}
+
+/* [project]/src/components/ui/Spinner.module.css [app-client] (css) */
+.Spinner-module__s0pLYa__spinner {
+  border: 2px solid #0000001a;
+  border-top-color: var(--color-primary);
+  border-left-color: var(--color-primary);
+  border-radius: 50%;
+  animation: 1s linear infinite Spinner-module__s0pLYa__spin;
+}
+
+.Spinner-module__s0pLYa__sm {
+  border-width: 2px;
+  width: 16px;
+  height: 16px;
+}
+
+.Spinner-module__s0pLYa__md {
+  border-width: 2.5px;
+  width: 24px;
+  height: 24px;
+}
+
+.Spinner-module__s0pLYa__lg {
+  border-width: 3px;
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes Spinner-module__s0pLYa__spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*# sourceMappingURL=src_components_ui_1nwjn6m._.css.map*/

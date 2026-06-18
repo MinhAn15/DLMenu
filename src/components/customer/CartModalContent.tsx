@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatVND } from '@/lib/utils/format';
-import type { CartItem } from '@/lib/types/database';
+import type { CartItem, MenuItem } from '@/lib/types/database';
 import Button from '@/components/ui/Button';
 
 interface CartModalProps {
   items: CartItem[];
   subtotal: number;
   onUpdateQuantity: (menuItemId: string, qty: number, note: string) => void;
-  onCheckout: () => void;
+  onCheckout: (paymentMethod: string, note: string) => void;
+  crossSellItems?: MenuItem[];
+  onAddCrossSell?: (item: MenuItem) => void;
 }
 
-export default function CartModalContent({ items, subtotal, onUpdateQuantity, onCheckout }: CartModalProps) {
+export default function CartModalContent({ items, subtotal, onUpdateQuantity, onCheckout, crossSellItems = [], onAddCrossSell }: CartModalProps) {
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'transfer'>('cash');
+  const [customerNote, setCustomerNote] = useState('');
   if (items.length === 0) {
     return <div className="text-center py-8 text-gray-500">Giỏ hàng trống</div>;
   }
@@ -47,13 +51,64 @@ export default function CartModalContent({ items, subtotal, onUpdateQuantity, on
         ))}
       </div>
 
+      {crossSellItems.length > 0 && onAddCrossSell && (
+        <div className="bg-orange-50 -mx-4 px-4 py-3 border-y border-orange-100">
+          <h4 className="text-sm font-bold text-orange-800 mb-2">🔥 Dùng kèm sẽ ngon hơn:</h4>
+          <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+            {crossSellItems.map(item => (
+              <div key={item.id} className="bg-white p-2 rounded-lg border border-orange-200 min-w-[140px] flex-shrink-0 shadow-sm flex flex-col gap-1">
+                <div className="text-xs font-bold truncate" title={item.name}>{item.name}</div>
+                <div className="text-[var(--color-primary)] text-xs font-medium">{formatVND(item.price)}</div>
+                <button 
+                  onClick={() => onAddCrossSell(item)}
+                  className="mt-1 w-full bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs py-1 rounded transition-colors font-medium"
+                >
+                  + Thêm
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="border-t border-gray-200 pt-4 mt-2">
-        <div className="flex justify-between items-center mb-4">
+        <h4 className="font-semibold text-gray-800 mb-3 text-sm">Phương thức thanh toán</h4>
+        <div className="flex gap-3 mb-4">
+          <label className={`flex-1 border rounded-lg p-3 flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors ${paymentMethod === 'cash' ? 'border-[var(--color-primary)] bg-[var(--color-primary)] bg-opacity-5' : 'border-gray-200 hover:bg-gray-50'}`}>
+            <input type="radio" name="payment" value="cash" checked={paymentMethod === 'cash'} onChange={() => setPaymentMethod('cash')} className="sr-only" />
+            <span className="text-xl">💵</span>
+            <span className="text-xs font-medium text-center">Tiền mặt</span>
+          </label>
+          <label className={`flex-1 border rounded-lg p-3 flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors ${paymentMethod === 'transfer' ? 'border-[var(--color-primary)] bg-[var(--color-primary)] bg-opacity-5' : 'border-gray-200 hover:bg-gray-50'}`}>
+            <input type="radio" name="payment" value="transfer" checked={paymentMethod === 'transfer'} onChange={() => setPaymentMethod('transfer')} className="sr-only" />
+            <span className="text-xl">🏦</span>
+            <span className="text-xs font-medium text-center">Chuyển khoản</span>
+          </label>
+        </div>
+
+        {paymentMethod === 'transfer' && (
+          <div className="bg-blue-50 text-blue-800 p-3 rounded-lg text-xs mb-4">
+            Vui lòng chuyển khoản sau khi chốt đơn. Quán sẽ mang mã QR ra tận bàn cho bạn quét!
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label className="block font-semibold text-gray-800 mb-2 text-sm">Ghi chú cho quán (Tùy chọn)</label>
+          <textarea 
+            value={customerNote}
+            onChange={(e) => setCustomerNote(e.target.value)}
+            placeholder="Ví dụ: Không hành, ít đá, làm cay..."
+            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] resize-none"
+            rows={2}
+          />
+        </div>
+
+        <div className="flex justify-between items-center mb-4 mt-2">
           <span className="font-semibold text-gray-600">Tổng cộng</span>
           <span className="font-bold text-xl text-[var(--color-primary)]">{formatVND(subtotal)}</span>
         </div>
         
-        <Button fullWidth size="lg" onClick={onCheckout}>
+        <Button fullWidth size="lg" onClick={() => onCheckout(paymentMethod, customerNote)}>
           Gửi Order
         </Button>
       </div>

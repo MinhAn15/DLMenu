@@ -11,16 +11,26 @@ interface CartBarProps {
 }
 
 export default function CartBar({ itemCount, subtotal, onViewCart }: CartBarProps) {
+  const [animate, setAnimate] = React.useState(false);
+
+  React.useEffect(() => {
+    if (itemCount > 0) {
+      setAnimate(true);
+      const timer = setTimeout(() => setAnimate(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [itemCount]);
+
   if (itemCount === 0) return null;
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-40 px-4 animate-slide-up hover-lift">
+    <div className="fixed bottom-4 left-0 right-0 z-40 px-4 animate-bounce-in hover-lift">
       <div 
-        className="glass-heavy max-w-lg mx-auto rounded-full flex items-center justify-between p-4 cursor-pointer"
+        className={`glass-heavy max-w-lg mx-auto rounded-full flex items-center justify-between p-4 cursor-pointer transition-transform ${animate ? 'scale-105' : ''}`}
         onClick={onViewCart}
       >
         <div className="relative">
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+          <span className={`absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full transition-transform ${animate ? 'scale-125' : ''}`}>
             {itemCount}
           </span>
         </div>

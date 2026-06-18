@@ -12,6 +12,8 @@ import Spinner from '@/components/ui/Spinner';
 import { formatVND } from '@/lib/utils/format';
 import toast from 'react-hot-toast';
 import type { MenuCategory, MenuItem } from '@/lib/types/database';
+import Skeleton from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 
 export default function AdminMenuPage() {
   const { shop, loading: shopLoading } = useAdminShop();
@@ -153,7 +155,6 @@ export default function AdminMenuPage() {
           description: itemDesc || null,
           image_url: itemImageUrl || null,
           is_available: itemAvailable,
-          is_featured: itemFeatured,
         });
         if (!res.success) throw new Error(res.error);
         toast.success('Đã cập nhật món');
@@ -165,7 +166,6 @@ export default function AdminMenuPage() {
           description: itemDesc || undefined,
           image_url: itemImageUrl || undefined,
           is_available: itemAvailable,
-          is_featured: itemFeatured,
         });
         if (!res.success) throw new Error(res.error);
         toast.success('Đã thêm món mới');
@@ -207,8 +207,26 @@ export default function AdminMenuPage() {
 
   if (shopLoading || loading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
-        <Spinner size="lg" />
+      <div className="flex flex-col gap-6 max-w-6xl mx-auto w-full">
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton width="200px" height="32px" />
+          <div className="flex gap-2">
+            <Skeleton width="100px" height="40px" borderRadius="var(--radius-md)" />
+            <Skeleton width="100px" height="40px" borderRadius="var(--radius-md)" />
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="p-4 border-b border-gray-100 flex gap-4">
+              <Skeleton width="60px" height="60px" borderRadius="var(--radius-md)" />
+              <div className="flex-1 flex flex-col gap-2 justify-center">
+                <Skeleton width="40%" height="20px" />
+                <Skeleton width="20%" height="16px" />
+              </div>
+              <Skeleton width="80px" height="24px" className="self-center" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -286,56 +304,75 @@ export default function AdminMenuPage() {
         </div>
       )}
 
-      {/* Menu Items Grid */}
       {filteredItems.length === 0 ? (
-        <Card style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-          <p style={{ fontSize: '2rem', marginBottom: 'var(--space-4)' }}>🍽️</p>
-          <p>Chưa có món nào. Nhấn "+ Thêm món" để bắt đầu.</p>
-        </Card>
+        <EmptyState 
+          title="Chưa có món nào" 
+          description="Nhấn '+ Thêm món' để bắt đầu tạo thực đơn cho quán của bạn."
+          icon={<span style={{ fontSize: '2rem' }}>🍽️</span>}
+          actionLabel="+ Thêm món"
+          onAction={() => openItemModal()}
+        />
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 'var(--space-4)' }}>
-          {filteredItems.map(item => {
-            const catName = categories.find(c => c.id === item.category_id)?.name;
-            return (
-              <Card key={item.id} className="hover-lift" style={{ display: 'flex', gap: 'var(--space-3)', overflow: 'hidden', opacity: item.is_available ? 1 : 0.6 }}>
-                {/* Image */}
-                <div style={{
-                  width: '80px', height: '80px', flexShrink: 0,
-                  borderRadius: 'var(--radius-md)', overflow: 'hidden',
-                  background: item.image_url ? undefined : 'linear-gradient(135deg, var(--color-primary-light), var(--color-primary))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {item.image_url ? (
-                    <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <span style={{ fontSize: '1.5rem', opacity: 0.3 }}>🍽️</span>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: 0 }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
-                      <h3 style={{ fontWeight: 700, fontSize: 'var(--font-size-sm)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</h3>
-                      {item.is_featured && <Badge variant="warning" size="sm">Hot</Badge>}
-                      {!item.is_available && <Badge variant="error" size="sm">Hết</Badge>}
-                    </div>
-                    {catName && <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>{catName}</p>}
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-2)' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{formatVND(item.price)}</span>
-                    <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-                      <button onClick={() => handleToggleAvailable(item)} style={{ cursor: 'pointer', fontSize: '1rem', background: 'none', border: 'none' }} title={item.is_available ? 'Ẩn món' : 'Hiện món'}>
-                        {item.is_available ? '👁️' : '🚫'}
-                      </button>
-                      <button onClick={() => openItemModal(item)} style={{ cursor: 'pointer', fontSize: '1rem', background: 'none', border: 'none' }}>✏️</button>
-                      <button onClick={() => handleDeleteItem(item.id)} style={{ cursor: 'pointer', fontSize: '1rem', background: 'none', border: 'none' }}>🗑️</button>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-sm uppercase tracking-wider">
+                <th className="p-4 font-semibold">Món ăn</th>
+                <th className="p-4 font-semibold">Danh mục</th>
+                <th className="p-4 font-semibold">Giá</th>
+                <th className="p-4 font-semibold">Trạng thái</th>
+                <th className="p-4 font-semibold text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredItems.map(item => {
+                const catName = categories.find(c => c.id === item.category_id)?.name;
+                return (
+                  <tr key={item.id} className={`hover:bg-gray-50 transition-colors ${!item.is_available ? 'opacity-60' : ''}`}>
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
+                          {item.image_url ? (
+                            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-xl opacity-30">🍽️</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900">{item.name}</p>
+                          <div className="flex gap-1">
+                            {(item.tags || []).map(tag => (
+                              <Badge key={tag} variant="default" size="sm">{tag}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-4 text-gray-600 text-sm">{catName || '—'}</td>
+                    <td className="p-4 font-bold text-[var(--color-primary)]">{formatVND(item.price)}</td>
+                    <td className="p-4">
+                      <Badge variant={item.is_available ? 'success' : 'error'} size="sm">
+                        {item.is_available ? 'Đang bán' : 'Hết hàng'}
+                      </Badge>
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => handleToggleAvailable(item)} className="p-2 text-gray-400 hover:text-gray-800 transition-colors" title={item.is_available ? 'Ẩn món' : 'Hiện món'}>
+                          {item.is_available ? '👁️' : '🚫'}
+                        </button>
+                        <button onClick={() => openItemModal(item)} className="p-2 text-blue-500 hover:text-blue-700 transition-colors" title="Sửa">
+                          ✏️
+                        </button>
+                        <button onClick={() => handleDeleteItem(item.id)} className="p-2 text-red-500 hover:text-red-700 transition-colors" title="Xóa">
+                          🗑️
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 

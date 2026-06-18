@@ -1,5 +1,6 @@
 'use server';
 
+import { createClient } from '@supabase/supabase-js';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export async function createOrder(params: {
@@ -26,24 +27,27 @@ export async function createOrder(params: {
     };
   }
 
-  const supabase = await createServerSupabaseClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
   try {
-    // Verify user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Vui lòng đăng nhập để đặt món');
+    // Get user if authenticated from standard server client
+    const supabaseAuth = await createServerSupabaseClient();
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+    const userId = user ? user.id : null;
 
-    // Generate order number
-    const { data: orderNum } = await supabase.rpc('generate_order_number', { p_shop_id: params.shopId });
+    // Generate order number using admin client
+    const { data: orderNum } = await supabaseAdmin.rpc('generate_order_number', { p_shop_id: params.shopId });
     const orderNumber = orderNum || `#${Date.now().toString().slice(-3)}`;
 
-    // Create order
-    const { data: order, error: orderError } = await supabase
+    // Create order using admin client to bypass RLS
+    const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
       .insert({
         shop_id: params.shopId,
         table_id: params.tableId,
-        user_id: user.id,
+        user_id: userId,
         order_type: params.orderType,
         order_number: orderNumber,
         subtotal: params.subtotal,
@@ -64,32 +68,33 @@ export async function createOrder(params: {
       menu_item_id: item.menuItemId,
       quantity: item.quantity,
       unit_price: item.unitPrice,
-      subtotal: item.unitPrice * item.quantity,
       note: item.note,
     }));
 
-    const { error: itemsError } = await supabase
+    const { error: itemsError } = await supabaseAdmin
       .from('order_items')
       .insert(orderItems);
 
     if (itemsError) {
       // Rollback: delete the order
-      await supabase.from('orders').delete().eq('id', order.id);
+      await supabaseAdmin.from('orders').delete().eq('id', order.id);
       throw new Error('Lỗi khi thêm chi tiết đơn hàng');
     }
 
-    // Auto-create membership if not exists
-    const { data: existingMembership } = await supabase
-      .from('user_shop_memberships')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('shop_id', params.shopId)
-      .single();
-
-    if (!existingMembership) {
-      await supabase
+    // Auto-create membership if not exists (only if logged in)
+    if (userId) {
+      const { data: existingMembership } = await supabaseAdmin
         .from('user_shop_memberships')
-        .insert({ user_id: user.id, shop_id: params.shopId });
+        .select('id')
+        .eq('user_id', userId)
+        .eq('shop_id', params.shopId)
+        .single();
+
+      if (!existingMembership) {
+        await supabaseAdmin
+          .from('user_shop_memberships')
+          .insert({ user_id: userId, shop_id: params.shopId });
+      }
     }
 
     return {

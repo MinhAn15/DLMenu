@@ -12,7 +12,7 @@ interface MenuItemCardProps {
 
 export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
   return (
-    <Card padding="none" variant="glass" className="flex overflow-hidden h-[120px] hover-lift">
+    <Card padding="none" variant="glass" className="flex overflow-hidden h-[120px] hover-lift active-press">
       {/* Image Side */}
       {item.image_url ? (
         <div className="w-[120px] h-full flex-shrink-0 bg-gray-100">

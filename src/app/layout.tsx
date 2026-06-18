@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'react-hot-toast';
 import { Inter, Outfit } from 'next/font/google';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -31,6 +33,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DiLinhMenu',
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export const viewport: Viewport = {
@@ -46,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={`${inter.variable} ${outfit.variable}`}>
+    <html lang="vi" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
         {/* Structured Data for SEO */}
         <script
@@ -68,18 +78,22 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-gradient font-sans antialiased">
-        {children}
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              fontFamily: 'var(--font-sans)',
-              borderRadius: 'var(--radius-lg)',
-            },
-          }}
-        />
+      <body className="bg-gradient font-sans antialiased text-[var(--color-text)]">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <LanguageProvider>
+            {children}
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  fontFamily: 'var(--font-sans)',
+                  borderRadius: 'var(--radius-lg)',
+                },
+              }}
+            />
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

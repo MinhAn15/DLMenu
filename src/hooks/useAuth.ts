@@ -1,23 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/types/database';
 import { User } from '@supabase/supabase-js';
-import { MOCK_PROFILE } from '@/lib/mockData';
+import { MOCK_PROFILE, MOCK_USERS } from '@/lib/mockData';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
+
+  const fetchProfile = useCallback(async (userId: string) => {
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      if (data) {
+        // eslint-disable-next-line
+        setProfile(data as Profile);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    } finally {
+      // eslint-disable-next-line
+      setLoading(false);
+    }
+  }, [supabase]);
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       const mockUserStr = localStorage.getItem('mock_user');
       if (mockUserStr) {
-        setUser(JSON.parse(mockUserStr) as User);
-        setProfile(MOCK_PROFILE);
+        const parsed = JSON.parse(mockUserStr) as User;
+        setTimeout(() => {
+          setUser(parsed);
+          const foundProfile = MOCK_USERS.find(u => u.phone === parsed.phone) || MOCK_PROFILE;
+          setProfile(foundProfile);
+          setLoading(false);
+        }, 0);
+      } else {
+        setTimeout(() => setLoading(false), 0);
       }
-      setLoading(false);
       return;
     }
 
@@ -41,49 +66,39 @@ export function useAuth() {
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, [supabase.auth, fetchProfile]);
 
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      if (data) setProfile(data as Profile);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const signInWithOTP = async (phone: string) => {
+  const signInWithEmail = async (email: string, password: string) => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       await new Promise(r => setTimeout(r, 1000));
-      return;
-    }
-    const formattedPhone = phone.startsWith('0') ? `+84${phone.slice(1)}` : phone;
-    const { error } = await supabase.auth.signInWithOtp({
-      phone: formattedPhone,
-    });
-    if (error) throw error;
-  };
-
-  const verifyOTP = async (phone: string, token: string) => {
-    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
-      await new Promise(r => setTimeout(r, 1000));
-      const fakeUser = { id: MOCK_PROFILE.id, phone, aud: 'authenticated' } as User;
+      let foundProfile = MOCK_USERS[0];
+      const fakeUser = { id: foundProfile.id, email, aud: 'authenticated' } as unknown as User;
       localStorage.setItem('mock_user', JSON.stringify(fakeUser));
       setUser(fakeUser);
-      setProfile(MOCK_PROFILE);
+      setProfile(foundProfile as Profile);
       return { user: fakeUser, session: {} };
     }
-    const formattedPhone = phone.startsWith('0') ? `+84${phone.slice(1)}` : phone;
-    const { data, error } = await supabase.auth.verifyOtp({
-      phone: formattedPhone,
-      token,
-      type: 'sms',
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
+  };
+
+  const signUpWithEmail = async (email: string, password: string, displayName: string) => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      throw new Error('Not supported in mock mode');
+    }
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: displayName,
+          role: 'shop_owner'
+        }
+      }
     });
     if (error) throw error;
     return data;
@@ -104,8 +119,8 @@ export function useAuth() {
     user,
     profile,
     loading,
-    signInWithOTP,
-    verifyOTP,
+    signInWithEmail,
+    signUpWithEmail,
     signOut,
   };
 }

@@ -1,0 +1,21 @@
+{
+  "admin": {
+    "sidebar": {
+      "overview": "Overview",
+      "shops": "Shops",
+      "menu": "Menu Catalog",
+      "tables": "Tables & QR",
+      "orders": "Orders",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "settings": {
+      "title": "System Settings",
+      "appearance": "Appearance",
+      "language": "Language",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -10,10 +11,9 @@ import styles from './page.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signInWithOTP, verifyOTP, user } = useAuth();
-  const [step, setStep] = useState<1 | 2>(1);
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
+  const { signInWithEmail, user } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   // If already logged in, redirect
@@ -23,39 +23,25 @@ export default function LoginPage() {
     }
   }, [user, router]);
 
-  const handleRequestOTP = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.length < 9) {
-      toast.error('Số điện thoại không hợp lệ');
+    if (!email || !password) {
+      toast.error('Vui lòng nhập đầy đủ Email và Mật khẩu');
       return;
     }
 
     setLoading(true);
     try {
-      await signInWithOTP(phone);
-      setStep(2);
-      toast.success('Mã OTP đã được gửi đến điện thoại của bạn');
-    } catch (error: any) {
-      toast.error(error.message || 'Có lỗi xảy ra khi gửi OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.length < 6) {
-      toast.error('Mã OTP phải có 6 số');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await verifyOTP(phone, otp);
+      await signInWithEmail(email, password);
       toast.success('Đăng nhập thành công!');
       router.push('/admin');
     } catch (error: any) {
-      toast.error(error.message || 'Mã OTP không chính xác');
+      const errMsg = error.message;
+      if (errMsg === 'Invalid login credentials') {
+        toast.error('Tài khoản hoặc mật khẩu không chính xác');
+      } else {
+        toast.error(errMsg || 'Đã xảy ra lỗi khi đăng nhập');
+      }
     } finally {
       setLoading(false);
     }
@@ -75,57 +61,34 @@ export default function LoginPage() {
       <div className={styles.card}>
         {/* Logo */}
         <div className={styles.logo}>
-          <div className={styles.logoIcon}>☕</div>
+          <Image src="/images/dilinhmenu_app_logo.png" alt="DiLinhMenu Logo" width={64} height={64} className="rounded-2xl shadow-md mb-2" />
           <h1 className={styles.logoTitle}>
             DiLinh<span className={styles.logoAccent}>Menu</span>
           </h1>
-          <p className={styles.logoSubtitle}>Quản lý cửa hàng của bạn</p>
+          <p className={styles.logoSubtitle}>Dành cho Chủ quán & Đối tác</p>
         </div>
 
         {/* Login Form */}
-        {step === 1 ? (
-          <form onSubmit={handleRequestOTP} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <Input
-              type="tel"
-              placeholder="Nhập số điện thoại (VD: 0901234567)"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
-              autoFocus
-            />
-            <Button type="submit" loading={loading} fullWidth size="lg">
-              Nhận mã OTP
-            </Button>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyOTP} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <div style={{ textAlign: 'center', marginBottom: 'var(--space-2)' }}>
-              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
-                Mã 6 số đã gửi đến <strong>{phone}</strong>
-              </p>
-            </div>
-            <Input
-              type="text"
-              inputMode="numeric"
-              placeholder="Nhập mã 6 số"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              disabled={loading}
-              autoFocus
-            />
-            <Button type="submit" loading={loading} fullWidth size="lg">
-              Xác nhận đăng nhập
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => { setStep(1); setOtp(''); }}
-              disabled={loading}
-            >
-              ← Đổi số điện thoại
-            </Button>
-          </form>
-        )}
+        <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <Input
+            type="email"
+            placeholder="Nhập Email (VD: admin@quanmai.com)"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
+            autoFocus
+          />
+          <Input
+            type="password"
+            placeholder="Nhập Mật khẩu"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+          />
+          <Button type="submit" loading={loading} fullWidth size="lg">
+            Đăng nhập
+          </Button>
+        </form>
 
         {/* Footer */}
         <div className={styles.footer}>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShop } from '@/hooks/useShop';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,14 +11,23 @@ import MenuItemCard from '@/components/customer/MenuItemCard';
 import CartBar from '@/components/customer/CartBar';
 import Modal from '@/components/ui/Modal';
 import CartModalContent from '@/components/customer/CartModalContent';
-import PhoneLoginForm from '@/components/customer/PhoneLoginForm';
+import CustomerAuthModal from '@/components/customer/CustomerAuthModal';
 import LoyaltyBanner from '@/components/customer/LoyaltyBanner';
 import OrderStatusTracker from '@/components/customer/OrderStatusTracker';
 import toast from 'react-hot-toast';
 import type { MenuItem } from '@/lib/types/database';
 
-export default function ShopMenuPage({ params }: { params: { slug: string; table: string } }) {
-  const { shop, table, categories, membership, promotions, getItemsByCategory, loading, error } = useShop(params.slug, params.table);
+export default function ShopMenuPage({ params }: { params: Promise<{ slug: string; table: string }> }) {
+  const [resolvedParams, setResolvedParams] = useState<{ slug: string; table: string } | null>(null);
+
+  useEffect(() => {
+    params.then(setResolvedParams);
+  }, [params]);
+
+  const { shop, table, categories, membership, promotions, getItemsByCategory, loading, error } = useShop(
+    resolvedParams?.slug || '', 
+    resolvedParams?.table || ''
+  );
   const { items: cartItems, subtotal, itemCount, addItem, updateQuantity, clearCart } = useCart(shop?.id);
   const { user } = useAuth();
 
@@ -64,15 +73,16 @@ export default function ShopMenuPage({ params }: { params: { slug: string; table
 
   const total = subtotal - discount.discountAmount;
 
-  const handleCheckoutClick = async () => {
-    if (!user) {
-      setIsCartOpen(false);
-      setIsLoginOpen(true);
-      return;
-    }
+  const handleCheckoutClick = async (paymentMethod: string, customerNote: string = '') => {
+    // Bỏ qua check login cho phép order ẩn danh (demo)
+    // if (!user) {
+    //   setIsLoginOpen(true);
+    //   return;
+    // }
 
     setIsCheckingOut(true);
     try {
+      const finalNote = `Thanh toán: ${paymentMethod === 'cash' ? 'Tiền mặt' : 'Chuyển khoản'}${customerNote ? `\nGhi chú: ${customerNote}` : ''}`;
       const res = await createOrder({
         shopId: shop.id,
         tableId: table?.id || null,
@@ -87,7 +97,7 @@ export default function ShopMenuPage({ params }: { params: { slug: string; table
         discountType: discount.discountType,
         total,
         orderType: table ? 'dine_in' : 'takeaway',
-        customerNote: null,
+        customerNote: finalNote,
       });
 
       if (!res.success) throw new Error(res.error);
@@ -110,23 +120,29 @@ export default function ShopMenuPage({ params }: { params: { slug: string; table
   return (
     <div style={themeStyle} className="min-h-screen bg-[var(--color-bg)] pb-24">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-30">
-        {shop.cover_image_url && (
-          <div className="h-32 w-full">
+      <header className="bg-white sticky top-0 z-30 shadow-md">
+        <div className="relative h-40 w-full">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/70 z-10"></div>
+          {shop.cover_image_url ? (
             <img src={shop.cover_image_url} alt="Cover" className="w-full h-full object-cover" />
-          </div>
-        )}
-        <div className="container py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold">{shop.name}</h1>
-            {table && <p className="text-sm text-[var(--color-primary)] font-semibold mt-1">Bàn {table.table_number}</p>}
+          ) : (
+            <img src="/images/customer_menu_hero_banner.png" alt="Cover Fallback" className="w-full h-full object-cover" />
+          )}
+          <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center text-3xl font-bold text-[var(--color-primary)] overflow-hidden border-2 border-white">
+              <img src="/images/dilinhmenu_app_logo.png" alt="Logo" className="w-full h-full object-cover" />
+            </div>
+            <div className="text-white">
+              <h1 className="text-xl font-bold drop-shadow-md">{shop.name}</h1>
+              {table && <p className="text-sm font-medium drop-shadow-md bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm inline-block mt-1">Bàn {table.table_number}</p>}
+            </div>
           </div>
           {/* User Profile Area */}
           <div
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200 cursor-pointer"
+            className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition"
             onClick={() => !user && setIsLoginOpen(true)}
           >
-            {user ? '👤' : <span className="text-xs">Login</span>}
+            {user ? '👤' : <span className="text-xs font-bold">Log in</span>}
           </div>
         </div>
       </header>
@@ -139,13 +155,13 @@ export default function ShopMenuPage({ params }: { params: { slug: string; table
       )}
 
       {/* Menu Categories Navigation (Sticky) */}
-      <div className="bg-white border-b border-[var(--color-border-light)] sticky top-[72px] z-20 overflow-x-auto whitespace-nowrap hide-scrollbar">
+      <div className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-[160px] z-20 overflow-x-auto whitespace-nowrap hide-scrollbar shadow-sm transition-all">
         <div className="container py-3 flex gap-4">
           {categories.map((cat) => (
             <a
               key={cat.id}
               href={`#cat-${cat.id}`}
-              className="font-medium text-gray-600 hover:text-[var(--color-primary)] transition-colors px-2"
+              className="font-bold text-sm text-gray-500 hover:text-[var(--color-primary)] active:scale-95 transition-all px-3 py-1.5 rounded-full hover:bg-orange-50"
             >
               {cat.name}
             </a>
@@ -190,6 +206,14 @@ export default function ShopMenuPage({ params }: { params: { slug: string; table
           subtotal={subtotal}
           onUpdateQuantity={updateQuantity}
           onCheckout={handleCheckoutClick}
+          crossSellItems={
+            categories
+              .flatMap(c => getItemsByCategory(c.id))
+              .filter(item => !cartItems.some(ci => ci.menuItem.id === item.id)) // Chỉ gợi ý món chưa có trong giỏ
+              .sort((a, b) => a.price - b.price) // Gợi ý món giá rẻ trước (ví dụ topping, khăn lạnh, trà đá)
+              .slice(0, 3) // Lấy top 3
+          }
+          onAddCrossSell={(item) => addItem(item)}
         />
         {/* Discount info */}
         {discount.discountAmount > 0 && (
@@ -218,12 +242,14 @@ export default function ShopMenuPage({ params }: { params: { slug: string; table
       </Modal>
 
       {/* Login Modal */}
-      <Modal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)}>
-        <PhoneLoginForm onSuccess={() => {
+      <CustomerAuthModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSuccess={() => {
           setIsLoginOpen(false);
           if (itemCount > 0) setIsCartOpen(true);
-        }} />
-      </Modal>
+        }}
+      />
 
       {/* Order Confirmation */}
       <Modal isOpen={!!orderResult} onClose={() => setOrderResult(null)}>

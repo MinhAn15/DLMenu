@@ -181,3 +181,28 @@ export async function deleteMenuItem(itemId: string) {
   if (error) return { success: false, error: error.message };
   return { success: true };
 }
+
+export async function getAdminMenuCategories(shopId?: string) {
+  const supabase = await createServerSupabaseClient();
+  let query = supabase.from('menu_categories').select('*').order('sort_order', { ascending: true });
+  if (shopId && shopId !== 'all') query = query.eq('shop_id', shopId);
+  const { data, error } = await query;
+  if (error) { console.error(error); return []; }
+  return data;
+}
+
+export async function getAdminMenuItems(shopId?: string) {
+  const supabase = await createServerSupabaseClient();
+  let query = supabase.from('menu_items').select('*').order('sort_order', { ascending: true });
+  if (shopId && shopId !== 'all') {
+    const { data: cats } = await supabase.from('menu_categories').select('id').eq('shop_id', shopId);
+    if (cats && cats.length > 0) {
+      query = query.in('category_id', cats.map(c => c.id));
+    } else {
+      return [];
+    }
+  }
+  const { data, error } = await query;
+  if (error) { console.error(error); return []; }
+  return data;
+}

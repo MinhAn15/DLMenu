@@ -9,9 +9,10 @@ interface QRGeneratorProps {
   shortCode: string; // e.g., QCM-01
   shopName: string;
   tableNumber: number;
+  hideDownload?: boolean;
 }
 
-export default function QRGenerator({ shortCode, shopName, tableNumber }: QRGeneratorProps) {
+export default function QRGenerator({ shortCode, shopName, tableNumber, hideDownload }: QRGeneratorProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -58,9 +59,11 @@ export default function QRGenerator({ shortCode, shopName, tableNumber }: QRGene
         </div>
       )}
       <div className="text-xs text-gray-500 break-all">{targetUrl}</div>
-      <Button variant="secondary" onClick={downloadQR} fullWidth>
-        Tải mã QR
-      </Button>
+      {!hideDownload && (
+        <Button variant="secondary" onClick={downloadQR} fullWidth>
+          Tải mã QR
+        </Button>
+      )}
     </Card>
   );
 }

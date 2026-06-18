@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Shop } from '@/lib/types/database';
 import { MOCK_SHOP } from '@/lib/mockData';
@@ -13,7 +13,9 @@ export function useAdminShop() {
   const [shop, setShop] = useState<Shop | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const supabase = createClient();
+  
+  // Wrap in useMemo to prevent infinite re-renders when passed as dependency
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -34,14 +36,14 @@ export function useAdminShop() {
           .from('shops')
           .select('*')
           .eq('owner_id', user.id)
-          .single();
+          .limit(1);
 
-        if (shopError || !data) {
+        if (shopError || !data || data.length === 0) {
           setError('Không tìm thấy cửa hàng');
           return;
         }
 
-        setShop(data as Shop);
+        setShop(data[0] as Shop);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Lỗi không xác định');
       } finally {

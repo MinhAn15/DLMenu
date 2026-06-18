@@ -9,6 +9,8 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Spinner from '@/components/ui/Spinner';
+import Skeleton from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 import { formatVND } from '@/lib/utils/format';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/lib/constants';
 import toast from 'react-hot-toast';
@@ -81,8 +83,21 @@ export default function AdminOrdersPage() {
 
   if (shopLoading || ordersLoading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
-        <Spinner size="lg" />
+      <div className="flex flex-col gap-6 max-w-6xl mx-auto w-full">
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton width="200px" height="32px" />
+          <Skeleton width="100px" height="40px" borderRadius="var(--radius-md)" />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 border-b border-gray-100">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} width="120px" height="36px" borderRadius="var(--radius-full)" />
+          ))}
+        </div>
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} width="100%" height="100px" borderRadius="var(--radius-xl)" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -133,10 +148,11 @@ export default function AdminOrdersPage() {
 
       {/* Orders List */}
       {filteredOrders.length === 0 ? (
-        <Card style={{ padding: 'var(--space-12)', textAlign: 'center', color: 'var(--color-text-muted)' }}>
-          <p style={{ fontSize: '2rem', marginBottom: 'var(--space-4)' }}>📋</p>
-          <p>Không có đơn hàng nào.</p>
-        </Card>
+        <EmptyState 
+          title="Không có đơn hàng nào" 
+          description="Chưa có đơn hàng nào khớp với bộ lọc hiện tại. Chờ đơn hàng mới nhé!"
+          icon={<span style={{ fontSize: '2rem' }}>📋</span>}
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
           {filteredOrders.map(order => (

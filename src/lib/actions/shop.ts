@@ -102,3 +102,17 @@ export async function togglePromotionActive(promoId: string, isActive: boolean) 
   if (error) return { success: false, error: error.message };
   return { success: true };
 }
+
+export async function getAdminShops() {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.from('shops').select('*').order('created_at', { ascending: false });
+  if (error) { console.error(error); return []; }
+  return data;
+}
+
+export async function getAdminShopById(shopId: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.from('shops').select('*').eq('id', shopId).single();
+  if (error) { console.error(error); return null; }
+  return data;
+}
