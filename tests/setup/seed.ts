@@ -105,21 +105,23 @@ async function globalSetup() {
         name: 'Cà phê Đen Đá',
         price: 20000,
         is_available: true,
-        image_url: '/images/coffee_den_da.png'
+        image_url: '/images/coffee_den_da.webp'
       },
       {
-        category_id: category.id,
+        id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', // Static UUID
+        shop_id: shop.id,
+        category_id: '8b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         name: 'Cà phê Sữa Đá',
         price: 25000,
-        is_available: true,
-        image_url: '/images/coffee_sua_da.png'
+        image_url: '/images/coffee_sua_da.webp'
       },
       {
-        category_id: category.id,
+        id: 'ab1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', // Static UUID
+        shop_id: shop.id,
+        category_id: '8b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         name: 'Trà Đào Cam Sả',
         price: 35000,
-        is_available: true,
-        image_url: '/images/tea_dao_cam_sa.png'
+        image_url: '/images/tea_dao_cam_sa.webp'
       }
     ]);
   }

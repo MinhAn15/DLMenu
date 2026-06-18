@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
+import { useNotificationSound } from '@/hooks/useNotificationSound';
 import type { Order, OrderItem, MenuItem, ShopTable, Profile } from '@/lib/types/database';
 
 export interface OrderWithDetails extends Order {
@@ -98,6 +99,8 @@ export function useRealtimeOrders(shopId: string | undefined) {
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
+  const { playDingDong } = useNotificationSound();
+
   // Realtime subscription
   useEffect(() => {
     if (!shopId || process.env.NEXT_PUBLIC_USE_MOCK === 'true') return;
@@ -110,6 +113,9 @@ export function useRealtimeOrders(shopId: string | undefined) {
         (payload) => {
           if (payload.eventType === 'INSERT') {
             const newOrder = payload.new as Order;
+            if (newOrder.status === 'pending') {
+              playDingDong();
+            }
             toast.success(`🔔 Đơn hàng mới: ${newOrder.order_number}`, {
               duration: 5000,
               icon: '🔔',

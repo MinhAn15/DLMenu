@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { CartItem } from '@/lib/types/database';
 import type { MenuItem } from '@/lib/types/database';
+import toast from 'react-hot-toast';
 
 export function useCart(shopId?: string) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -37,6 +38,19 @@ export function useCart(shopId?: string) {
 
   const addItem = (menuItem: MenuItem, quantity: number = 1, note: string = '') => {
     setItems((prevItems) => {
+      // Anti-Spam Protection
+      const currentCount = prevItems.reduce((sum, i) => sum + i.quantity, 0);
+      const currentSubtotal = prevItems.reduce((sum, i) => sum + i.menuItem.price * i.quantity, 0);
+      
+      if (currentCount + quantity > 20) {
+        toast.error('Giỏ hàng chỉ chứa tối đa 20 món.');
+        return prevItems;
+      }
+      if (currentSubtotal + (menuItem.price * quantity) > 2000000) {
+        toast.error('Tổng đơn hàng không được vượt quá 2.000.000 VNĐ.');
+        return prevItems;
+      }
+
       // Check if exact item with same note exists
       const existingItemIndex = prevItems.findIndex(
         (i) => i.menuItem.id === menuItem.id && i.note === note
@@ -65,15 +79,33 @@ export function useCart(shopId?: string) {
     }
 
     setItems((prevItems) => {
-      const newItems = [...prevItems];
-      const index = newItems.findIndex(
+      const index = prevItems.findIndex(
         (i) => i.menuItem.id === menuItemId && i.note === note
       );
       
       if (index >= 0) {
+        const oldQuantity = prevItems[index].quantity;
+        const diff = quantity - oldQuantity;
+        
+        if (diff > 0) {
+          const currentCount = prevItems.reduce((sum, i) => sum + i.quantity, 0);
+          const currentSubtotal = prevItems.reduce((sum, i) => sum + i.menuItem.price * i.quantity, 0);
+          
+          if (currentCount + diff > 20) {
+            toast.error('Giỏ hàng chỉ chứa tối đa 20 món.');
+            return prevItems;
+          }
+          if (currentSubtotal + (prevItems[index].menuItem.price * diff) > 2000000) {
+            toast.error('Tổng đơn hàng không được vượt quá 2.000.000 VNĐ.');
+            return prevItems;
+          }
+        }
+
+        const newItems = [...prevItems];
         newItems[index].quantity = quantity;
+        return newItems;
       }
-      return newItems;
+      return prevItems;
     });
   };
 

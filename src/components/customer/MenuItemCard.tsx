@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import type { MenuItem } from '@/lib/types/database';
 import { formatVND } from '@/lib/utils/format';
 import Card from '@/components/ui/Card';
@@ -15,12 +16,13 @@ export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
     <Card padding="none" variant="glass" className="flex overflow-hidden h-[120px] hover-lift active-press">
       {/* Image Side */}
       {item.image_url ? (
-        <div className="w-[120px] h-full flex-shrink-0 bg-gray-100">
-          <img
+        <div className="w-[120px] h-full flex-shrink-0 bg-gray-100 relative">
+          <Image
             src={item.image_url}
             alt={item.name}
-            className="w-full h-full object-cover"
-            loading="lazy"
+            fill
+            sizes="(max-width: 768px) 120px, 120px"
+            className="object-cover"
           />
         </div>
       ) : (

@@ -1,6 +1,6 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useShop } from '@/hooks/useShop';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -126,11 +126,11 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
           {shop.cover_image_url ? (
             <img src={shop.cover_image_url} alt="Cover" className="w-full h-full object-cover" />
           ) : (
-            <img src="/images/customer_menu_hero_banner.png" alt="Cover Fallback" className="w-full h-full object-cover" />
+            <Image src="/images/customer_menu_hero_banner.webp" alt="Cover Fallback" fill sizes="100vw" className="object-cover" />
           )}
           <div className="absolute bottom-4 left-4 z-20 flex items-center gap-3">
-            <div className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center text-3xl font-bold text-[var(--color-primary)] overflow-hidden border-2 border-white">
-              <img src="/images/dilinhmenu_app_logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <div className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center text-3xl font-bold text-[var(--color-primary)] overflow-hidden border-2 border-white relative">
+              <Image src="/images/dilinhmenu_app_logo.webp" alt="Logo" fill sizes="64px" className="object-cover" />
             </div>
             <div className="text-white">
               <h1 className="text-xl font-bold drop-shadow-md">{shop.name}</h1>

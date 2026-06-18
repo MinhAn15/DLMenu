@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = `${shop.name} | Menu Điện Tử`;
   const description = shop.description || `Xem menu và đặt món trực tuyến tại ${shop.name} qua hệ thống DiLinhMenu.`;
-  const ogImage = shop.cover_image_url || shop.logo_url || '/images/shop_cover.png';
+  const ogImage = shop.cover_image_url || shop.logo_url || '/images/shop_cover.webp';
 
   return {
     title,
