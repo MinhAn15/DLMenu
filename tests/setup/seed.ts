@@ -69,15 +69,15 @@ async function globalSetup() {
       name: 'Cà phê Mai',
       slug: 'ca-phe-mai',
       status: 'active',
-      cover_image_url: '/images/shop_cover.png',
+      theme_config: { primary_color: '#8B5A2B', font: 'Inter' },
       loyalty_config: {
-        pointsPerVND: 0.0001,
-        tiers: [
-          { name: 'Đồng', minPoints: 0, color: '#CD7F32' },
-          { name: 'Bạc', minPoints: 100, color: '#C0C0C0' },
-          { name: 'Vàng', minPoints: 500, color: '#FFD700' }
-        ]
-      }
+        points_per_vnd: 0.01,
+        ranks: [{ name: 'Member', min_points: 0, discount_percent: 0 }],
+        bonus_rules: [],
+        discount_stacking: 'take_highest'
+      },
+      max_order_value: 5000000,
+      max_cart_items: 50
     }, { onConflict: 'slug' })
     .select('id')
     .single();

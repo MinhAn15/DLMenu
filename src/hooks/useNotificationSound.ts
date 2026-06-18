@@ -1,12 +1,46 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 
 export function useNotificationSound() {
   const audioContextRef = useRef<AudioContext | null>(null);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   useEffect(() => {
-    // Only initialize AudioContext after user interaction (browser policy)
+    // Sync state from localStorage
+    const savedState = localStorage.getItem('audio_notification_enabled');
+    if (savedState !== null) {
+      setIsSoundEnabled(savedState === 'true');
+    }
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'audio_notification_enabled') {
+        setIsSoundEnabled(e.newValue === 'true');
+      }
+    };
+    
+    // Custom event for same-window sync
+    const handleCustomEvent = (e: any) => {
+      setIsSoundEnabled(e.detail === 'true');
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('audio-toggle', handleCustomEvent);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('audio-toggle', handleCustomEvent);
+    };
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    const newState = !isSoundEnabled;
+    setIsSoundEnabled(newState);
+    localStorage.setItem('audio_notification_enabled', String(newState));
+    window.dispatchEvent(new CustomEvent('audio-toggle', { detail: String(newState) }));
+  }, [isSoundEnabled]);
+
+  useEffect(() => {
     const initAudio = () => {
-      if (!audioContextRef.current) {
+      if (!audioContextRef.current && isSoundEnabled) {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
     };
@@ -21,10 +55,10 @@ export function useNotificationSound() {
         audioContextRef.current.close();
       }
     };
-  }, []);
+  }, [isSoundEnabled]);
 
   const playDingDong = useCallback(() => {
-    if (!audioContextRef.current) return;
+    if (!isSoundEnabled || !audioContextRef.current) return;
     
     const ctx = audioContextRef.current;
     if (ctx.state === 'suspended') {
@@ -58,7 +92,7 @@ export function useNotificationSound() {
     gain2.connect(ctx.destination);
     osc2.start(t + 0.3);
     osc2.stop(t + 1.0);
-  }, []);
+  }, [isSoundEnabled]);
 
-  return { playDingDong };
+  return { playDingDong, isSoundEnabled, toggleSound };
 }

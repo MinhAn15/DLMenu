@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotificationSound } from '@/hooks/useNotificationSound';
 
 const navItems = [
   { href: '/admin', label: 'Tổng quan', icon: '📊' },
@@ -20,6 +21,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const { isSoundEnabled, toggleSound, playDingDong } = useNotificationSound();
 
   return (
     <>
@@ -77,7 +79,22 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-gray-100 flex flex-col gap-2">
+          <button
+            onClick={() => {
+              toggleSound();
+              if (!isSoundEnabled) {
+                // If it was turned off, we just turned it on -> play test sound
+                setTimeout(playDingDong, 100);
+              }
+            }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium w-full transition-colors ${
+              isSoundEnabled ? 'text-green-600 bg-green-50' : 'text-gray-500 bg-gray-50'
+            }`}
+          >
+            <span>{isSoundEnabled ? '🔊' : '🔇'}</span>
+            Chuông báo: {isSoundEnabled ? 'Bật' : 'Tắt'}
+          </button>
           <button
             onClick={signOut}
             className="flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-red-600 hover:bg-red-50 w-full transition-colors"

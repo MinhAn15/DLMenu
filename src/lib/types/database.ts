@@ -56,6 +56,8 @@ export interface Shop {
   loyalty_config: LoyaltyConfig;
   owner_id: string;
   is_active: boolean;
+  max_order_value: number;
+  max_cart_items: number;
   subscription_tier: SubscriptionTier;
   created_at: string;
   updated_at: string;

@@ -3,7 +3,7 @@ import type { CartItem } from '@/lib/types/database';
 import type { MenuItem } from '@/lib/types/database';
 import toast from 'react-hot-toast';
 
-export function useCart(shopId?: string) {
+export function useCart(shopId?: string, maxCartItems: number = 20, maxOrderValue: number = 2000000) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -42,12 +42,12 @@ export function useCart(shopId?: string) {
       const currentCount = prevItems.reduce((sum, i) => sum + i.quantity, 0);
       const currentSubtotal = prevItems.reduce((sum, i) => sum + i.menuItem.price * i.quantity, 0);
       
-      if (currentCount + quantity > 20) {
-        toast.error('Giỏ hàng chỉ chứa tối đa 20 món.');
+      if (currentCount + quantity > maxCartItems) {
+        toast.error(`Giỏ hàng chỉ chứa tối đa ${maxCartItems} món.`);
         return prevItems;
       }
-      if (currentSubtotal + (menuItem.price * quantity) > 2000000) {
-        toast.error('Tổng đơn hàng không được vượt quá 2.000.000 VNĐ.');
+      if (currentSubtotal + (menuItem.price * quantity) > maxOrderValue) {
+        toast.error(`Tổng đơn hàng không được vượt quá ${new Intl.NumberFormat('vi-VN').format(maxOrderValue)} VNĐ.`);
         return prevItems;
       }
 
@@ -91,12 +91,12 @@ export function useCart(shopId?: string) {
           const currentCount = prevItems.reduce((sum, i) => sum + i.quantity, 0);
           const currentSubtotal = prevItems.reduce((sum, i) => sum + i.menuItem.price * i.quantity, 0);
           
-          if (currentCount + diff > 20) {
-            toast.error('Giỏ hàng chỉ chứa tối đa 20 món.');
+          if (currentCount + diff > maxCartItems) {
+            toast.error(`Giỏ hàng chỉ chứa tối đa ${maxCartItems} món.`);
             return prevItems;
           }
-          if (currentSubtotal + (prevItems[index].menuItem.price * diff) > 2000000) {
-            toast.error('Tổng đơn hàng không được vượt quá 2.000.000 VNĐ.');
+          if (currentSubtotal + (prevItems[index].menuItem.price * diff) > maxOrderValue) {
+            toast.error(`Tổng đơn hàng không được vượt quá ${new Intl.NumberFormat('vi-VN').format(maxOrderValue)} VNĐ.`);
             return prevItems;
           }
         }

@@ -28,7 +28,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
     resolvedParams?.slug || '', 
     resolvedParams?.table || ''
   );
-  const { items: cartItems, subtotal, itemCount, addItem, updateQuantity, clearCart } = useCart(shop?.id);
+  const { items: cartItems, subtotal, itemCount, addItem, updateQuantity, clearCart } = useCart(shop?.id, shop?.max_cart_items, shop?.max_order_value);
   const { user } = useAuth();
 
   const [isCartOpen, setIsCartOpen] = useState(false);
