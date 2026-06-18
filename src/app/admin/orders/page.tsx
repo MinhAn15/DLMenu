@@ -11,6 +11,7 @@ import Modal from '@/components/ui/Modal';
 import Spinner from '@/components/ui/Spinner';
 import Skeleton from '@/components/ui/Skeleton';
 import EmptyState from '@/components/ui/EmptyState';
+import PrintableReceipt from '@/components/admin/PrintableReceipt';
 import { formatVND } from '@/lib/utils/format';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/lib/constants';
 import toast from 'react-hot-toast';
@@ -44,8 +45,9 @@ const ACTION_BUTTONS: Record<string, { label: string; next: string; variant?: 'p
 export default function AdminOrdersPage() {
   const { shop, loading: shopLoading } = useAdminShop();
   const { orders, loading: ordersLoading, refetch } = useRealtimeOrders(shop?.id);
-  const [tab, setTab] = useState('active');
+  const [tab, setTab] = useState<any>('active');
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+  const [orderToPrint, setOrderToPrint] = useState<any>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
@@ -245,10 +247,20 @@ export default function AdminOrdersPage() {
                   {selectedOrder.order_type === 'dine_in' ? 'Ăn tại quán' : 'Mang về'}
                 </p>
               </div>
-              <div style={{ textAlign: 'right' }}>
+              <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 'var(--space-2)' }}>
                 <div style={{ fontWeight: 700, fontSize: 'var(--font-size-xl)', color: 'var(--color-primary)' }}>
                   {formatVND(selectedOrder.total)}
                 </div>
+                <Button 
+                  size="sm" 
+                  variant="secondary" 
+                  onClick={() => {
+                    setOrderToPrint(selectedOrder);
+                    setTimeout(() => window.print(), 100);
+                  }}
+                >
+                  🖨️ In Bill
+                </Button>
               </div>
             </div>
 
@@ -294,6 +306,9 @@ export default function AdminOrdersPage() {
           </div>
         )}
       </Modal>
+
+      {/* Hidden Printable Receipt */}
+      {orderToPrint && <PrintableReceipt order={orderToPrint} shopName={shop?.name || 'DiLinhMenu'} />}
     </div>
   );
 }

@@ -258,3 +258,46 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
+
+/* @media print Utilities for Thermal Printers & QR Pages */
+@media print {
+  /* Hide everything by default when printing except elements with .print-only */
+  body > *:not(.print-only-container) {
+    display: none !important;
+  }
+  
+  .print-only-container {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+
+  /* Thermal Receipt Settings (80mm width typical ~ 302px) */
+  .thermal-receipt {
+    width: 80mm;
+    margin: 0 auto;
+    font-family: monospace;
+    font-size: 12px;
+    color: black;
+  }
+  
+  /* Reset background and text colors for print */
+  * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  @page {
+    margin: 0;
+  }
+}

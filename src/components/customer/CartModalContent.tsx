@@ -87,8 +87,17 @@ export default function CartModalContent({ items, subtotal, onUpdateQuantity, on
         </div>
 
         {paymentMethod === 'transfer' && (
-          <div className="bg-blue-50 text-blue-800 p-3 rounded-lg text-xs mb-4">
-            Vui lòng chuyển khoản sau khi chốt đơn. Quán sẽ mang mã QR ra tận bàn cho bạn quét!
+          <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-xs mb-4 flex flex-col items-center border border-blue-100">
+            <p className="font-bold mb-2 text-sm text-center">Quét mã VietQR để thanh toán</p>
+            <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 mb-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={`https://img.vietqr.io/image/970436-1012345678-compact2.jpg?amount=${subtotal}&addInfo=Thanh toan DiLinhMenu&accountName=NGUYEN VAN A`}
+                alt="VietQR"
+                className="w-[200px] h-[200px] object-contain mix-blend-multiply"
+              />
+            </div>
+            <p className="text-center text-gray-600 mt-1">Hệ thống sẽ tự động xác nhận đơn khi nhận được tiền.</p>
           </div>
         )}
 
