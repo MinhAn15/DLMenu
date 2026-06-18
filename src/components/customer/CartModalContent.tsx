@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { formatVND } from '@/lib/utils/format';
 import type { CartItem, MenuItem } from '@/lib/types/database';
 import Button from '@/components/ui/Button';
@@ -13,10 +14,11 @@ interface CartModalProps {
 }
 
 export default function CartModalContent({ items, subtotal, onUpdateQuantity, onCheckout, crossSellItems = [], onAddCrossSell }: CartModalProps) {
+  const { t } = useLanguage();
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'transfer'>('cash');
   const [customerNote, setCustomerNote] = useState('');
   if (items.length === 0) {
-    return <div className="text-center py-8 text-gray-500">Giỏ hàng trống</div>;
+    return <div className="text-center py-8 text-gray-500">{t('customer.cart.empty')}</div>;
   }
 
   return (
@@ -29,7 +31,7 @@ export default function CartModalContent({ items, subtotal, onUpdateQuantity, on
               <div className="text-[var(--color-primary)] font-medium mt-1">
                 {formatVND(item.menuItem.price)}
               </div>
-              {item.note && <div className="text-xs text-gray-500 mt-1 italic">Ghi chú: {item.note}</div>}
+              {item.note && <div className="text-xs text-gray-500 mt-1 italic">{t('customer.cart.note')} {item.note}</div>}
             </div>
             
             <div className="flex items-center gap-3">
@@ -53,18 +55,15 @@ export default function CartModalContent({ items, subtotal, onUpdateQuantity, on
 
       {crossSellItems.length > 0 && onAddCrossSell && (
         <div className="bg-orange-50 -mx-4 px-4 py-3 border-y border-orange-100">
-          <h4 className="text-sm font-bold text-orange-800 mb-2">🔥 Dùng kèm sẽ ngon hơn:</h4>
+          <h4 className="text-sm font-bold text-orange-800 mb-2">{t('customer.cart.cross_sell')}</h4>
           <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
             {crossSellItems.map(item => (
               <div key={item.id} className="bg-white p-2 rounded-lg border border-orange-200 min-w-[140px] flex-shrink-0 shadow-sm flex flex-col gap-1">
                 <div className="text-xs font-bold truncate" title={item.name}>{item.name}</div>
-                <div className="text-[var(--color-primary)] text-xs font-medium">{formatVND(item.price)}</div>
-                <button 
-                  onClick={() => onAddCrossSell(item)}
-                  className="mt-1 w-full bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs py-1 rounded transition-colors font-medium"
-                >
-                  + Thêm
-                </button>
+                <div className="flex items-center justify-between mt-auto">
+                  <span className="text-[10px] text-orange-600 font-semibold">{formatVND(item.price)}</span>
+                  <button onClick={() => onAddCrossSell(item)} className="w-5 h-5 rounded-full bg-orange-200 text-orange-700 flex items-center justify-center font-bold text-xs shrink-0">+</button>
+                </div>
               </div>
             ))}
           </div>

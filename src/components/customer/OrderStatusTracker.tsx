@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/lib/constants';
 import { formatVND } from '@/lib/utils/format';
 
@@ -14,6 +15,7 @@ interface OrderStatusTrackerProps {
 }
 
 export default function OrderStatusTracker({ orderNumber, status, total, onClose }: OrderStatusTrackerProps) {
+  const { t } = useLanguage();
   const currentIndex = STATUS_STEPS.indexOf(status);
   const isCancelled = status === 'cancelled';
 
@@ -32,10 +34,10 @@ export default function OrderStatusTracker({ orderNumber, status, total, onClose
           {isCancelled ? '❌' : currentIndex >= 4 ? '✅' : '🛒'}
         </div>
         <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--font-size-xl)', fontWeight: 700 }}>
-          {isCancelled ? 'Đơn hàng đã hủy' : currentIndex >= 4 ? 'Hoàn thành!' : 'Đã đặt món!'}
+          {isCancelled ? t('customer.order.cancelled') : currentIndex >= 4 ? t('customer.order.completed') : t('customer.order.placed')}
         </h2>
         <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-1)' }}>
-          Đơn {orderNumber} · {formatVND(total)}
+          {t('customer.order.order_number').replace('{{id}}', orderNumber)} · {formatVND(total)}
         </p>
       </div>
 
@@ -81,7 +83,7 @@ export default function OrderStatusTracker({ orderNumber, status, total, onClose
                     fontSize: isCurrent ? 'var(--font-size-base)' : 'var(--font-size-sm)',
                     color: isCurrent ? 'var(--color-text)' : 'var(--color-text-secondary)',
                   }}>
-                    {ORDER_STATUS_LABELS[step]}
+                    {t('customer.order.status_' + step) || ORDER_STATUS_LABELS[step]}
                   </div>
                   {isCurrent && (
                     <div style={{
@@ -90,7 +92,7 @@ export default function OrderStatusTracker({ orderNumber, status, total, onClose
                       fontWeight: 600,
                       marginTop: '2px',
                     }}>
-                      ● Hiện tại
+                      {t('customer.order.current')}
                     </div>
                   )}
                 </div>
@@ -117,7 +119,7 @@ export default function OrderStatusTracker({ orderNumber, status, total, onClose
           transition: 'opacity var(--transition-fast)',
         }}
       >
-        Tiếp tục xem menu
+        {t('customer.order.continue')}
       </button>
     </div>
   );

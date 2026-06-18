@@ -4,6 +4,7 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useShop } from '@/hooks/useShop';
 import { useCart } from '@/hooks/useCart';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { createOrder } from '@/lib/actions/customerOrder';
 import { resolveDiscount } from '@/lib/utils/discount';
@@ -33,6 +34,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   const { items: cartItems, subtotal, itemCount, addItem, updateQuantity, clearCart } = useCart(shop?.id, shop?.max_cart_items, shop?.max_order_value);
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -92,7 +94,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
 
   const handleAddToCart = (item: MenuItem) => {
     addItem(item);
-    toast.success(`Đã thêm ${item.name}`, { duration: 1500, style: { fontSize: '0.875rem' } });
+    toast.success(`${t('customer.menu.added_to_cart')} ${item.name}`, { duration: 1500, style: { fontSize: '0.875rem' } });
   };
 
   // Calculate discount
@@ -138,9 +140,9 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
         total: res.data!.total,
         status: 'pending',
       });
-      toast.success('Đặt món thành công!');
+      toast.success(t('customer.order.success'));
     } catch (err: any) {
-      toast.error(err.message || 'Lỗi đặt món. Vui lòng thử lại.');
+      toast.error(err.message || t('customer.order.error'));
     } finally {
       setIsCheckingOut(false);
     }
@@ -163,7 +165,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
             </div>
             <div className="text-white">
               <h1 className="text-xl font-bold drop-shadow-md">{shop.name}</h1>
-              {table && <p className="text-sm font-medium drop-shadow-md bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm inline-block mt-1">Bàn {table.table_number}</p>}
+              {table && <p className="text-sm font-medium drop-shadow-md bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm inline-block mt-1">{t('customer.menu.table')} {table.table_number}</p>}
             </div>
           </div>
           {/* Actions Area */}
@@ -181,7 +183,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
               className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition"
               onClick={() => !user && setIsLoginOpen(true)}
             >
-              {user ? '👤' : <span className="text-xs font-bold">Log in</span>}
+              {user ? '👤' : <span className="text-xs font-bold">{t('customer.menu.login')}</span>}
             </div>
           </div>
         </div>
@@ -240,7 +242,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
       />
 
       {/* Cart Modal */}
-      <Modal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} title="Giỏ Hàng">
+      <Modal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} title={t('customer.cart.title')}>
         <CartModalContent
           items={cartItems}
           subtotal={subtotal}

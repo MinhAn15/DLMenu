@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { formatVND } from '@/lib/utils/format';
 import Button from '@/components/ui/Button';
 
@@ -11,6 +12,7 @@ interface CartBarProps {
 }
 
 export default function CartBar({ itemCount, subtotal, onViewCart }: CartBarProps) {
+  const { t } = useLanguage();
   const [animate, setAnimate] = React.useState(false);
 
   React.useEffect(() => {
@@ -35,11 +37,11 @@ export default function CartBar({ itemCount, subtotal, onViewCart }: CartBarProp
           </span>
         </div>
         <div className="ml-3 flex flex-col">
-          <span className="text-sm font-medium text-[var(--color-primary)]">Giỏ hàng của bạn</span>
+          <span className="text-sm font-medium text-[var(--color-primary)]">{t('customer.cart.title')}</span>
           <span className="font-heading font-bold text-lg text-gray-900">{formatVND(subtotal)}</span>
         </div>
         <div className="flex items-center gap-2 text-[var(--color-primary)] font-medium bg-[var(--color-primary)] bg-opacity-10 px-4 py-2 rounded-full">
-          Xem <span className="text-xl">→</span>
+          {t('customer.cart.view')} <span className="text-xl">→</span>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import type { MenuItem } from '@/lib/types/database';
 import { formatVND } from '@/lib/utils/format';
+import { useLanguage } from '@/contexts/LanguageContext';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -12,6 +13,7 @@ interface MenuItemCardProps {
 }
 
 export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
+  const { t } = useLanguage();
   return (
     <Card padding="none" variant="glass" className="flex overflow-hidden h-[120px] hover-lift active-press">
       {/* Image Side */}
@@ -62,7 +64,7 @@ export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
             className="rounded-full px-4 min-h-[44px] min-w-[44px] flex items-center justify-center font-bold"
             style={!item.is_available ? { opacity: 0.5 } : {}}
           >
-            {item.is_available ? 'Thêm' : 'Hết'}
+            {item.is_available ? t('customer.menu.add_to_cart') : t('customer.menu.out_of_stock')}
           </Button>
         </div>
       </div>
