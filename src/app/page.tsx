@@ -94,11 +94,11 @@ export default function HomePage() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className={styles.badge}><Rocket size={16} /> Nâng Tầm Quán Của Bạn</div>
-            <h1 className={styles.title}>
-              Tăng Doanh Thu Với<br />
+            <h1 className={`${styles.title} max-w-2xl`}>
+              Tăng Doanh Thu Với <span className="block md:inline"></span>
               <span className={styles.accent}>QR Menu & Tích Điểm</span>
             </h1>
-            <p className={styles.subtitle}>
+            <p className={`${styles.subtitle} max-w-xl`}>
               Giải pháp toàn diện giúp các quán cà phê, nhà hàng tại Di Linh chuyên nghiệp hoá quy trình đặt món, giữ chân khách hàng cũ và tự động hoá doanh thu.
             </p>
             <div className={styles.ctas}>

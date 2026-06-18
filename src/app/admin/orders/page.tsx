@@ -154,7 +154,7 @@ export default function AdminOrdersPage() {
           icon={<span style={{ fontSize: '2rem' }}>📋</span>}
         />
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredOrders.map(order => (
             <Card
               key={order.id}

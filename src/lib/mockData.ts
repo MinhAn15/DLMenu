@@ -43,9 +43,9 @@ export const MOCK_CATEGORIES: MenuCategory[] = [
 ];
 
 export const MOCK_ITEMS: MenuItem[] = [
-  { id: 'i1', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Đen Đá', description: 'Cà phê nguyên chất', price: 20000, image_url: null, is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now },
-  { id: 'i2', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Sữa Đá', description: 'Sữa đặc Ngôi sao phương Nam', price: 25000, image_url: null, is_available: true, is_featured: false, sort_order: 2, tags: [], created_at: now, updated_at: now },
-  { id: 'i3', shop_id: MOCK_SHOP.id, category_id: 'c2', name: 'Trà Đào Cam Sả', description: 'Trà thanh mát giải nhiệt', price: 35000, image_url: null, is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now },
+  { id: 'i1', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Đen Đá', description: 'Cà phê nguyên chất', price: 20000, image_url: '/images/coffee_den_da.png', is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now },
+  { id: 'i2', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Sữa Đá', description: 'Sữa đặc Ngôi sao phương Nam', price: 25000, image_url: '/images/coffee_sua_da.png', is_available: true, is_featured: false, sort_order: 2, tags: [], created_at: now, updated_at: now },
+  { id: 'i3', shop_id: MOCK_SHOP.id, category_id: 'c2', name: 'Trà Đào Cam Sả', description: 'Trà thanh mát giải nhiệt', price: 35000, image_url: '/images/tea_dao_cam_sa.png', is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now },
   { id: 'i4', shop_id: MOCK_SHOP.id, category_id: 'c3', name: 'Bánh Tiramisu', description: 'Bánh ngọt chuẩn Ý', price: 45000, image_url: null, is_available: true, is_featured: false, sort_order: 1, tags: [], created_at: now, updated_at: now },
 ];
 

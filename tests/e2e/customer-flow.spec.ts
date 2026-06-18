@@ -1,38 +1,43 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Customer Flow', () => {
-  test('Customer can view menu and place an order', async ({ page }) => {
-    // Navigate to the test shop created by seed.ts
+test.describe('Customer Flow & Cart Logic', () => {
+  test.beforeEach(async ({ page }) => {
+    // Navigate directly to the seeded shop and table
     await page.goto('/s/ca-phe-mai/t/1');
+  });
 
-    // Wait for the shop name to load
-    await expect(page.locator('h1:has-text("Cà phê Mai")')).toBeVisible();
+  test('Customer can view menu and place an order', async ({ page }) => {
+    await expect(page.locator('h1')).toContainText('Cà phê Mai');
+    await expect(page.getByText('Bàn 1')).toBeVisible();
 
-    // Expect categories to be visible
-    await expect(page.locator('a:has-text("Cà phê")').first()).toBeVisible();
+    // Add items to cart
+    const cardDenDa = page.locator('div.flex-grow').filter({ has: page.getByRole('heading', { name: 'Cà phê Đen Đá', exact: true }) }).first();
+    await cardDenDa.getByRole('button', { name: 'Thêm' }).click();
+    
+    const cardDao = page.locator('div.flex-grow').filter({ has: page.getByRole('heading', { name: 'Trà Đào Cam Sả', exact: true }) }).first();
+    await cardDao.getByRole('button', { name: 'Thêm' }).click();
+    
+    // Open Cart
+    await page.locator('text=Giỏ hàng của bạn').click();
+    
+    // Add Note
+    await page.fill('textarea', 'Ít đá, không đường nhé');
 
-    // Add an item to cart
-    const addButtons = page.locator('button:has-text("Thêm")');
-    await expect(addButtons.first()).toBeVisible();
-    await addButtons.first().click();
+    // Confirm Checkout
+    await page.locator('button:has-text("Gửi Order")').click();
 
-    // Expect cart bar to appear
-    const cartBar = page.locator('text=Giỏ hàng của bạn');
+    // Verify Success
+    await expect(page.getByText('Đặt món thành công!')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('Customer cart retains items across reloads (localStorage)', async ({ page }) => {
+    // Navigate and add specific item
+    await page.goto('/s/ca-phe-mai/t/1');
+    const card = page.locator('div.flex-grow').filter({ has: page.getByRole('heading', { name: 'Cà phê Sữa Đá', exact: true }) }).first();
+    await card.getByRole('button', { name: 'Thêm' }).click();
+    await page.reload();
+    const cartBar = page.locator('text=Giỏ hàng của bạn').locator('..');
     await expect(cartBar).toBeVisible();
-
-    // Open cart modal
-    await page.locator('text=Xem').last().click();
-
-    // Click checkout
-    const checkoutButton = page.locator('button:has-text("Gửi Order")');
-    await expect(checkoutButton).toBeVisible();
-    await checkoutButton.click();
-
-    // Checkout is direct now (anonymous)
-    await expect(page.locator('text=Đã đặt món!')).toBeVisible({ timeout: 10000 });
-
-    // Wait for order success state (from OrderStatusTracker)
-    await expect(page.locator('text=Đã đặt món!')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('button:has-text("Tiếp tục xem menu")')).toBeVisible();
+    await expect(cartBar).toContainText('25.000');
   });
 });

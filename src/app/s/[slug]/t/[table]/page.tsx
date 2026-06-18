@@ -178,7 +178,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
           return (
             <section key={cat.id} id={`cat-${cat.id}`} className="scroll-mt-32">
               <h2 className="text-lg font-bold mb-4">{cat.name}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {categoryItems.map((item) => (
                   <MenuItemCard
                     key={item.id}

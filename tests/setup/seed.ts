@@ -97,14 +97,31 @@ async function globalSetup() {
     name: 'Cà phê',
   }).select('id').single();
 
-  // 5. Insert Test Menu Item
+  // 5. Insert Test Menu Items
   if (category) {
-    await supabase.from('menu_items').insert({
-      category_id: category.id,
-      name: 'Cà phê đen',
-      price: 20000,
-      is_available: true
-    });
+    await supabase.from('menu_items').insert([
+      {
+        category_id: category.id,
+        name: 'Cà phê Đen Đá',
+        price: 20000,
+        is_available: true,
+        image_url: '/images/coffee_den_da.png'
+      },
+      {
+        category_id: category.id,
+        name: 'Cà phê Sữa Đá',
+        price: 25000,
+        is_available: true,
+        image_url: '/images/coffee_sua_da.png'
+      },
+      {
+        category_id: category.id,
+        name: 'Trà Đào Cam Sả',
+        price: 35000,
+        is_available: true,
+        image_url: '/images/tea_dao_cam_sa.png'
+      }
+    ]);
   }
 
   console.log('Test data seeded successfully.');
