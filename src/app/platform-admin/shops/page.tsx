@@ -58,6 +58,7 @@ export default function PlatformShopsPage() {
         phone: formPhone, address: formAddress, theme_config: { primary_color: '#6B4226', font: 'Inter' }, business_hours: {},
         loyalty_config: { points_formula: { type: 'per_amount', amount_per_point: 10000 }, ranks: [{ name: 'Thành viên', min_points: 0, discount_percent: 0 }, { name: 'Bạc', min_points: 100, discount_percent: 3 }, { name: 'Vàng', min_points: 500, discount_percent: 5 }, { name: 'Kim cương', min_points: 2000, discount_percent: 10 }], bonus_rules: [], discount_stacking: 'take_highest' },
         owner_id: '', is_active: true, subscription_tier: formTier,
+        max_order_value: 2000000, max_cart_items: 20,
         created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
       };
       setShops(prev => [...prev, newShop]);

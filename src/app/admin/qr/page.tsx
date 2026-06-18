@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
 import { QRCodeSVG } from 'qrcode.react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 import { createPortal } from 'react-dom';
 
 export default function QRCodeGeneratorPage() {
@@ -81,15 +81,15 @@ export default function QRCodeGeneratorPage() {
           <Input 
             type="number" 
             label="Bàn bắt đầu" 
-            value={startTable} 
-            onChange={(e) => setStartTable(parseInt(e.target.value) || 1)} 
+            value={startTable.toString()} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStartTable(parseInt(e.target.value) || 1)} 
             min={1}
           />
           <Input 
             type="number" 
             label="Bàn kết thúc" 
-            value={endTable} 
-            onChange={(e) => setEndTable(parseInt(e.target.value) || 1)} 
+            value={endTable.toString()} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEndTable(parseInt(e.target.value) || 1)} 
             min={startTable}
           />
         </div>
