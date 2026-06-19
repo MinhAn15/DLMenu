@@ -79,9 +79,10 @@
   font-size: 3rem;
   font-weight: 800;
   line-height: 1.2;
-  color: #111827;
+  color: var(--color-text);
   margin-bottom: var(--space-4);
   letter-spacing: -0.02em;
+  transition: color var(--transition-base);
 }
 
 @media (min-width: 768px) {
@@ -99,7 +100,7 @@
 
 .subtitle {
   font-size: var(--font-size-lg);
-  color: #4B5563;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   margin-bottom: var(--space-8);
   max-width: 600px;
@@ -216,14 +217,14 @@
 /* Logos Section */
 .logos {
   padding: var(--space-8) var(--space-4);
-  background: white;
-  border-top: 1px solid #F3F4F6;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-light);
   text-align: center;
 }
 
 .logosTitle {
   font-size: var(--font-size-sm);
-  color: #6B7280;
+  color: var(--color-text-muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -242,13 +243,14 @@
 .logoGrid span {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #111827;
+  color: var(--color-text);
 }
 
 /* How It Works Section */
 .howItWorks {
   padding: 100px var(--space-4);
-  background: #FAFAFA;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .sectionHeader {
@@ -260,13 +262,13 @@
 .sectionTitle {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-text);
   margin-bottom: var(--space-4);
 }
 
 .sectionSub {
   font-size: var(--font-size-lg);
-  color: #4B5563;
+  color: var(--color-text-secondary);
 }
 
 .stepsGrid {
@@ -291,8 +293,8 @@
 .stepNum {
   width: 64px;
   height: 64px;
-  background: #FFF3E0;
-  color: #D97706;
+  background: var(--step-num-bg, #FFF3E0);
+  color: var(--step-num-text, #D97706);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -300,24 +302,31 @@
   font-size: 1.5rem;
   font-weight: 800;
   margin: 0 auto var(--space-6);
+  --step-num-bg: #FFF3E0;
+  --step-num-text: #D97706;
+}
+
+:global(.dark) .stepNum {
+  --step-num-bg: rgba(245, 166, 35, 0.15);
+  --step-num-text: #F5A623;
 }
 
 .stepTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text);
   margin-bottom: var(--space-3);
 }
 
 .stepDesc {
-  color: #4B5563;
+  color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 /* Features Section */
 .features {
   padding: 100px var(--space-4);
-  background: white;
+  background: var(--color-surface);
 }
 
 .featGrid {
@@ -343,15 +352,20 @@
 .featCard {
   padding: var(--space-8);
   border-radius: 24px;
-  background: #F9FAFB;
-  border: 1px solid #F3F4F6;
+  background: var(--card-bg, #F9FAFB);
+  border: 1px solid var(--color-border-light);
   transition: all 0.3s ease;
+  --card-bg: #F9FAFB;
+}
+
+:global(.dark) .featCard {
+  --card-bg: rgba(255, 255, 255, 0.03);
 }
 
 .featCard:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border-color: #FCA5A5;
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary-light);
 }
 
 .featIcon {
@@ -368,19 +382,19 @@
 .featTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text);
   margin-bottom: var(--space-3);
 }
 
 .featDesc {
-  color: #4B5563;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
 /* Pricing Section */
 .pricing {
   padding: 100px var(--space-4);
-  background: #FAFAFA;
+  background: var(--color-bg);
 }
 
 .priceGrid {
@@ -399,10 +413,10 @@
 }
 
 .priceCard {
-  background: white;
+  background: var(--color-surface);
   border-radius: 32px;
   padding: 40px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--color-border);
   position: relative;
   transition: transform 0.3s ease;
 }
@@ -438,14 +452,14 @@
 .priceName {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--color-text);
   margin-bottom: var(--space-2);
 }
 
 .priceAmount {
   font-size: 3rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--color-text);
   margin-bottom: var(--space-6);
   display: flex;
   align-items: baseline;
@@ -454,7 +468,7 @@
 
 .priceAmount span {
   font-size: 1rem;
-  color: #6B7280;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -466,8 +480,8 @@
 
 .priceFeatures li {
   padding: 12px 0;
-  color: #4B5563;
-  border-bottom: 1px solid #F3F4F6;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border-light);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -497,10 +511,11 @@
 
 /* Footer */
 .footer {
-  background: #000;
+  background: #0C0705;
   color: white;
   padding: var(--space-12) var(--space-4);
   text-align: center;
+  border-top: 1px solid rgba(140, 74, 38, 0.15);
 }
 
 .footerBrand {
@@ -534,10 +549,15 @@
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--header-bg, rgba(255, 255, 255, 0.95));
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
+  --header-bg: rgba(255, 255, 255, 0.95);
+}
+
+:global(.dark) .header {
+  --header-bg: rgba(18, 18, 18, 0.95);
 }
 
 .headerContainer {
