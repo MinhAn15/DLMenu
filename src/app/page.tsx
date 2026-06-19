@@ -74,7 +74,9 @@ export default function HomePage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="container-wide py-4 flex justify-between items-center">
           <div className="font-heading font-bold text-xl text-[var(--color-primary)] flex items-center gap-2">
-            <Image src="/images/dilinhmenu_app_logo.png" alt="DiLinhMenu Logo" width={32} height={32} className="rounded-lg shadow-sm" />
+            <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)] flex items-center justify-center text-white shadow-sm">
+              <Coffee size={18} />
+            </div>
             DiLinhMenu
           </div>
           <div className="flex items-center gap-4">
@@ -93,13 +95,13 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className={styles.badge}><Rocket size={16} /> Nâng Tầm Quán Của Bạn</div>
+            <div className={styles.badge}><Coffee size={16} /> Thiết kế riêng cho Di Linh</div>
             <h1 className={`${styles.title} max-w-2xl`}>
-              Tăng Doanh Thu Với <span className="block md:inline"></span>
-              <span className={styles.accent}>QR Menu & Tích Điểm</span>
+              Quản Lý Quán <span className="block md:inline"></span>
+              <span className={styles.accent}>Đơn Giản & Mộc Mạc</span>
             </h1>
             <p className={`${styles.subtitle} max-w-xl`}>
-              Giải pháp toàn diện giúp các quán cà phê, nhà hàng tại Di Linh chuyên nghiệp hoá quy trình đặt món, giữ chân khách hàng cũ và tự động hoá doanh thu.
+              Giải pháp quản lý quán cà phê, nhà hàng được thiết kế riêng cho người Di Linh. Đơn giản, mộc mạc, hiệu quả ngay trong ngày đầu. Tích hợp QR gọi món & Tích điểm thông minh.
             </p>
             <div className={styles.ctas}>
               <Link href="/register" className={styles.ctaPrimary}>
@@ -119,7 +121,43 @@ export default function HomePage() {
           >
             <div className={styles.mockupWrapper}>
               <div className={styles.mockupScreen}>
-                <img src="/images/hero.png" alt="DiLinhMenu UI Mockup" className={styles.mockupImgFill} />
+                {/* CSS based UI mockup instead of image */}
+                <div className="flex flex-col h-full bg-slate-50">
+                  <div className="bg-[var(--color-primary)] h-32 p-4 rounded-b-3xl shadow-sm text-white relative">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-lg">Cà phê Mai</h3>
+                        <p className="text-xs opacity-80">Bàn 01</p>
+                      </div>
+                      <div className="bg-white/20 p-2 rounded-full"><Coffee size={16} /></div>
+                    </div>
+                  </div>
+                  <div className="flex-1 p-4 -mt-10">
+                    <div className="bg-white rounded-xl shadow-sm p-3 mb-3 flex items-center gap-3">
+                      <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center text-amber-700">☕</div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm">Cà Phê Sữa Đá</h4>
+                        <p className="text-xs text-gray-500">25.000đ</p>
+                      </div>
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold">+</div>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm p-3 mb-3 flex items-center gap-3">
+                      <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-700">🧋</div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm">Trà Đào Cam Sả</h4>
+                        <p className="text-xs text-gray-500">35.000đ</p>
+                      </div>
+                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold">+</div>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] rounded-t-3xl">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-semibold text-sm">Tổng cộng</span>
+                      <span className="font-bold text-[var(--color-primary)]">60.000đ</span>
+                    </div>
+                    <div className="w-full bg-[var(--color-primary)] text-white text-center py-3 rounded-xl font-bold text-sm shadow-md">Đặt Món Ngay</div>
+                  </div>
+                </div>
               </div>
             </div>
             

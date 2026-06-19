@@ -38,6 +38,7 @@ export interface LoyaltyConfig {
 }
 
 export interface ThemeConfig {
+  template_id?: 'classic' | 'pub' | 'minimal';
   primary_color: string;
   font: string;
   bank_info?: {

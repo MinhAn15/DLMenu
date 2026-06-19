@@ -141,7 +141,7 @@ export default function PlatformShopsPage() {
                   <td className="p-4 text-sm text-gray-600">{owner?.display_name || shop.phone || '—'}</td>
                   <td className="py-4">
                     <Badge variant={shop.subscription_tier === 'premium' ? 'warning' : shop.subscription_tier === 'pro' ? 'info' : 'default'} size="sm">
-                      {shop.subscription_tier.toUpperCase()}
+                      {(shop.subscription_tier || 'free').toUpperCase()}
                     </Badge>
                   </td>
                   <td className="py-4">

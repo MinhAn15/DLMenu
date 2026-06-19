@@ -36,7 +36,7 @@ async function globalSetup() {
     superadminId = usersData.users.find((u: any) => u.email === superadminEmail)?.id;
   }
   if (superadminId) {
-    await supabase.from('profiles').update({ role: 'super_admin' }).eq('id', superadminId);
+    await supabase.from('profiles').update({ role: 'platform_admin' }).eq('id', superadminId);
   }
 
   // 2. Create Shop Admin
@@ -62,7 +62,7 @@ async function globalSetup() {
   await supabase.from('profiles').update({ role: 'shop_owner' }).eq('id', ownerId);
 
   // 3. Insert Test Shop
-  const { data: shop } = await supabase
+  const { data: shop, error: shopErr } = await supabase
     .from('shops')
     .upsert({
       owner_id: ownerId,
@@ -75,14 +75,13 @@ async function globalSetup() {
         ranks: [{ name: 'Member', min_points: 0, discount_percent: 0 }],
         bonus_rules: [],
         discount_stacking: 'take_highest'
-      },
-      max_order_value: 5000000,
-      max_cart_items: 50
+      }
     }, { onConflict: 'slug' })
     .select('id')
     .single();
 
-  if (!shop) throw new Error('Failed to create test shop');
+  if (shopErr) console.error('Shop Upsert Error:', shopErr);
+  if (!shop) throw new Error('Failed to create test shop. Error: ' + shopErr?.message);
 
   // 3. Insert Test Table
   await supabase.from('shop_tables').upsert({

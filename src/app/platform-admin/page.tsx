@@ -6,8 +6,9 @@ import { useAdminData } from '@/hooks/useAdminData';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import { formatVND } from '@/lib/utils/format';
+import { Store, ShoppingBag, DollarSign, LayoutGrid } from 'lucide-react';
 
-function StatCard({ title, value, icon, trend }: { title: string; value: string; icon: string; trend?: string }) {
+function StatCard({ title, value, icon, trend }: { title: string; value: string; icon: React.ReactNode; trend?: string }) {
   return (
     <Card style={{ padding: 'var(--space-5)' }}>
       <div className="flex items-start justify-between">
@@ -16,7 +17,7 @@ function StatCard({ title, value, icon, trend }: { title: string; value: string;
           <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
           {trend && <p className="text-xs text-green-600 font-medium mt-1">{trend}</p>}
         </div>
-        <div className="text-2xl">{icon}</div>
+        <div className="text-[var(--color-primary)] p-3 bg-[var(--color-primary-light)]/10 rounded-xl">{icon}</div>
       </div>
     </Card>
   );
@@ -57,7 +58,7 @@ export default function PlatformDashboardPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">
-          Tổng quan Hệ thống 🎛️
+          Tổng quan Hệ thống
         </h1>
         <p className="text-sm text-gray-500 mt-1">
           {selectedShopId === 'all' ? 'Dữ liệu toàn platform' : `Đang xem: ${shops[0]?.name}`} · Cập nhật lúc {new Date().toLocaleTimeString('vi-VN')}
@@ -66,10 +67,10 @@ export default function PlatformDashboardPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Tổng số quán" value={`${activeShops}/${shops.length}`} icon="🏪" trend={`${activeShops} đang hoạt động`} />
-        <StatCard title="Doanh thu hôm nay" value={formatVND(mockTotalRevenue)} icon="💰" trend="+12% so với hôm qua" />
-        <StatCard title="Đơn hàng hôm nay" value={String(mockTodayOrders)} icon="🛒" />
-        <StatCard title="Tổng món ăn" value={String(totalItems)} icon="🍽️" />
+        <StatCard title="Tổng số Quán" value={`${shops.length}`} icon={<Store size={24} />} trend={`+${activeShops} đang HĐ`} />
+        <StatCard title="Doanh thu thực" value={formatVND(mockTotalRevenue)} icon={<DollarSign size={24} />} trend="Từ đơn hoàn tất" />
+        <StatCard title="Đơn hôm nay" value={`${mockTodayOrders}`} icon={<ShoppingBag size={24} />} trend="Tất cả quán" />
+        <StatCard title="Tổng số Món" value={`${totalItems}`} icon={<LayoutGrid size={24} />} />
       </div>
 
       {/* Two columns: Shops list + Tier breakdown */}
@@ -114,7 +115,7 @@ export default function PlatformDashboardPage() {
                             variant={shop.subscription_tier === 'premium' ? 'warning' : shop.subscription_tier === 'pro' ? 'info' : 'default'}
                             size="sm"
                           >
-                            {shop.subscription_tier.toUpperCase()}
+                            {(shop.subscription_tier || 'free').toUpperCase()}
                           </Badge>
                         </td>
                         <td className="py-3">

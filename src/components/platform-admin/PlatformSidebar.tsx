@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Image from 'next/image';
+import { Coffee } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PlatformSidebar() {
@@ -51,7 +51,9 @@ export default function PlatformSidebar() {
         {/* Brand */}
         <div className="p-6 border-b border-gray-700 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Image src="/images/dilinhmenu_app_logo.png" alt="DiLinhMenu Logo" width={32} height={32} className="rounded-md" />
+            <div className="w-8 h-8 rounded-md bg-amber-500 flex items-center justify-center text-white">
+              <Coffee size={18} />
+            </div>
             <div>
               <h1 className="text-xl font-bold text-white tracking-tight">
                 DiLinh<span className="text-amber-400">Menu</span>
