@@ -55,7 +55,7 @@ export function useShop(slug: string, tableNumber?: string) {
           .from('shops')
           .select('*')
           .eq('slug', slug)
-          .eq('status', 'active')
+          .eq('is_active', true)
           .single();
 
         if (shopError || !shopData) throw new Error('Shop not found');
@@ -85,8 +85,8 @@ export function useShop(slug: string, tableNumber?: string) {
             .select('*')
             .eq('shop_id', currentShop.id)
             .eq('is_active', true)
-            .lte('start_date', new Date().toISOString())
-            .gte('end_date', new Date().toISOString()),
+            .lte('starts_at', new Date().toISOString())
+            .gte('ends_at', new Date().toISOString()),
         ]);
 
         if (catsRes.data) {
