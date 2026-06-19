@@ -138,6 +138,11 @@ img {
 .bg-gradient {
   background: linear-gradient(135deg, #FFF9F2 0%, #FAEDDF 50%, #F5F7FA 100%);
   background-attachment: fixed;
+  transition: background var(--transition-slow);
+}
+
+.dark .bg-gradient {
+  background: linear-gradient(135deg, #1A100A 0%, #140C08 50%, #121212 100%);
 }
 
 /* Glassmorphism Panel */
