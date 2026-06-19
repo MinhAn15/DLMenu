@@ -71,17 +71,17 @@ export default function HomePage() {
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
-        <div className="container-wide py-4 flex justify-between items-center">
-          <div className="font-heading font-bold text-xl text-[var(--color-primary)] flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)] flex items-center justify-center text-white shadow-sm">
+      <header className={styles.header}>
+        <div className={styles.headerContainer}>
+          <div className={styles.logoGroup}>
+            <div className={styles.logoIconWrapper}>
               <Coffee size={18} />
             </div>
             DiLinhMenu
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-semibold text-gray-600 hover:text-[var(--color-primary)] transition-colors">Đăng nhập</Link>
-            <Link href="/register" className="text-sm font-semibold bg-[var(--color-primary)] text-white px-4 py-2 rounded-full shadow-sm hover:bg-[var(--color-primary-dark)] transition-colors">Đăng ký quán</Link>
+          <div className={styles.navLinks}>
+            <Link href="/login" className={styles.loginLink}>Đăng nhập</Link>
+            <Link href="/register" className={styles.registerBtn}>Đăng ký quán</Link>
           </div>
         </div>
       </header>
@@ -119,46 +119,74 @@ export default function HomePage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
-            <div className={styles.mockupWrapper}>
-              <div className={styles.mockupScreen}>
-                {/* CSS based UI mockup instead of image */}
-                <div className="flex flex-col h-full bg-slate-50">
-                  <div className="bg-[var(--color-primary)] h-32 p-4 rounded-b-3xl shadow-sm text-white relative">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-lg">Cà phê Mai</h3>
-                        <p className="text-xs opacity-80">Bàn 01</p>
-                      </div>
-                      <div className="bg-white/20 p-2 rounded-full"><Coffee size={16} /></div>
-                    </div>
+            {/* Removed mockupWrapper constraint to allow Bento Box to expand fully */}
+            <div className={styles.bentoContainer}>
+              
+              {/* 1. Large Card: Dashboard (2x2) */}
+              <div className={`${styles.bentoCard} ${styles.span2Cols} ${styles.span2Rows}`}>
+                <div className={styles.bentoLargeHeader}>
+                  <div>
+                    <h3 className={styles.bentoTitle}>Đơn hàng mới</h3>
+                    <p className={styles.bentoSubtitle}>Hôm nay, 10:30 AM</p>
                   </div>
-                  <div className="flex-1 p-4 -mt-10">
-                    <div className="bg-white rounded-xl shadow-sm p-3 mb-3 flex items-center gap-3">
-                      <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center text-amber-700">☕</div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-sm">Cà Phê Sữa Đá</h4>
-                        <p className="text-xs text-gray-500">25.000đ</p>
-                      </div>
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold">+</div>
+                  <div className={styles.bentoBadge}>Hoạt động</div>
+                </div>
+                <div className={styles.bentoList}>
+                  <div className={styles.bentoListItem}>
+                    <div className={`${styles.bentoIconBg} ${styles.iconAmber}`}>☕</div>
+                    <div className={styles.bentoListItemInfo}>
+                      <h4 className={styles.bentoItemTitle}>Cà phê Mai</h4>
+                      <p className={styles.bentoItemSubtitle}>Bàn 01 • Cà phê sữa đá</p>
                     </div>
-                    <div className="bg-white rounded-xl shadow-sm p-3 mb-3 flex items-center gap-3">
-                      <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-700">🧋</div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-sm">Trà Đào Cam Sả</h4>
-                        <p className="text-xs text-gray-500">35.000đ</p>
-                      </div>
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold">+</div>
-                    </div>
+                    <span className={styles.bentoItemValue}>25K</span>
                   </div>
-                  <div className="bg-white p-4 border-t border-gray-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] rounded-t-3xl">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-semibold text-sm">Tổng cộng</span>
-                      <span className="font-bold text-[var(--color-primary)]">60.000đ</span>
+                  <div className={styles.bentoListItem}>
+                    <div className={`${styles.bentoIconBg} ${styles.iconOrange}`}>🧋</div>
+                    <div className={styles.bentoListItemInfo}>
+                      <h4 className={styles.bentoItemTitle}>Trà Đào Cam Sả</h4>
+                      <p className={styles.bentoItemSubtitle}>Bàn 04 • Mang đi</p>
                     </div>
-                    <div className="w-full bg-[var(--color-primary)] text-white text-center py-3 rounded-xl font-bold text-sm shadow-md">Đặt Món Ngay</div>
+                    <span className={styles.bentoItemValue}>35K</span>
+                  </div>
+                  <div className={styles.bentoListItem}>
+                    <div className={`${styles.bentoIconBg} ${styles.iconIndigo}`}>🍵</div>
+                    <div className={styles.bentoListItemInfo}>
+                      <h4 className={styles.bentoItemTitle}>Trà Xanh Macchiato</h4>
+                      <p className={styles.bentoItemSubtitle}>Bàn 02</p>
+                    </div>
+                    <span className={styles.bentoItemValue}>40K</span>
                   </div>
                 </div>
               </div>
+
+              {/* 2. Small Card: QR Code (1x1) */}
+              <div className={styles.bentoCard}>
+                <h3 className={styles.bentoTitle}>Quét gọi món</h3>
+                <div className={styles.bentoQrIcon}>
+                  <Smartphone size={48} strokeWidth={1.5} />
+                </div>
+              </div>
+
+              {/* 3. Small Card: Tích Điểm (1x1) */}
+              <div className={`${styles.bentoCard} ${styles.bentoCardPrimary}`}>
+                <h3 className={styles.bentoCardPrimaryTitle}>Tích điểm</h3>
+                <p className={styles.bentoCardPrimarySubtitle}>Thành viên Vàng</p>
+                <div className={styles.bentoCardPrimaryValue}>1,450 pt</div>
+              </div>
+
+              {/* 4. Medium Card: Doanh thu (2x1) */}
+              <div className={`${styles.bentoCard} ${styles.span2Cols}`}>
+                <h3 className={styles.bentoTitle}>Doanh thu hôm nay</h3>
+                <p className={styles.bentoSubtitle}>+24% so với hôm qua</p>
+                <div className={styles.bentoChart}>
+                  <div className={`${styles.bentoBar} ${styles.bar40}`}></div>
+                  <div className={`${styles.bentoBar} ${styles.bar60}`}></div>
+                  <div className={`${styles.bentoBar} ${styles.bar30}`}></div>
+                  <div className={`${styles.bentoBar} ${styles.bar80}`}></div>
+                  <div className={`${styles.bentoBar} ${styles.bentoBarActive} ${styles.bar100}`}></div>
+                </div>
+              </div>
+
             </div>
             
             <motion.div 
