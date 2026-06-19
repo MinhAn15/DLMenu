@@ -28,6 +28,9 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
 
   const [primaryColor, setPrimaryColor] = useState('');
+  const [bankId, setBankId] = useState('');
+  const [accountNo, setAccountNo] = useState('');
+  const [accountName, setAccountName] = useState('');
   const [savingTheme, setSavingTheme] = useState(false);
 
   // Initialize from shop
@@ -38,6 +41,9 @@ export default function AdminSettingsPage() {
       setPhone(shop.phone || '');
       setAddress(shop.address || '');
       setPrimaryColor(shop.theme_config.primary_color);
+      setBankId(shop.theme_config.bank_info?.bank_id || '');
+      setAccountNo(shop.theme_config.bank_info?.account_no || '');
+      setAccountName(shop.theme_config.bank_info?.account_name || '');
     }
   }, [shop]);
 
@@ -59,7 +65,8 @@ export default function AdminSettingsPage() {
     if (!shop) return;
     setSavingTheme(true);
     try {
-      const res = await updateThemeConfig(shop.id, { primary_color: primaryColor, font: shop.theme_config.font });
+      const bankInfo = bankId && accountNo ? { bank_id: bankId, account_no: accountNo, account_name: accountName } : undefined;
+      const res = await updateThemeConfig(shop.id, { primary_color: primaryColor, font: shop.theme_config.font, bank_info: bankInfo });
       if (!res.success) throw new Error(res.error);
       toast.success('Đã cập nhật giao diện');
     } catch (err: any) {
@@ -166,7 +173,30 @@ export default function AdminSettingsPage() {
             </div>
           </div>
 
-          <Button onClick={handleSaveTheme} loading={savingTheme}>Lưu giao diện</Button>
+          <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: 'var(--space-2) 0' }} />
+          
+          <div>
+            <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600, marginBottom: 'var(--space-3)', color: 'var(--color-text)' }}>💳 Thông tin Nhận chuyển khoản (VietQR)</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Mã Ngân Hàng (VD: MB, VCB)</label>
+                <Input value={bankId} onChange={e => setBankId(e.target.value.toUpperCase())} placeholder="VD: MB" />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Số Tài Khoản</label>
+                <Input value={accountNo} onChange={e => setAccountNo(e.target.value)} placeholder="0901234567" />
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Tên Chủ Tài Khoản</label>
+                <Input value={accountName} onChange={e => setAccountName(e.target.value.toUpperCase())} placeholder="NGUYEN VAN A" />
+              </div>
+            </div>
+            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: 'var(--space-2)' }}>
+              * Thông tin này sẽ dùng để tạo mã VietQR tự động cho khách hàng khi thanh toán chuyển khoản.
+            </p>
+          </div>
+
+          <Button onClick={handleSaveTheme} loading={savingTheme}>Lưu Giao diện & Ngân hàng</Button>
         </div>
       </Card>
 

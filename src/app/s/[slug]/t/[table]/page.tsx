@@ -42,7 +42,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [orderResult, setOrderResult] = useState<{ orderNumber: string; total: number; status: string } | null>(null);
+  const [orderResult, setOrderResult] = useState<{ orderNumber: string; total: number; status: string; paymentMethod: string } | null>(null);
 
   if (loading) {
     return (
@@ -139,6 +139,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
         orderNumber: res.data!.order_number,
         total: res.data!.total,
         status: 'pending',
+        paymentMethod: paymentMethod,
       });
       toast.success(t('customer.order.success'));
     } catch (err: any) {
@@ -300,6 +301,8 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
             orderNumber={orderResult.orderNumber}
             status={orderResult.status}
             total={orderResult.total}
+            paymentMethod={orderResult.paymentMethod}
+            bankInfo={shop?.theme_config?.bank_info}
             onClose={() => setOrderResult(null)}
           />
         )}

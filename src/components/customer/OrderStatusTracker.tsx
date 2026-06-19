@@ -11,10 +11,16 @@ interface OrderStatusTrackerProps {
   orderNumber: string;
   status: string;
   total: number;
+  paymentMethod?: string;
+  bankInfo?: {
+    bank_id: string;
+    account_no: string;
+    account_name: string;
+  };
   onClose: () => void;
 }
 
-export default function OrderStatusTracker({ orderNumber, status, total, onClose }: OrderStatusTrackerProps) {
+export default function OrderStatusTracker({ orderNumber, status, total, paymentMethod, bankInfo, onClose }: OrderStatusTrackerProps) {
   const { t } = useLanguage();
   const currentIndex = STATUS_STEPS.indexOf(status);
   const isCancelled = status === 'cancelled';
@@ -40,6 +46,25 @@ export default function OrderStatusTracker({ orderNumber, status, total, onClose
           {t('customer.order.order_number').replace('{{id}}', orderNumber)} · {formatVND(total)}
         </p>
       </div>
+
+      {/* VietQR Section */}
+      {paymentMethod === 'transfer' && bankInfo && (
+        <div className="mb-6 p-4 bg-orange-50 rounded-xl border border-orange-100 flex flex-col items-center text-center">
+          <h3 className="font-bold text-orange-800 text-sm mb-2">Quét mã để thanh toán</h3>
+          <div className="bg-white p-2 rounded-lg shadow-sm w-48 h-48 relative mb-2">
+            <img 
+              src={`https://img.vietqr.io/image/${bankInfo.bank_id}-${bankInfo.account_no}-compact2.png?amount=${total}&addInfo=${orderNumber}&accountName=${encodeURIComponent(bankInfo.account_name)}`} 
+              alt="VietQR"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="text-xs text-gray-600">
+            <p><strong>Ngân hàng:</strong> {bankInfo.bank_id}</p>
+            <p><strong>STK:</strong> {bankInfo.account_no}</p>
+            <p><strong>Tên:</strong> {bankInfo.account_name}</p>
+          </div>
+        </div>
+      )}
 
       {/* Status Steps */}
       {!isCancelled && (

@@ -40,6 +40,11 @@ export interface LoyaltyConfig {
 export interface ThemeConfig {
   primary_color: string;
   font: string;
+  bank_info?: {
+    bank_id: string; // e.g., 'MB', 'VCB', 'TCB'
+    account_no: string;
+    account_name: string;
+  };
 }
 
 export interface Shop {

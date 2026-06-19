@@ -10,6 +10,7 @@ const navItems = [
   { href: '/admin', label: 'Tổng quan', icon: '📊' },
   { href: '/admin/orders', label: 'Đơn hàng', icon: '🛒' },
   { href: '/admin/menu', label: 'Thực đơn', icon: '🍔' },
+  { href: '/admin/kds', label: 'Màn hình Bếp (KDS)', icon: '🍳' },
   { href: '/admin/tables', label: 'Bàn & QR', icon: '📱' },
   { href: '/admin/qr', label: 'Tạo QR Bàn', icon: '🖨️' },
   { href: '/admin/analytics', label: 'Thống kê', icon: '📈' },
