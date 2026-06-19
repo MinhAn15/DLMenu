@@ -4,7 +4,7 @@ import styles from './page.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Rocket, Smartphone, Trophy, ChartBar, Coffee, Beer, CupSoda, Soup } from 'lucide-react';
+import { Rocket, Smartphone, Trophy, ChartBar, Coffee, Beer, CupSoda, Soup, QrCode } from 'lucide-react';
 
 const steps = [
   {
@@ -97,7 +97,7 @@ export default function HomePage() {
           >
             <div className={styles.badge}><Coffee size={16} /> Thiết kế riêng cho Di Linh</div>
             <h1 className={`${styles.title} max-w-2xl`}>
-              Quản Lý Quán <span className="block md:inline"></span>
+              Quản Lý Quán <span className="block md:inline">&nbsp;</span>
               <span className={styles.accent}>Đơn Giản & Mộc Mạc</span>
             </h1>
             <p className={`${styles.subtitle} max-w-xl`}>
@@ -163,7 +163,7 @@ export default function HomePage() {
               <div className={styles.bentoCard}>
                 <h3 className={styles.bentoTitle}>Quét gọi món</h3>
                 <div className={styles.bentoQrIcon}>
-                  <Smartphone size={48} strokeWidth={1.5} />
+                  <QrCode size={48} strokeWidth={1.5} />
                 </div>
               </div>
 
@@ -186,16 +186,6 @@ export default function HomePage() {
                   <div className={`${styles.bentoBar} ${styles.bentoBarActive} ${styles.bar100}`}></div>
                 </div>
               </div>
-
-              <motion.div 
-                className={styles.mockupQr}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-              >
-                <div className={styles.qrIcon}><Smartphone size={24} /></div>
-                <div className={styles.qrLabel}>QUÉT ĐỂ ĐẶT MÓN</div>
-              </motion.div>
 
             </div>
           </motion.div>

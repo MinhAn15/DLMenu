@@ -44,7 +44,8 @@ export async function updateOrderStatus(orderId: string, newStatus: string): Pro
     // Build update
     const updateData: Record<string, unknown> = { status: newStatus };
     if (newStatus === 'confirmed') updateData.confirmed_at = new Date().toISOString();
-    if (newStatus === 'cancelled') updateData.completed_at = new Date().toISOString();
+    // Note: 'cancelled' intentionally does NOT write completed_at to avoid
+    // polluting analytics queries (revenue reports filter by completed_at IS NOT NULL).
 
     const { error } = await supabase
       .from('orders')
