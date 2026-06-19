@@ -40,7 +40,7 @@
 }
 
 .container {
-  max-w: 1200px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   position: relative;
@@ -633,6 +633,7 @@
   width: 100%;
   max-width: 540px;
   margin: 0 auto;
+  position: relative;
 }
 
 @media (min-width: 640px) {
@@ -641,12 +642,7 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .bentoContainer {
-    grid-template-columns: repeat(3, 1fr); /* Desktop: 3 Cột */
-    grid-template-rows: auto auto;
-  }
-}
+
 
 .bentoCard {
   background: var(--bento-bg);
@@ -687,11 +683,7 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .span2Cols {
-    grid-column: span 2;
-  }
-}
+
 
 /* Specific Bento Interiors */
 .bentoLargeHeader {

@@ -187,17 +187,17 @@ export default function HomePage() {
                 </div>
               </div>
 
+              <motion.div 
+                className={styles.mockupQr}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <div className={styles.qrIcon}><Smartphone size={24} /></div>
+                <div className={styles.qrLabel}>QUÉT ĐỂ ĐẶT MÓN</div>
+              </motion.div>
+
             </div>
-            
-            <motion.div 
-              className={styles.mockupQr}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-            >
-              <div className={styles.qrIcon}><Smartphone size={24} /></div>
-              <div className={styles.qrLabel}>QUÉT ĐỂ ĐẶT MÓN</div>
-            </motion.div>
           </motion.div>
         </div>
       </main>
