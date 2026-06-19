@@ -60,6 +60,11 @@ export default function PlatformOrdersPage() {
           <tbody className="divide-y divide-gray-100">
             {orders.map(order => {
               const shop = shops.find(s => s.id === order.shop_id);
+              const tableLabel = order.shop_tables
+                ? `Bàn ${order.shop_tables.table_number}`
+                : (order.order_type === 'takeaway' ? 'Mang về' : '—');
+              const customerName = order.profiles?.display_name || 'Khách';
+              const customerPhone = order.profiles?.phone || '';
               return (
                 <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                   <td className="p-4 font-bold text-amber-700">{order.order_number}</td>
@@ -73,15 +78,15 @@ export default function PlatformOrdersPage() {
                       </div>
                     </td>
                   )}
-                  <td className="p-4 text-gray-600">Bàn {order.table_number}</td>
+                  <td className="p-4 text-gray-600">{tableLabel}</td>
                   <td className="p-4">
-                    <p className="text-sm font-medium text-gray-900">{order.customer_name}</p>
-                    <p className="text-xs text-gray-400">{order.customer_phone}</p>
+                    <p className="text-sm font-medium text-gray-900">{customerName}</p>
+                    <p className="text-xs text-gray-400">{customerPhone}</p>
                   </td>
                   <td className="p-4 font-bold">{formatVND(order.total)}</td>
                   <td className="p-4">
-                    <Badge style={{ backgroundColor: ORDER_STATUS_COLORS[order.status], color: 'white', fontSize: '0.7rem' }}>
-                      {ORDER_STATUS_LABELS[order.status]}
+                    <Badge style={{ backgroundColor: ORDER_STATUS_COLORS[order.status as OrderStatus] || ORDER_STATUS_COLORS.pending, color: 'white', fontSize: '0.7rem' }}>
+                      {ORDER_STATUS_LABELS[order.status as OrderStatus] || order.status}
                     </Badge>
                   </td>
                   <td className="p-4 text-sm text-gray-500">

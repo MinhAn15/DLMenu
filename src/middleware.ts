@@ -44,10 +44,21 @@ export async function middleware(request: NextRequest) {
     // In production, we should check role = 'shop_owner'
   }
 
-  // Protect /platform-admin
+  // Protect /platform-admin: requires authenticated user AND role='platform_admin'
   if (request.nextUrl.pathname.startsWith('/platform-admin')) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url));
+    }
+    // Fetch the current user's role from profiles (anon client, RLS allows user to read own row)
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    // Fail-closed: any error or non-platform_admin role lands on /, not the admin area.
+    if (profileError || !profile || profile.role !== 'platform_admin') {
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
