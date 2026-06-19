@@ -1,6 +1,7 @@
 'use server';
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import type { ThemeConfig } from '@/lib/types/database';
 
 export async function updateShopInfo(shopId: string, updates: {
   name?: string;
@@ -20,7 +21,7 @@ export async function updateShopInfo(shopId: string, updates: {
   return { success: true };
 }
 
-export async function updateThemeConfig(shopId: string, themeConfig: { primary_color: string; font: string }) {
+export async function updateThemeConfig(shopId: string, themeConfig: ThemeConfig) {
   if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
     return { success: true };
   }

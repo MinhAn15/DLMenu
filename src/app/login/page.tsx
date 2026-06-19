@@ -19,7 +19,7 @@ export default function LoginPage() {
   // If already logged in, redirect
   React.useEffect(() => {
     if (user && profile) {
-      if (profile.role === 'platform_admin' || profile.role === 'super_admin') {
+      if (profile.role === 'platform_admin') {
         router.push('/platform-admin');
       } else {
         router.push('/admin');
