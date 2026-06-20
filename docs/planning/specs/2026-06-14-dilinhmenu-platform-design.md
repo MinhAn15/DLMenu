@@ -624,6 +624,7 @@ Accessible via: https://dilinhmenu.com/q/MAI-05
 - [ ] Analytics: charts, top items, customer retention
 - [ ] Takeaway order support
 - [ ] QR management + printing
+- [ ] AI Image Generation for Menu Items — See [AI Image Generation Design](../../superpowers/specs/2026-06-20-ai-image-generation-design.md)
 
 ### Out of Scope (Future)
 - [ ] AI recommendations
