@@ -1,5 +1,10 @@
 -- supabase/migrations/008_create_menu_images_bucket.sql
 
+-- Drop existing policies first (idempotent)
+DROP POLICY IF EXISTS "shop_admin_can_manage_own_images" ON storage.objects;
+DROP POLICY IF EXISTS "platform_admin_can_manage_all_images" ON storage.objects;
+DROP POLICY IF EXISTS "anyone_can_read_menu_images" ON storage.objects;
+
 -- Create the menu-images storage bucket
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('menu-images', 'menu-images', true)
