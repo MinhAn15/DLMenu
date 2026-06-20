@@ -11,7 +11,7 @@ CREATE POLICY "shop_admin_can_manage_own_images" ON storage.objects
   USING (
     bucket_id = 'menu-images'
     AND auth.role() = 'authenticated'
-    AND (storage.foldername(name))[1] = (
+    AND (storage.foldername(name))[1]::uuid = (
       SELECT s.id FROM shops s
       WHERE s.owner_id = auth.uid()
     )
@@ -19,7 +19,7 @@ CREATE POLICY "shop_admin_can_manage_own_images" ON storage.objects
   WITH CHECK (
     bucket_id = 'menu-images'
     AND auth.role() = 'authenticated'
-    AND (storage.foldername(name))[1] = (
+    AND (storage.foldername(name))[1]::uuid = (
       SELECT s.id FROM shops s
       WHERE s.owner_id = auth.uid()
     )
