@@ -44,10 +44,10 @@ export default function Sidebar() {
 
       {/* Sidebar Content */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 shadow-xl md:shadow-none flex flex-col 
-        transform transition-transform duration-300 ease-in-out
-        md:relative md:translate-x-0
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 shadow-xl md:shadow-none flex flex-col 
+        transition-transform duration-300 ease-in-out
+        fixed md:sticky
+        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
           <div>

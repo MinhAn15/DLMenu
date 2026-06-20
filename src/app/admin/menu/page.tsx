@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
 import { getCategories, getMenuItems, createCategory, updateCategory, deleteCategory, createMenuItem, updateMenuItem, deleteMenuItem } from '@/lib/actions/menu';
 import Button from '@/components/ui/Button';
@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import type { MenuCategory, MenuItem } from '@/lib/types/database';
 import Skeleton from '@/components/ui/Skeleton';
 import EmptyState from '@/components/ui/EmptyState';
+import ImageGenerator from '@/components/ai/ImageGenerator';
 
 export default function AdminMenuPage() {
   const { shop, loading: shopLoading } = useAdminShop();
@@ -44,6 +45,7 @@ export default function AdminMenuPage() {
 
   // Active filter
   const [selectedCatId, setSelectedCatId] = useState<string | 'all'>('all');
+  const newItemIdRef = useRef(`new-${Date.now()}`);
 
   const fetchData = useCallback(async () => {
     if (!shop) return;
@@ -413,7 +415,36 @@ export default function AdminMenuPage() {
             </select>
           </div>
           <Input placeholder="Mô tả ngắn" value={itemDesc} onChange={e => setItemDesc(e.target.value)} />
-          <Input placeholder="URL hình ảnh (tùy chọn)" value={itemImageUrl} onChange={e => setItemImageUrl(e.target.value)} />
+          <div style={{ marginBottom: 'var(--space-4)' }}>
+            <label style={{
+              display: 'block',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 600,
+              marginBottom: 'var(--space-2)',
+              color: 'var(--color-text-secondary)',
+            }}>
+              Hình ảnh món ăn
+            </label>
+            {shop && (
+              <ImageGenerator
+                shopId={shop.id}
+                itemId={editingItem?.id || newItemIdRef.current}
+                onImageGenerated={(url) => setItemImageUrl(url)}
+                currentImageUrl={itemImageUrl || null}
+              />
+            )}
+          </div>
+          <details style={{ marginBottom: 'var(--space-4)' }}>
+            <summary style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--color-text-muted)',
+              cursor: 'pointer',
+              fontWeight: 600,
+            }}>
+              Hoặc nhập URL thủ công
+            </summary>
+            <Input placeholder="URL hình ảnh (tùy chọn)" value={itemImageUrl} onChange={e => setItemImageUrl(e.target.value)} />
+          </details>
           <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer', fontSize: 'var(--font-size-sm)' }}>
               <input type="checkbox" checked={itemAvailable} onChange={e => setItemAvailable(e.target.checked)} />

@@ -2,7 +2,7 @@
 
 > **Design Doc** — Shop Admin & Platform Admin can generate realistic menu images using NVIDIA NIM Qwen-image API.
 
-**Status:** Draft
+**Status:** Approved & Implemented
 **Date:** 2026-06-20
 
 ---

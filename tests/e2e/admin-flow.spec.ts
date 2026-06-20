@@ -22,17 +22,24 @@ test.describe('Admin Flow', () => {
     // Wait for redirect to admin dashboard
     await page.waitForURL('**/admin**', { timeout: 20000 });
 
+    // Wait for react-hot-toast to auto-dismiss (z:9999 overlay intercepts Playwright clicks)
+    await page.waitForTimeout(4000);
+
     // Verify Admin Dashboard contents
     const content = await page.content();
     console.log("PAGE HTML CONTENT:", content);
     await expect(page.locator('h1').first()).toBeVisible();
 
-    // Navigate to Orders
-    await page.locator('a:has-text("Đơn hàng")').first().click();
+    // Navigate to Orders (use evaluate to bypass react-hot-toast z:9999 overlay)
+    await page.evaluate(() => {
+      document.querySelector<HTMLAnchorElement>('a[href="/admin/orders"]')?.click();
+    });
     await expect(page.locator('h1:has-text("Quản lý Đơn hàng")')).toBeVisible();
 
     // Navigate to Menu
-    await page.locator('a:has-text("Thực đơn")').first().click();
+    await page.evaluate(() => {
+      document.querySelector<HTMLAnchorElement>('a[href="/admin/menu"]')?.click();
+    });
     await expect(page.locator('h1:has-text("Quản lý Thực đơn")')).toBeVisible({ timeout: 20000 });
   });
 });

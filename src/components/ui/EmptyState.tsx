@@ -13,7 +13,7 @@ interface EmptyStateProps {
 export default function EmptyState({ icon, title, description, actionLabel, onAction, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-[var(--color-border)] rounded-[var(--radius-xl)] bg-[var(--color-surface)] relative">
-      <div className="w-48 h-48 relative mb-6 mx-auto">
+      <div className="w-48 h-48 relative mb-6 mx-auto pointer-events-none">
         <Image 
           src="/images/empty_state.webp" 
           alt="Empty State" 
