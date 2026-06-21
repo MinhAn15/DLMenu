@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useShopContext } from '@/hooks/useShopContext';
 import { useAdminData } from '@/hooks/useAdminData';
 import Card from '@/components/ui/Card';
@@ -127,15 +128,15 @@ export default function PlatformShopsPage() {
               return (
                 <tr key={shop.id} className={`hover:bg-gray-50 transition-colors ${!shop.is_active ? 'opacity-60' : ''}`}>
                   <td className="p-4">
-                    <div className="flex items-center gap-3">
+                    <Link href={`/platform-admin/shops/${shop.id}`} className="flex items-center gap-3 group">
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm" style={{ background: shop.theme_config.primary_color }}>
                         {shop.name.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900">{shop.name}</p>
+                        <p className="font-bold text-gray-900 group-hover:text-amber-600 transition-colors">{shop.name}</p>
                         <p className="text-xs text-gray-400">{shop.address}</p>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   <td className="p-4 font-mono text-sm text-gray-500">{shop.slug}</td>
                   <td className="p-4 text-sm text-gray-600">{owner?.display_name || shop.phone || '—'}</td>
@@ -155,6 +156,7 @@ export default function PlatformShopsPage() {
                   <td className="p-4 text-center font-semibold">{itemCount}</td>
                   <td className="p-4 text-right">
                     <div className="flex justify-end gap-1">
+                      <Link href={`/platform-admin/shops/${shop.id}`} className="p-2 text-amber-500 hover:text-amber-700 transition-colors" title="Mở workspace">🔍</Link>
                       <button onClick={() => openEditModal(shop)} className="p-2 text-blue-500 hover:text-blue-700 transition-colors" title="Sửa">✏️</button>
                       <button onClick={() => openCloneModal(shop)} className="p-2 text-amber-500 hover:text-amber-700 transition-colors" title="Clone">📋</button>
                       <button onClick={() => handleDelete(shop.id)} className="p-2 text-red-500 hover:text-red-700 transition-colors" title="Xóa">🗑️</button>
