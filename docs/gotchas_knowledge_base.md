@@ -53,3 +53,25 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 ### 4.4 `useAdminShop` async — shop null khi render lần đầu
 - **Vấn đề:** Hook `useAdminShop` fetch shop bằng `useEffect` async. Component render lần đầu với `shop = null`, sau đó re-render khi data về. Trong E2E, click button khi shop chưa load → modal không hiển thị ImageGenerator (vì render condition `{shop && <ImageGenerator />}`).
 - **Cách khắc phục:** Trong E2E, `waitForTimeout(3000)` sau khi page hiển thị trước khi click vào element phụ thuộc shop.
+
+## 5. Architecture & Enterprise Gotchas
+
+### 5.1 Monorepo — chỉ extract package khi có consumer thứ 2
+- **Vấn đề:** Tạo `packages/ui` + `packages/config` ngay từ đầu khi chỉ có 1 app là YAGNI. Overhead workspace tooling, transpile config, version management.
+- **Cách khắc phục:** Chỉ extract `packages/types` + `packages/validation` (2 package thiết yếu cho shared types + validation). Dùng npm workspaces (không Turborepo). Chỉ thêm package khi có app thứ 2 cần dùng.
+
+### 5.2 tRPC context — không gọi getUser() trong context factory
+- **Vấn đề:** Nếu gọi `supabase.auth.getUser()` trong `createTRPCContext()`, mọi request (kể cả public/guest endpoints) đều phải chờ auth check ~100-300ms.
+- **Cách khắc phục:** Context chỉ tạo supabase client (0.1ms). Auth check đặt trong middleware, chỉ chạy cho `protectedProcedure`. Public procedures không bị ảnh hưởng.
+
+### 5.3 Server Actions vs tRPC — chọn 1 rule rõ ràng, không grey area
+- **Vấn đề:** Để cả Server Actions + tRPC cho data mutations tạo confusion — dev không biết nên dùng cái nào.
+- **Cách khắc phục:** Rule cứng: "Auth (Supabase SDK) + file uploads (FormData) → Server Action. Mọi data operation còn lại → tRPC." Không có ngoại lệ.
+
+### 5.4 Realtime + TanStack Query — phải dedup subscription updates
+- **Vấn đề:** Khi mutation + subscription cùng update cache, race condition xảy ra — subscription có thể merge data cũ sau khi mutation đã update cache mới.
+- **Cách khắc phục:** Optimistic update trong `onMutate`. Subscription dùng `commit_timestamp` so sánh với `lastSync` — chỉ merge changes từ OTHER clients, ignore changes do mutation hiện tại gây ra.
+
+### 5.5 Integration tests cho tRPC — dùng createCaller() không cần MSW
+- **Vấn đề:** MSW thêm 1 lớp HTTP stack phải mock. tRPC procedures test qua HTTP cần request/response serialization, tăng độ phức tạp.
+- **Cách khắc phục:** Dùng `router.createCaller(ctx)` in-process + `vi.mock('@supabase/ssr')`. Nhanh hơn, đơn giản hơn, test đúng business logic. MSW chỉ cần nếu test middleware HTTP-specific.
