@@ -35,3 +35,21 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 ### 3.2 Real-time Polling Đơn hàng
 - **Vấn đề:** Khách đặt đơn, chủ quán phải bấm F5 mới thấy đơn. Nếu dùng Supabase `.on('postgres_changes')` đôi khi bị mất kết nối WebSockets (WebSocket Disconnect).
 - **Cách khắc phục:** Tích hợp Polling Interval (15 giây) kết hợp cùng WebSockets Listener. Nếu WebSockets chết, setInterval vẫn fetch lại đơn để hệ thống đạt 99.9% uptime.
+
+## 4. AI / NVIDIA NIM Gotchas
+
+### 4.1 react-hot-toast chặn Playwright E2E click
+- **Vấn đề:** react-hot-toast render container `z-index: 9999` full-viewport với `pointer-events: none` trên container nhưng `pointer-events: auto` trên children. Playwright dùng `elementFromPoint()` bỏ qua `pointer-events: none` và tìm thấy toast, chặn click vào sidebar/button.
+- **Cách khắc phục:** Dùng `page.evaluate(() => el.click())` bypass actionability check, hoặc `waitForTimeout(4000)` cho toast auto-dismiss (mặc định 3s).
+
+### 4.2 Supabase Storage RLS: text = uuid type mismatch
+- **Vấn đề:** Migration RLS policy dùng `(storage.foldername(name))[1] = shops.id` — foldername trả về `text` nhưng `shops.id` là `uuid`. PostgreSQL không tự cast kiểu này.
+- **Cách khắc phục:** Cast explicit: `(storage.foldername(name))[1]::uuid`.
+
+### 4.3 Tailwind CSS `fixed` + `md:relative` xung đột
+- **Vấn đề:** Code `className="fixed md:relative"` không hoạt động như mong đợi — cả 2 đều là one-layer utilities, `fixed` thắng.
+- **Cách khắc phục:** Dùng `className="fixed md:sticky"` để mobile fixed, desktop sticky trong flex container.
+
+### 4.4 `useAdminShop` async — shop null khi render lần đầu
+- **Vấn đề:** Hook `useAdminShop` fetch shop bằng `useEffect` async. Component render lần đầu với `shop = null`, sau đó re-render khi data về. Trong E2E, click button khi shop chưa load → modal không hiển thị ImageGenerator (vì render condition `{shop && <ImageGenerator />}`).
+- **Cách khắc phục:** Trong E2E, `waitForTimeout(3000)` sau khi page hiển thị trước khi click vào element phụ thuộc shop.
