@@ -6,6 +6,71 @@
 
 ---
 
+## [2026-06-21] Session #2 — Session Management System + Gotchas KB
+
+### Summary
+Created PROGRESS.md multi-session log system with `/end-session`, `/resume-session`, `/progress` workflows in AGENTS.md. Added 4 new technical gotchas to knowledge base from Session #1 discoveries. Committed all Session #1 work with comprehensive documentation.
+
+### Completed
+
+| Feature | Details | Status |
+|---|---|---|
+| PROGRESS.md log system | Structured session entries: Completed/In Progress/Pending/Git State/Next Steps | ✅ |
+| AGENTS.md workflows | `/end-session`, `/resume-session`, `/progress` with step-by-step instructions | ✅ |
+| Gotchas knowledge base | +4 new entries: react-hot-toast E2E, RLS text=uuid, fixed+relative, useAdminShop async | ✅ |
+| Cross-IDE compatibility | Format designed for Cursor, Copilot, Claude, Gemini, any AI IDE | ✅ |
+
+### In Progress
+
+- PlatformSidebar segmented IA (carried over from Session #1)
+
+### Pending
+
+| Priority | Feature | Spec Reference |
+|---|---|---|
+| Medium | Phase B: Dashboard redesign (action inbox replaces stat cards) | superadmin-ui-redesign.md §4 |
+| Medium | PlatformSidebar shop segments with live counters | superadmin-ui-redesign.md §3.2 |
+| Low | GitHub Actions CI/CD for E2E tests | workflow_audit.md |
+| Low | Server Actions standardization | workflow_audit.md |
+
+### Files Created
+
+```
+PROGRESS.md                              — Multi-session progress log system
+```
+
+### Files Modified
+
+```
+AGENTS.md                                — Added /end-session, /resume-session, /progress workflows
+docs/gotchas_knowledge_base.md           — Appended §4 AI/NVIDIA NIM gotchas (4 entries)
+```
+
+### Key Decisions
+
+1. **PROGRESS.md as single source of truth** — One file per project, machine-readable sections, newest-first ordering
+2. **AGENTS.md for workflow definitions** — AI reads AGENTS.md on session start, finds `/end-session` and `/resume-session` instructions
+3. **Gotchas centralized in `docs/gotchas_knowledge_base.md`** — Session discoveries auto-appended during `/end-session`
+4. **Template at bottom of PROGRESS.md** — New sessions can copy-paste the template structure
+
+### Gotchas Discovered
+
+- None new in this session (session management itself is not a technical gotcha)
+
+### Git State (as of 2026-06-21)
+- Branch: `main` (ahead of `origin/main`)
+- Last 3 commits:
+  1. `679c791` chore: update session progress log + append 4 new gotchas to knowledge base
+  2. `65d30a5` feat: add PROGRESS.md session log + /end-session /resume-session workflows
+  3. `beaac46` feat(platform): Phase A — Tenant Workspace route with 5 tabs
+
+### Next Steps
+1. Phase B: Replace `/platform-admin` dashboard stat cards with action inbox
+2. Update PlatformSidebar with segmented section per spec §3.2
+3. GitHub Actions CI/CD workflow
+
+---
+
 ## [2026-06-21] Session #1 — AI Image Generation + Landing Page + Platform Workspace
 
 ### Summary
