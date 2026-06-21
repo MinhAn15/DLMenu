@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'react-hot-toast';
 import { Inter, Outfit } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { TRPCProvider } from '@/components/providers/TRPCProvider';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import './globals.css';
 
@@ -81,17 +82,19 @@ export default function RootLayout({
       <body className="bg-gradient font-sans antialiased text-[var(--color-text)]">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <LanguageProvider>
-            {children}
-            <Toaster
-              position="top-center"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  fontFamily: 'var(--font-sans)',
-                  borderRadius: 'var(--radius-lg)',
-                },
-              }}
-            />
+            <TRPCProvider>
+              {children}
+              <Toaster
+                position="top-center"
+                toastOptions={{
+                  duration: 3000,
+                  style: {
+                    fontFamily: 'var(--font-sans)',
+                    borderRadius: 'var(--radius-lg)',
+                  },
+                }}
+              />
+            </TRPCProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
