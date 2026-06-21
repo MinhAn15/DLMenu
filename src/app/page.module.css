@@ -498,6 +498,15 @@
   margin-bottom: var(--space-4);
 }
 
+.footerBrandAccent {
+  color: #F5A623;
+}
+
+.footerDescription {
+  color: #9CA3AF;
+  margin-bottom: 24px;
+}
+
 .footerLinks {
   display: flex;
   justify-content: center;
@@ -514,6 +523,22 @@
 
 .footerLinks a:hover {
   color: white;
+}
+
+.footerCopyright {
+  margin-top: 40px;
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+/* Additional utility classes for inline style removal */
+.ctaPrimaryFullWidth {
+  width: 100%;
+  justify-content: center;
+}
+
+.sectionHeaderLargeMargin {
+  margin-bottom: 40px;
 }
 
 /* =====================================

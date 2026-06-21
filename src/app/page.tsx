@@ -27,22 +27,19 @@ const steps = [
 const features = [
   {
     icon: <Trophy size={24} />,
-    bg: '#FEF3C7', // amber-100
-    color: '#D97706', // amber-600
+    className: 'featAmber',
     title: 'Tích Điểm Tự Động',
     desc: 'Tích điểm theo Số điện thoại, tự động lên hạng thành viên. Giữ chân khách hàng quay lại quán liên tục.'
   },
   {
     icon: <Smartphone size={24} />,
-    bg: '#E0E7FF', // indigo-100
-    color: '#4338CA', // indigo-700
+    className: 'featIndigo',
     title: 'Quét Là Dùng',
     desc: 'Menu hoạt động siêu mượt, khách chỉ cần quét mã là gọi món, không bắt ép khách phải tải App rườm rà.'
   },
   {
     icon: <ChartBar size={24} />,
-    bg: '#DCFCE7', // green-100
-    color: '#15803D', // green-700
+    className: 'featGreen',
     title: 'Dashboard Quản Trị',
     desc: 'Báo cáo doanh thu, món bán chạy, quản lý đơn hàng ngay lập tức. Mọi thứ trên một màn hình duy nhất.'
   }
@@ -231,7 +228,7 @@ export default function HomePage() {
         <div className={styles.featGrid}>
           {features.map((feat, index) => (
             <div key={index} className={`${styles.featCard} transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}>
-              <div className={styles.featIcon} style={{ background: feat.bg, color: feat.color }}>
+              <div className={`${styles.featIcon} ${styles[feat.className as keyof typeof styles] || ''}`}>
                 {feat.icon}
               </div>
               <h3 className={styles.featTitle}>{feat.title}</h3>
@@ -262,7 +259,7 @@ export default function HomePage() {
                   <li key={i}>{f}</li>
                 ))}
               </ul>
-              <Link href="/register" className={styles.ctaPrimary} style={{ width: '100%', justifyContent: 'center' }}>
+              <Link href="/register" className={`${styles.ctaPrimary} ${styles.ctaPrimaryFullWidth}`}>
                 {plan.cta}
               </Link>
             </div>
@@ -272,7 +269,7 @@ export default function HomePage() {
 
       {/* Final CTA */}
       <section className={styles.finalCta}>
-        <div className={styles.sectionHeader} style={{ marginBottom: '40px' }}>
+        <div className={`${styles.sectionHeader} ${styles.sectionHeaderLargeMargin}`}>
           <h2 className={styles.sectionTitle}>Sẵn Sàng Nâng Tầm Quán Của Bạn?</h2>
           <p className={styles.sectionSub}>Tham gia cùng 50+ chủ quán khác đang sử dụng DiLinhMenu để tăng trưởng doanh thu.</p>
         </div>
@@ -284,9 +281,9 @@ export default function HomePage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerBrand}>
-          DL<span style={{ color: '#F5A623' }}>Menu</span>
+          DL<span className={styles.footerBrandAccent}>Menu</span>
         </div>
-        <p style={{ color: '#9CA3AF', marginBottom: '24px' }}>
+        <p className={styles.footerDescription}>
           Giải pháp công nghệ F&B số 1 tại Di Linh.
         </p>
         <div className={styles.footerLinks}>
@@ -295,7 +292,7 @@ export default function HomePage() {
           <a href="#pricing">Bảng giá</a>
           <a href="mailto:contact@dilinhmenu.vn">Liên hệ</a>
         </div>
-        <p style={{ marginTop: '40px', fontSize: '0.875rem', color: '#6B7280' }}>
+        <p className={styles.footerCopyright}>
           © 2026 DiLinhMenu. Phục vụ với ☕ tại Di Linh.
         </p>
       </footer>
