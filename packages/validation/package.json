@@ -1,0 +1,17 @@
+{
+  "name": "@dilinh/validation",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dilinh/types": "*",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0"
+  }
+}

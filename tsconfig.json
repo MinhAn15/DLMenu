@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@dilinh/types": ["./packages/types/src"],
+      "@dilinh/validation": ["./packages/validation/src"]
     }
   },
   "include": [
@@ -28,7 +30,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "packages/types/src/**/*.ts",
+    "packages/validation/src/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
