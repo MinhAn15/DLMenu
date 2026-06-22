@@ -6,51 +6,43 @@
 
 ---
 
-## [2026-06-22] Session #5 — DONE: P3 next-intl + P7 Auth Opt + P8 AdminRouter + E2E (Antigravity)
+## [2026-06-22] Session #6 — Admin Menu Migration to tRPC + Server Action Cleanup (OpenCode)
 
 ### Summary
-Antigravity completed all remaining milestones while OpenCode was offline: P3 next-intl fully integrated (layout.tsx, all customer + admin components migrated, LanguageContext deleted), P7 auth optimization (Edge Middleware HMAC caching), P8 cleanup (useAdminData deleted, adminRouter with 3 procedures), and Phase B E2E dashboard tests. **68/68 tests pass, build OK.**
+OpenCode migrated `admin/menu/page.tsx` from Server Actions to tRPC (`trpc.menu.*` procedures with `useQuery`/`useMutation`/`utils.invalidate`), deleted 5 orphaned Server Action files (`menu.ts`, `order.ts`, `adminOrders.ts`, `adminTables.ts`, `adminUsers.ts`) that had tRPC replacements. Fixed `orderAdmin.ts` by inlining the `completeOrder` function that depended on the deleted `order.ts`. **68 tests pass, build OK.** Promotions + Settings + Tables + Analytics pages still use Server Actions (need tRPC routers first).
 
-### Committed (new since Session #4)
+### Committed this session
 
 | Feature | Details | Tests | Commit |
 |---|---|---|---|
-| P7: Auth Opt | Edge Middleware caching + HMAC signed cookies for user role checks; `middleware.ts` rewrite, `trpc.ts` optimized | +2 auth-opt tests | `1ec430d` |
-| P3: next-intl | Full i18n: `next.config.ts` + layout.tsx `NextIntlClientProvider` + paths. LanguageContext deleted. All customer + plat-admin components migrated. | — | `825303f` |
-| P8: Admin tRPC Router | `adminRouter` with `getSystemStats`, `getRecentActivity`, `getHealthSummary`. `useAdminData` deleted. | — | `825303f` |
-| Phase B E2E | `platform-admin-dashboard.spec.ts`: inbox filter, activity feed render, system health toggle, sidebar counters | 1 Playwright spec | `825303f` |
-| Design doc | `docs/superpowers/specs/2026-06-22-next-intl-trpc-admin-cleanup-design.md` | — | `825303f` |
+| admin/menu → tRPC | `trpc.menu.getCategories`/`getMenuItems` useQuery + 6 mutations with `utils.invalidate`. Removed useEffect/fetchData pattern. | — | This commit |
+| Orphaned SA cleanup | Deleted `menu.ts`, `order.ts`, `adminOrders.ts`, `adminTables.ts`, `adminUsers.ts` | — | This commit |
+| orderAdmin.ts fix | Inlined `completeOrder()` function to remove dependency on deleted `order.ts` | — | This commit |
 
-### Committed (cumulative, all phases)
+### Still using Server Actions (needs tRPC routers)
 
-| Phase | Feature | Tests | Status |
-|---|---|---|---|
-| P0 | npm workspaces + types + validation | 33 | ✅ `53226cb` |
-| P1 | tRPC infrastructure (context, auth, health, TRPCProvider, RouteHandler) | 3 | ✅ `e03f467` |
-| P2 | Zustand cart-store + ui-store (CRUD, persist, computed totals) | 22 | ✅ `695a3ba` |
-| P3 | next-intl (messages, layout, component migration, LanguageContext deleted) | — | ✅ `825303f` |
-| P4 | Testing infrastructure (createCaller, mockAuth, helpers) | 9 | ✅ `8044966` |
-| P5 | Menu tRPC router (8 procedures, RBAC-protected) | 13 | ✅ `68b5f94` `177d934` |
-| P6 | Order tRPC router (create, list, updateStatus, loyalty points) | 13 | ✅ `4351e00` |
-| P7 | RBAC middleware + Auth Opt (hasRole, ownsShop, Edge HMAC caching) | 8 | ✅ `9813da8` `1ec430d` |
-| P8 | Cleanup (adminRouter, useAdminData deleted) | — | ✅ `825303f` |
-| Phase B | Dashboard (ActionInbox, ActivityFeed, SystemHealth, PlatformSidebar) | 1 E2E | ✅ `825303f` |
+| Page | SA File | Needed |
+|---|---|---|
+| `admin/promotions/page.tsx` | `shop.ts` | `trpc.shop.promotions` router |
+| `admin/settings/page.tsx` | `shop.ts` | `trpc.shop.settings` router |
+| `admin/tables/page.tsx` | `tables.ts` | `trpc.shop.tables` router |
+| `admin/analytics/page.tsx` | `analytics.ts` | `trpc.shop.analytics` router |
+| `admin/orders/page.tsx`, `admin/kds/page.tsx` | `orderAdmin.ts` | `trpc.order.*` (already exists, page not migrated) |
+| `s/[slug]/t/[table]/page.tsx` | `customerOrder.ts` | Customer-facing order creation |
+
+### Gotchas Discovered
+
+1. **Server Action cleanup needs import graph check**: When deleting Server Actions files, check inter-file dependencies first. `orderAdmin.ts` imported `completeOrder` from `order.ts` — deleting `order.ts` broke the build. Fix: inline the function into `orderAdmin.ts`.
 
 ### Git State
 - Branch: `main`
-- Latest: `825303f` feat: P3 next-intl + P8 tRPC adminRouter + E2E dashboard tests
-- **All planned phases (P0-P8) complete.**
+- This commit: admin/menu tRPC migration + SA cleanup
 
-### Gotchas Discovered
-- (none in this session — Antigravity's work, no new failure patterns observed)
-
-### Remaining / Future
-| Priority | Task | Notes |
-|---|---|---|
-| Low | GitHub Actions CI/CD | `workflow_audit.md` reference |
-| Low | Server Actions -> tRPC audit | Còn vài Server Actions chưa migrate (shop, auth) |
-| Low | AdminDataContext remnants | Kiểm tra xem có file nào còn import useAdminData ko |
-| Low | E2E test expansion | Thêm test cho order flow, menu management
+### Next Steps
+1. **Create tRPC routers** for promotions, settings, tables, analytics (shop owner scope)
+2. **Migrate remaining admin pages** → tRPC
+3. **Move customer order** (currently uses `customerOrder.ts` SA) → tRPC
+4. **GitHub Actions CI/CD**
 
 ---
 

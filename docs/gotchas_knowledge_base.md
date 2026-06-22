@@ -84,3 +84,7 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 - **Vấn đề:** Supabase-js dùng chain pattern: `from().select().eq().order()`. Kết quả của chain vừa là builder object vừa là thenable (Promise). Mock đơn giản dùng `mockReturnThis()` không hoạt động vì `await` trên non-thenable object trả về chính object đó, không phải `{ data, error }`.
 - **Cách khắc phục:** Tạo builder function vừa có methods chain (mock fn return `this`) vừa có `.then()/.catch()/.finally()` bind từ `Promise.resolve({ data: rows, error: null })`. Hàm `single()` trả về Promise riêng với `{ data: rows[0] ?? null }`. Ví dụ pattern trong `tests/integration/menu.test.ts`.
 
+### 5.8 Dọn Server Actions — kiểm tra import graph trước khi xoá
+- **Vấn đề:** Xoá file `src/lib/actions/order.ts` vì tưởng không còn ai import, nhưng `orderAdmin.ts` import `completeOrder` từ `./order` gây lỗi build. Các file Server Actions trong cùng thư mục có thể import lẫn nhau.
+- **Cách khắc phục:** Trước khi xoá Server Action file, grep toàn bộ `src/` cho import từ file đó. Đặc biệt kiểm tra các file cùng thư mục `src/lib/actions/*` vì chúng thường import lẫn nhau bằng relative path `./file`.
+

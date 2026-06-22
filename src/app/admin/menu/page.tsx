@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
-import { getCategories, getMenuItems, createCategory, updateCategory, deleteCategory, createMenuItem, updateMenuItem, deleteMenuItem } from '@/lib/actions/menu';
+import { trpc } from '@/lib/trpc/client';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Modal from '@/components/ui/Modal';
 import Input from '@/components/ui/Input';
 import Badge from '@/components/ui/Badge';
-import Spinner from '@/components/ui/Spinner';
 import { formatVND } from '@/lib/utils/format';
 import toast from 'react-hot-toast';
 import type { MenuCategory, MenuItem } from '@/lib/types/database';
@@ -18,9 +17,38 @@ import ImageGenerator from '@/components/ai/ImageGenerator';
 
 export default function AdminMenuPage() {
   const { shop, loading: shopLoading } = useAdminShop();
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
-  const [items, setItems] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const shopId = shop?.id ?? '';
+  const utils = trpc.useUtils();
+
+  const { data: categories = [], isLoading: catsLoading } = trpc.menu.getCategories.useQuery(
+    { shopId },
+    { enabled: !!shop },
+  );
+  const { data: items = [], isLoading: itemsLoading } = trpc.menu.getMenuItems.useQuery(
+    { shopId },
+    { enabled: !!shop },
+  );
+
+  const loading = shopLoading || catsLoading || itemsLoading;
+
+  const createCatMutation = trpc.menu.createCategory.useMutation({
+    onSuccess: () => { utils.menu.getCategories.invalidate(); },
+  });
+  const updateCatMutation = trpc.menu.updateCategory.useMutation({
+    onSuccess: () => { utils.menu.getCategories.invalidate(); },
+  });
+  const deleteCatMutation = trpc.menu.deleteCategory.useMutation({
+    onSuccess: () => { utils.menu.getCategories.invalidate(); },
+  });
+  const createItemMutation = trpc.menu.createMenuItem.useMutation({
+    onSuccess: () => { utils.menu.getMenuItems.invalidate(); },
+  });
+  const updateItemMutation = trpc.menu.updateMenuItem.useMutation({
+    onSuccess: () => { utils.menu.getMenuItems.invalidate(); },
+  });
+  const deleteItemMutation = trpc.menu.deleteMenuItem.useMutation({
+    onSuccess: () => { utils.menu.getMenuItems.invalidate(); },
+  });
 
   // Modal states
   const [catModalOpen, setCatModalOpen] = useState(false);
@@ -31,7 +59,6 @@ export default function AdminMenuPage() {
   // Category form
   const [catName, setCatName] = useState('');
   const [catDesc, setCatDesc] = useState('');
-  const [catSaving, setCatSaving] = useState(false);
 
   // Item form
   const [itemName, setItemName] = useState('');
@@ -41,32 +68,10 @@ export default function AdminMenuPage() {
   const [itemImageUrl, setItemImageUrl] = useState('');
   const [itemAvailable, setItemAvailable] = useState(true);
   const [itemFeatured, setItemFeatured] = useState(false);
-  const [itemSaving, setItemSaving] = useState(false);
 
   // Active filter
   const [selectedCatId, setSelectedCatId] = useState<string | 'all'>('all');
   const newItemIdRef = useRef(`new-${Date.now()}`);
-
-  const fetchData = useCallback(async () => {
-    if (!shop) return;
-    setLoading(true);
-    try {
-      const [catsRes, itemsRes] = await Promise.all([
-        getCategories(shop.id),
-        getMenuItems(shop.id),
-      ]);
-      if (catsRes.success && catsRes.data) setCategories(catsRes.data as MenuCategory[]);
-      if (itemsRes.success && itemsRes.data) setItems(itemsRes.data as MenuItem[]);
-    } catch (err) {
-      toast.error('Lỗi khi tải dữ liệu');
-    } finally {
-      setLoading(false);
-    }
-  }, [shop]);
-
-  useEffect(() => {
-    if (shop) fetchData();
-  }, [shop, fetchData]);
 
   // ========== CATEGORY HANDLERS ==========
   const openCatModal = (cat?: MenuCategory) => {
@@ -84,35 +89,25 @@ export default function AdminMenuPage() {
 
   const handleSaveCategory = async () => {
     if (!catName.trim()) { toast.error('Nhập tên danh mục'); return; }
-    if (!shop) return;
-
-    setCatSaving(true);
     try {
       if (editingCategory) {
-        const res = await updateCategory(editingCategory.id, { name: catName, description: catDesc || undefined });
-        if (!res.success) throw new Error(res.error);
+        await updateCatMutation.mutateAsync({ id: editingCategory.id, name: catName, description: catDesc || undefined });
         toast.success('Đã cập nhật danh mục');
       } else {
-        const res = await createCategory(shop.id, catName, catDesc || undefined);
-        if (!res.success) throw new Error(res.error);
+        await createCatMutation.mutateAsync({ shopId, name: catName, description: catDesc || undefined });
         toast.success('Đã thêm danh mục mới');
       }
       setCatModalOpen(false);
-      fetchData();
     } catch (err: any) {
       toast.error(err.message || 'Lỗi khi lưu danh mục');
-    } finally {
-      setCatSaving(false);
     }
   };
 
   const handleDeleteCategory = async (catId: string) => {
     if (!confirm('Xóa danh mục này? Các món trong danh mục sẽ mất liên kết.')) return;
     try {
-      const res = await deleteCategory(catId);
-      if (!res.success) throw new Error(res.error);
+      await deleteCatMutation.mutateAsync({ id: catId });
       toast.success('Đã xóa danh mục');
-      fetchData();
     } catch (err: any) {
       toast.error(err.message || 'Lỗi khi xóa');
     }
@@ -145,49 +140,40 @@ export default function AdminMenuPage() {
   const handleSaveItem = async () => {
     if (!itemName.trim()) { toast.error('Nhập tên món'); return; }
     if (!itemPrice || isNaN(Number(itemPrice)) || Number(itemPrice) <= 0) { toast.error('Giá phải là số dương'); return; }
-    if (!shop) return;
-
-    setItemSaving(true);
     try {
       if (editingItem) {
-        const res = await updateMenuItem(editingItem.id, {
+        await updateItemMutation.mutateAsync({
+          id: editingItem.id,
           name: itemName,
-          category_id: itemCategoryId || null,
+          categoryId: itemCategoryId || null,
           price: Number(itemPrice),
           description: itemDesc || null,
-          image_url: itemImageUrl || null,
-          is_available: itemAvailable,
+          imageUrl: itemImageUrl || null,
+          isAvailable: itemAvailable,
         });
-        if (!res.success) throw new Error(res.error);
         toast.success('Đã cập nhật món');
       } else {
-        const res = await createMenuItem(shop.id, {
+        await createItemMutation.mutateAsync({
+          shopId,
           name: itemName,
-          category_id: itemCategoryId || null,
+          categoryId: itemCategoryId || null,
           price: Number(itemPrice),
           description: itemDesc || undefined,
-          image_url: itemImageUrl || undefined,
-          is_available: itemAvailable,
+          imageUrl: itemImageUrl || undefined,
         });
-        if (!res.success) throw new Error(res.error);
         toast.success('Đã thêm món mới');
       }
       setItemModalOpen(false);
-      fetchData();
     } catch (err: any) {
       toast.error(err.message || 'Lỗi khi lưu');
-    } finally {
-      setItemSaving(false);
     }
   };
 
   const handleDeleteItem = async (itemId: string) => {
     if (!confirm('Xóa món này?')) return;
     try {
-      const res = await deleteMenuItem(itemId);
-      if (!res.success) throw new Error(res.error);
+      await deleteItemMutation.mutateAsync({ id: itemId });
       toast.success('Đã xóa món');
-      fetchData();
     } catch (err: any) {
       toast.error(err.message || 'Lỗi khi xóa');
     }
@@ -195,8 +181,7 @@ export default function AdminMenuPage() {
 
   const handleToggleAvailable = async (item: MenuItem) => {
     try {
-      await updateMenuItem(item.id, { is_available: !item.is_available });
-      fetchData();
+      await updateItemMutation.mutateAsync({ id: item.id, isAvailable: !item.is_available });
     } catch {
       toast.error('Lỗi khi cập nhật');
     }
@@ -207,7 +192,7 @@ export default function AdminMenuPage() {
     ? items
     : items.filter(i => i.category_id === selectedCatId);
 
-  if (shopLoading || loading) {
+  if (loading) {
     return (
       <div className="flex flex-col gap-6 max-w-6xl mx-auto w-full">
         <div className="flex justify-between items-center mb-4">
@@ -343,7 +328,7 @@ export default function AdminMenuPage() {
                         <div>
                           <p className="font-bold text-gray-900">{item.name}</p>
                           <div className="flex gap-1">
-                            {(item.tags || []).map(tag => (
+                            {(item.tags || []).map((tag: string) => (
                               <Badge key={tag} variant="default" size="sm">{tag}</Badge>
                             ))}
                           </div>
@@ -383,7 +368,7 @@ export default function AdminMenuPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
           <Input placeholder="Tên danh mục (VD: Cà phê)" value={catName} onChange={e => setCatName(e.target.value)} autoFocus />
           <Input placeholder="Mô tả (tùy chọn)" value={catDesc} onChange={e => setCatDesc(e.target.value)} />
-          <Button onClick={handleSaveCategory} loading={catSaving} fullWidth>
+          <Button onClick={handleSaveCategory} loading={createCatMutation.isPending || updateCatMutation.isPending} fullWidth>
             {editingCategory ? 'Cập nhật' : 'Thêm'}
           </Button>
         </div>
@@ -455,7 +440,7 @@ export default function AdminMenuPage() {
               Nổi bật (Hot)
             </label>
           </div>
-          <Button onClick={handleSaveItem} loading={itemSaving} fullWidth>
+          <Button onClick={handleSaveItem} loading={createItemMutation.isPending || updateItemMutation.isPending} fullWidth>
             {editingItem ? 'Cập nhật' : 'Thêm món'}
           </Button>
         </div>
