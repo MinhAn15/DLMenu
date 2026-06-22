@@ -21,12 +21,36 @@ export const middleware = t.middleware;
 export const mergeRouters = t.mergeRouters;
 
 export const isAuthenticated = middleware(async ({ ctx, next }) => {
-  const ctxAuth = ctx as TRPCContext & { user?: AuthUser; profile?: AuthProfile };
+  const ctxAuth = ctx as TRPCContext & { 
+    user?: AuthUser; 
+    profile?: AuthProfile | null; 
+    headers?: Headers | null; 
+  };
   const user = ctxAuth.user ?? (await ctx.supabase.auth.getUser()).data.user;
   if (!user) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Vui lòng đăng nhập' });
   }
-  const profile = ctxAuth.profile ?? (await ctx.supabase.from('profiles').select('id, role, display_name').eq('id', user.id).single()).data as AuthProfile | null;
+
+  const roleHeader = ctxAuth.headers?.get ? ctxAuth.headers.get('x-user-role') : (ctxAuth.headers as any)?.['x-user-role'];
+  let profile = ctxAuth.profile;
+
+  if (!profile) {
+    if (roleHeader) {
+      profile = {
+        id: user.id,
+        role: roleHeader,
+        display_name: user.email || 'Cached User',
+      } as AuthProfile;
+    } else {
+      const { data } = await ctx.supabase
+        .from('profiles')
+        .select('id, role, display_name')
+        .eq('id', user.id)
+        .single();
+      profile = data as AuthProfile | null;
+    }
+  }
+
   return next({ ctx: { ...ctx, user, profile } });
 });
 

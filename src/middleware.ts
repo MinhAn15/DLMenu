@@ -2,10 +2,36 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+const COOKIE_NAME = 'dilinh-user-role';
+const SECRET_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'default-dilinh-secret-key';
+
+async function getHMACSignature(text: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const textData = encoder.encode(text);
+
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, textData);
+  return Array.from(new Uint8Array(signatureBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 export async function middleware(request: NextRequest) {
+  // 1. Sanitize request headers to prevent header spoofing from clients
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete('x-user-role');
+
   let response = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   });
 
@@ -20,7 +46,9 @@ export async function middleware(request: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({
-            request,
+            request: {
+              headers: requestHeaders,
+            },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
@@ -39,9 +67,6 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
-    // Simple role check based on raw_user_meta_data or we can check profiles table
-    // For MVP, if they can login to admin, we assume they have access to their shop
-    // In production, we should check role = 'shop_owner'
   }
 
   // Protect /platform-admin: requires authenticated user AND role='platform_admin'
@@ -49,16 +74,58 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
-    // Fetch the current user's role from profiles (anon client, RLS allows user to read own row)
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
 
-    // Fail-closed: any error or non-platform_admin role lands on /, not the admin area.
-    if (profileError || !profile || profile.role !== 'platform_admin') {
+    // Try to get role from secure signed cookie cache
+    const roleCookie = request.cookies.get(COOKIE_NAME)?.value;
+    let userRole: string | null = null;
+    let shouldSetCookie = false;
+
+    if (roleCookie) {
+      const [roleVal, signature] = roleCookie.split('.');
+      if (roleVal && signature) {
+        const expectedSig = await getHMACSignature(roleVal, SECRET_KEY);
+        if (signature === expectedSig) {
+          userRole = roleVal;
+        }
+      }
+    }
+
+    // Cache miss or invalid signature: query profiles database table
+    if (!userRole) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!profileError && profile?.role) {
+        userRole = profile.role;
+        shouldSetCookie = true;
+      }
+    }
+
+    // Redirect to home if user has no role or is not platform_admin
+    if (!userRole || userRole !== 'platform_admin') {
       return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // Cache hit/retrieved: set x-user-role header and write signed cookie
+    requestHeaders.set('x-user-role', userRole);
+    response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+
+    if (shouldSetCookie) {
+      const signature = await getHMACSignature(userRole, SECRET_KEY);
+      response.cookies.set(COOKIE_NAME, `${userRole}.${signature}`, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24, // 1 day cache
+      });
     }
   }
 
@@ -67,13 +134,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

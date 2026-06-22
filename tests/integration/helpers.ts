@@ -86,7 +86,7 @@ export function createCaller(options?: {
     user: options?.user ?? null,
     profile: options?.profile ?? null,
   });
-  const ctx = { supabase: supabase as any, ...options?.overrides };
+  const ctx = { supabase: supabase as any, headers: null, ...options?.overrides };
   if (options?.user) {
     (ctx as any).user = options.user;
   }
