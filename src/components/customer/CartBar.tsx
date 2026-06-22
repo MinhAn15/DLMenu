@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 import { formatVND } from '@/lib/utils/format';
 import Button from '@/components/ui/Button';
 
@@ -12,7 +12,7 @@ interface CartBarProps {
 }
 
 export default function CartBar({ itemCount, subtotal, onViewCart }: CartBarProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const [animate, setAnimate] = React.useState(false);
 
   React.useEffect(() => {

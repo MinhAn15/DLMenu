@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import { ChevronDown, ChevronRight, CheckCircle, Activity, Database, RefreshCw } from 'lucide-react';
 
 export default function SystemHealthSection() {
   const [expanded, setExpanded] = useState(false);
-  const { shops, orders } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
+  const { data: orders = [] } = trpc.admin.getOrders.useQuery();
 
   return (
     <Card>

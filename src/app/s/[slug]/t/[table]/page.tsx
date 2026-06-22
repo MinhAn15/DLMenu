@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useShop } from '@/hooks/useShop';
 import { useCart } from '@/hooks/useCart';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '@/hooks/useAuth';
 import { createOrder } from '@/lib/actions/customerOrder';
 import { resolveDiscount } from '@/lib/utils/discount';
@@ -34,7 +34,7 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   const { items: cartItems, subtotal, itemCount, addItem, updateQuantity, clearCart } = useCart(shop?.id, shop?.max_cart_items, shop?.max_order_value);
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
-  const { t } = useLanguage();
+  const t = useTranslations();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);

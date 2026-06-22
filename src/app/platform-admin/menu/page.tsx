@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useShopContext, filterByShop } from '@/hooks/useShopContext';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
@@ -13,7 +13,9 @@ import type { MenuItem, MenuCategory } from '@/lib/types/database';
 
 export default function PlatformMenuPage() {
   const { selectedShopId } = useShopContext();
-  const { items: dbItems, categories: dbCats, shops } = useAdminData();
+  const { data: dbItems = [] } = trpc.admin.getMenuItems.useQuery();
+  const { data: dbCats = [] } = trpc.admin.getCategories.useQuery();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
   const [activeTab, setActiveTab] = useState<'items' | 'categories'>('items');
 
   // 1. Data Source

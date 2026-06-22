@@ -4,13 +4,11 @@ import React from 'react';
 import PlatformSidebar from '@/components/platform-admin/PlatformSidebar';
 import ShopSelector from '@/components/platform-admin/ShopSelector';
 import { ShopContextProvider } from '@/hooks/useShopContext';
-import { AdminDataProvider } from '@/hooks/useAdminData';
 
 export default function PlatformAdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AdminDataProvider>
-      <ShopContextProvider>
-        <div className="flex min-h-screen bg-[#F0F2F5]">
+    <ShopContextProvider>
+      <div className="flex min-h-screen bg-[#F0F2F5]">
         <PlatformSidebar />
         <main className="flex-1 flex flex-col h-screen overflow-hidden">
           {/* Header Bar with Shop Selector */}
@@ -23,7 +21,6 @@ export default function PlatformAdminLayout({ children }: { children: React.Reac
           </div>
         </main>
       </div>
-      </ShopContextProvider>
-    </AdminDataProvider>
+    </ShopContextProvider>
   );
 }

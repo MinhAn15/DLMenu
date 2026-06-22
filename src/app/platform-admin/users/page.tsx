@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
@@ -21,11 +21,12 @@ const roleColors: Record<UserRole, string> = {
 };
 
 export default function PlatformUsersPage() {
-  const { shops, users: dbUsers } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
+  const { data: dbUsers = [] } = trpc.admin.getUsers.useQuery();
   const [users, setUsers] = useState<any[]>([]);
 
   React.useEffect(() => {
-    if (dbUsers.length > 0 && users.length === 0) {
+    if (dbUsers && dbUsers.length > 0 && users.length === 0) {
       setUsers(dbUsers);
     }
   }, [dbUsers, users.length]);

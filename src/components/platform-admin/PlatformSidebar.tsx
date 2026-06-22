@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import {
   LayoutDashboard, Store, UtensilsCrossed, TicketPercent,
   BarChart3, Users, Settings, LogOut, ChevronDown, ChevronRight,
@@ -61,19 +61,13 @@ export default function PlatformSidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [customerExpanded, setCustomerExpanded] = useState(true);
-  const { shops, orders } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
 
   const counters = useMemo(() => {
     const total = shops.length;
-    const trial = shops.filter(s => (s.subscription_tier || 'free') === 'free').length;
-    const needsAction = shops.filter(s => {
-      if (!s.is_active) return true;
-      if ((s.subscription_tier || 'free') !== 'free') {
-        if (s.subscription_tier !== 'free') return false;
-      }
-      return false;
-    }).length || Math.max(1, Math.floor(total * 0.15));
-    const endingSoon = shops.filter(s => !s.is_active).length || Math.max(1, Math.floor(total * 0.08));
+    const trial = shops.filter((s) => (s.subscription_tier || 'free') === 'free').length;
+    const needsAction = shops.filter((s) => !s.is_active).length;
+    const endingSoon = shops.filter((s) => s.subscription_tier === 'pro').length;
     return { total, trial, needsAction, endingSoon };
   }, [shops]);
 

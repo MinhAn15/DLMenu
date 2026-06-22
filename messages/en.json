@@ -21,7 +21,70 @@
       "system": "System"
     }
   },
+  "admin": {
+    "sidebar": {
+      "overview": "Overview",
+      "shops": "Shops Management",
+      "menu": "Menu Catalog",
+      "tables": "Tables & QR",
+      "orders": "Orders",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "settings": {
+      "title": "System Settings",
+      "appearance": "Appearance",
+      "language": "Language",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
   "Customer": {
+    "menu": {
+      "add_to_cart": "Add",
+      "out_of_stock": "Out",
+      "table": "Table",
+      "login": "Log in",
+      "empty_menu": "The shop is relaxing, the mist hasn't cleared",
+      "empty_menu_desc": "There are no items served here yet.",
+      "added_to_cart": "Added"
+    },
+    "cart": {
+      "title": "Your Cart",
+      "empty": "Cart is empty",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "total": "Total",
+      "checkout": "Checkout",
+      "cash": "Cash",
+      "transfer": "Transfer",
+      "note_placeholder": "Note for shop (less ice, more sugar...)",
+      "clear_cart": "Clear cart",
+      "max_items": "Cart can only hold up to {max} items.",
+      "max_value": "Total order value cannot exceed {max} VND.",
+      "view": "View",
+      "cross_sell": "Tastes better with:",
+      "note": "Note:"
+    },
+    "order": {
+      "success": "Order placed successfully!",
+      "error": "Order error. Please try again.",
+      "status_pending": "Order received",
+      "status_confirmed": "Confirmed",
+      "status_preparing": "Stove is firing up",
+      "status_ready": "Ready to serve",
+      "status_completed": "Served",
+      "status_cancelled": "Cancelled",
+      "order_number": "Order {id}",
+      "completed": "Completed!",
+      "placed": "Order Placed!",
+      "cancelled": "Order Cancelled",
+      "current": "● Current",
+      "continue": "Continue to menu"
+    }
+  },
+  "customer": {
     "menu": {
       "add_to_cart": "Add",
       "out_of_stock": "Out",

@@ -3,7 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import { Inter, Outfit } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { TRPCProvider } from '@/components/providers/TRPCProvider';
-import { LanguageProvider } from '@/contexts/LanguageContext';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -51,13 +52,16 @@ export const viewport: Viewport = {
   themeColor: '#6B4226',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="vi" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
         {/* Structured Data for SEO */}
         <script
@@ -81,7 +85,7 @@ export default function RootLayout({
       </head>
       <body className="bg-gradient font-sans antialiased text-[var(--color-text)]">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <LanguageProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
             <TRPCProvider>
               {children}
               <Toaster
@@ -95,7 +99,7 @@ export default function RootLayout({
                 }}
               />
             </TRPCProvider>
-          </LanguageProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

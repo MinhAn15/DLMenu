@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import { formatVND } from '@/lib/utils/format';
 import { ArrowRight, ShoppingBag, TicketPercent, Settings, Download } from 'lucide-react';
@@ -63,7 +63,8 @@ function generateMockActivity(orders: any[], shops: any[]): Activity[] {
 }
 
 export default function ActivityFeed() {
-  const { orders, shops } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
+  const { data: orders = [] } = trpc.admin.getOrders.useQuery();
 
   const activities = useMemo(() => generateMockActivity(orders, shops), [orders, shops]);
 

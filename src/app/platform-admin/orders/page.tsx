@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useShopContext, filterByShop } from '@/hooks/useShopContext';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';
 import { formatVND } from '@/lib/utils/format';
@@ -13,7 +13,8 @@ const statusOptions: OrderStatus[] = ['pending', 'confirmed', 'preparing', 'read
 
 export default function PlatformOrdersPage() {
   const { selectedShopId } = useShopContext();
-  const { shops, orders: allOrders } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
+  const { data: allOrders = [] } = trpc.admin.getOrders.useQuery();
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
   const isAllMode = selectedShopId === 'all';

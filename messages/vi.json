@@ -21,7 +21,70 @@
       "system": "Hệ thống"
     }
   },
+  "admin": {
+    "sidebar": {
+      "overview": "Tổng quan",
+      "shops": "Quản lý Quán",
+      "menu": "Kho Menu",
+      "tables": "Bàn & QR",
+      "orders": "Đơn hàng",
+      "users": "Người dùng",
+      "settings": "Cài đặt"
+    },
+    "settings": {
+      "title": "Cài đặt Hệ thống",
+      "appearance": "Giao diện",
+      "language": "Ngôn ngữ",
+      "light": "Sáng",
+      "dark": "Tối",
+      "system": "Hệ thống"
+    }
+  },
   "Customer": {
+    "menu": {
+      "add_to_cart": "Thêm",
+      "out_of_stock": "Hết",
+      "table": "Bàn",
+      "login": "Đăng nhập",
+      "empty_menu": "Quán đang thảnh thơi, sương chưa tan",
+      "empty_menu_desc": "Chưa có món nào được phục vụ tại đây.",
+      "added_to_cart": "Đã thêm"
+    },
+    "cart": {
+      "title": "Giỏ hàng của bạn",
+      "empty": "Giỏ hàng trống",
+      "subtotal": "Tạm tính",
+      "discount": "Giảm giá",
+      "total": "Tổng cộng",
+      "checkout": "Thanh toán",
+      "cash": "Tiền mặt",
+      "transfer": "Chuyển khoản",
+      "note_placeholder": "Ghi chú cho quán (ít đá, nhiều đường...)",
+      "clear_cart": "Xóa giỏ hàng",
+      "max_items": "Giỏ hàng chỉ chứa tối đa {max} món.",
+      "max_value": "Tổng đơn hàng không được vượt quá {max} VNĐ.",
+      "view": "Xem",
+      "cross_sell": "Dùng kèm sẽ ngon hơn:",
+      "note": "Ghi chú:"
+    },
+    "order": {
+      "success": "Đặt món thành công!",
+      "error": "Lỗi đặt món. Vui lòng thử lại.",
+      "status_pending": "Đã nhận đơn",
+      "status_confirmed": "Đã xác nhận",
+      "status_preparing": "Bếp đang lên lửa",
+      "status_ready": "Đã sẵn sàng",
+      "status_completed": "Đã phục vụ",
+      "status_cancelled": "Đã hủy",
+      "order_number": "Đơn {id}",
+      "completed": "Hoàn thành!",
+      "placed": "Đã đặt món!",
+      "cancelled": "Đơn hàng đã hủy",
+      "current": "● Hiện tại",
+      "continue": "Tiếp tục xem menu"
+    }
+  },
+  "customer": {
     "menu": {
       "add_to_cart": "Thêm",
       "out_of_stock": "Hết",
@@ -74,7 +137,7 @@
       "inbox_title": "Hôm nay cần xử lý",
       "inbox_count": "{count} việc cần làm",
       "filter_all": "Tất cả",
-      "filter_urgent": "Khẩn",
+      "filter_urgent": "Khần",
       "filter_warning": "Cảnh báo",
       "filter_info": "Đề xuất",
       "view_all": "Xem tất cả",

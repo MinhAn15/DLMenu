@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/lib/constants';
 import { formatVND } from '@/lib/utils/format';
 
@@ -21,7 +21,7 @@ interface OrderStatusTrackerProps {
 }
 
 export default function OrderStatusTracker({ orderNumber, status, total, paymentMethod, bankInfo, onClose }: OrderStatusTrackerProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const currentIndex = STATUS_STEPS.indexOf(status);
   const isCancelled = status === 'cancelled';
 
@@ -43,7 +43,7 @@ export default function OrderStatusTracker({ orderNumber, status, total, payment
           {isCancelled ? t('customer.order.cancelled') : currentIndex >= 4 ? t('customer.order.completed') : t('customer.order.placed')}
         </h2>
         <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)', marginTop: 'var(--space-1)' }}>
-          {t('customer.order.order_number').replace('{{id}}', orderNumber)} · {formatVND(total)}
+          {t('customer.order.order_number', { id: orderNumber })} · {formatVND(total)}
         </p>
       </div>
 

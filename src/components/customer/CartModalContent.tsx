@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 import { formatVND } from '@/lib/utils/format';
 import type { CartItem, MenuItem } from '@/lib/types/database';
 import Button from '@/components/ui/Button';
@@ -14,7 +14,7 @@ interface CartModalProps {
 }
 
 export default function CartModalContent({ items, subtotal, onUpdateQuantity, onCheckout, crossSellItems = [], onAddCrossSell }: CartModalProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'transfer'>('cash');
   const [customerNote, setCustomerNote] = useState('');
   if (items.length === 0) {

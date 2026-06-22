@@ -2,13 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations, useLocale } from 'next-intl';
 import Card from '@/components/ui/Card';
 
 export default function PlatformSettingsPage() {
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
+  const t = useTranslations();
+  const locale = useLocale();
   const [mounted, setMounted] = useState(false);
+
+  const setLanguage = (lang: 'vi' | 'en') => {
+    document.cookie = `dilinh-locale=${lang}; path=/; max-age=31536000`;
+    window.location.reload();
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -58,13 +64,13 @@ export default function PlatformSettingsPage() {
             <div className="flex gap-2">
               <button 
                 onClick={() => setLanguage('vi')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex items-center gap-2 ${language === 'vi' ? 'bg-[var(--color-primary)] text-white border-transparent' : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:bg-[var(--color-bg)]'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex items-center gap-2 ${locale === 'vi' ? 'bg-[var(--color-primary)] text-white border-transparent' : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:bg-[var(--color-bg)]'}`}
               >
                 🇻🇳 Tiếng Việt
               </button>
               <button 
                 onClick={() => setLanguage('en')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex items-center gap-2 ${language === 'en' ? 'bg-[var(--color-primary)] text-white border-transparent' : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:bg-[var(--color-bg)]'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors flex items-center gap-2 ${locale === 'en' ? 'bg-[var(--color-primary)] text-white border-transparent' : 'bg-[var(--color-surface)] text-[var(--color-text)] border-[var(--color-border)] hover:bg-[var(--color-bg)]'}`}
               >
                 🇺🇸 English
               </button>

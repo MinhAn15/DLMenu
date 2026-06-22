@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { useShopContext } from '@/hooks/useShopContext';
@@ -85,7 +85,7 @@ function generateMockInbox(shops: any[]): InboxItem[] {
 }
 
 export default function ActionInbox() {
-  const { shops } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
   const { setSelectedShopId } = useShopContext();
   const [filter, setFilter] = useState<'all' | 'urgent' | 'warning' | 'info'>('all');
 

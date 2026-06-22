@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useShopContext, filterByShop } from '@/hooks/useShopContext';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
@@ -11,7 +11,8 @@ import toast from 'react-hot-toast';
 
 export default function PlatformTablesPage() {
   const { selectedShopId } = useShopContext();
-  const { shops, tables: dbTables } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
+  const { data: dbTables = [] } = trpc.admin.getTables.useQuery();
   const [tables, setTables] = useState<any[]>([]);
 
   React.useEffect(() => {

@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import type { MenuItem } from '@/lib/types/database';
 import { formatVND } from '@/lib/utils/format';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -13,7 +13,7 @@ interface MenuItemCardProps {
 }
 
 export default function MenuItemCard({ item, onAdd }: MenuItemCardProps) {
-  const { t } = useLanguage();
+  const t = useTranslations();
   return (
     <Card padding="none" variant="glass" className="flex overflow-hidden h-[120px] hover-lift active-press">
       {/* Image Side */}

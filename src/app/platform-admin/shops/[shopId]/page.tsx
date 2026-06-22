@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import { formatVND } from '@/lib/utils/format';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';
@@ -24,7 +24,10 @@ export default function ShopWorkspacePage() {
   const params = useParams();
   const shopId = params.shopId as string;
   const [activeTab, setActiveTab] = useState<TabId>('overview');
-  const { shops, items: dbItems, orders: dbOrders, categories } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
+  const { data: dbItems = [] } = trpc.admin.getMenuItems.useQuery({ shopId });
+  const { data: dbOrders = [] } = trpc.admin.getOrders.useQuery();
+  const { data: categories = [] } = trpc.admin.getCategories.useQuery({ shopId });
 
   const shop = shops.find(s => s.id === shopId);
   const shopItems = dbItems.filter(i => i.shop_id === shopId);

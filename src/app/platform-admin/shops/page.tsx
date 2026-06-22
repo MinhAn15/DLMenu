@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useShopContext } from '@/hooks/useShopContext';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
@@ -14,7 +14,10 @@ import type { Shop } from '@/lib/types/database';
 
 export default function PlatformShopsPage() {
   const { selectedShopId } = useShopContext();
-  const { shops: dbShops, loading, tables, items, users } = useAdminData();
+  const { data: dbShops = [] } = trpc.admin.getShops.useQuery();
+  const { data: tables = [] } = trpc.admin.getTables.useQuery();
+  const { data: items = [] } = trpc.admin.getMenuItems.useQuery();
+  const { data: users = [] } = trpc.admin.getUsers.useQuery();
   const [shops, setShops] = useState<Shop[]>([]);
 
   // Update local state when dbShops changes

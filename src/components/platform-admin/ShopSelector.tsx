@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useShopContext } from '@/hooks/useShopContext';
-import { useAdminData } from '@/hooks/useAdminData';
+import { trpc } from '@/lib/trpc/client';
 
 export default function ShopSelector() {
   const { selectedShopId, setSelectedShopId } = useShopContext();
-  const { shops } = useAdminData();
+  const { data: shops = [] } = trpc.admin.getShops.useQuery();
   const activeCount = shops.filter(s => s.is_active).length;
 
   return (
