@@ -1,5 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import type { TRPCContext } from './context';
+import { hasRole } from './middleware/rbac';
 
 interface AuthUser {
   id: string;
@@ -30,3 +31,10 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
 });
 
 export const protectedProcedure = publicProcedure.use(isAuthenticated);
+
+/** Platform admin only — rejects all non-admin roles */
+export const adminProcedure = protectedProcedure.use(middleware(hasRole('platform_admin')));
+
+/** Shop owner or platform admin — rejects customer role */
+export const shopOwnerProcedure = protectedProcedure.use(middleware(hasRole('shop_owner', 'platform_admin')));
+
