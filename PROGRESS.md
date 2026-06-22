@@ -20,7 +20,7 @@ All 3 AI tracks completed their work. OpenCode (Track A) finished P4 + P5 menu r
 | P2: Zustand cart-store + ui-store | Cart CRUD, persist, computed totals; ui sidebar/theme/shopId | 22 tests | `695a3ba` | ✅ |
 | P4: Testing infrastructure | createMockSupabase, createCaller, mockAuth helpers, trpc.test refactor | 12 tests | `8044966` | ✅ |
 | P5: Menu tRPC router | 8 procedures (categories + items CRUD), camelCase→snake_case mapping | 7+6 tests | `68b5f94` `177d934` | ✅ |
-| P7: RBAC middleware | hasRole factory + ownsShop tenant isolation + adminProcedure + shopOwnerProcedure | 6 tests | `9813da8` | ✅ |
+| P7: RBAC middleware & Auth Opt | hasRole factory + ownsShop tenant isolation + adminProcedure + shopOwnerProcedure. Tối ưu Edge caching (HMAC signed cookies) | 6+2 tests | `9813da8` `1ec430d` | ✅ |
 | P6: Order tRPC router | 3 procedures (create, list, updateStatus), loyalty points, status flow validation | 6+7 tests | This commit | ✅ |
 
 ### Uncommitted Changes (before this commit)
