@@ -4,3 +4,5 @@ export * from './order';
 export * from './shop';
 export * from './auth';
 export * from './admin';
+export * from './promotion';
+export * from './table';
