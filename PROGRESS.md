@@ -6,6 +6,36 @@
 
 ---
 
+## [2026-06-22] Session #8 — TypeScript Compilation Fix, Vitest & Playwright E2E Validation (Antigravity)
+
+### Summary
+Antigravity khắc phục triệt để lỗi biên dịch TypeScript `implicit any` đối với các trường kiểu Json của Supabase trên giao diện Admin, xác minh thành công toàn bộ 51 bài test Vitest tích hợp và 25 bài test E2E Playwright trên môi trường local (100% passed).
+
+### Completed this session
+
+| Feature | Details | Status |
+|---|---|---|
+| TypeScript Type Casting | Ép kiểu explicit `(item.tags as string[])` kết hợp type guard `Array.isArray` tại `platform-admin/menu` để vượt qua TypeScript strict mode. | ✅ |
+| Static Build Check | Chạy `npm run build` biên dịch dự án thành công hoàn toàn không có bất kỳ lỗi nào. | ✅ |
+| Vitest integration tests | Chạy thành công 51/51 integration tests. | ✅ |
+| Playwright E2E tests | Chạy thành công 25/25 E2E tests. | ✅ |
+
+### Git State
+- Branch: `main`
+- Modified files: `src/app/platform-admin/menu/page.tsx`, `docs/gotchas_knowledge_base.md`, `task.md`, `PROGRESS.md`.
+
+### Key Decisions
+- Sử dụng kết hợp `Array.isArray(item.tags)` làm type guard runtime và ép kiểu tường minh `(item.tags as string[])` ở tầng compile-time để đảm bảo tính an toàn dữ liệu và vượt qua compiler check của TypeScript.
+
+### Gotchas Discovered
+- Gotcha 5.12: Cách cast kiểu explicit cho trường Json Array khi dùng tRPC để tránh lỗi implicit any trong TypeScript strict mode.
+
+### Next Steps
+1. Chuyển đổi logic đặt hàng phía khách hàng (`customerOrder.ts` Server Action) sang tRPC.
+2. Cài đặt quy trình kiểm thử tự động trên GitHub Actions (CI/CD).
+
+---
+
 ## [2026-06-22] Session #7 — Supabase DDL Fix, E2E Test & Server Action Optimization (Antigravity)
 
 ### Summary

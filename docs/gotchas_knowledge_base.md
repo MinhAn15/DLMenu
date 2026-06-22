@@ -98,6 +98,9 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 
 ### 5.11 Ràng buộc NOT NULL của cột subtotal trong order_items
 - **Vấn đề:** Cột `subtotal` trong bảng `order_items` là `NOT NULL` và không có default value. Nếu Server Action `createOrder` chèn dữ liệu mà thiếu trường `subtotal`, PostgreSQL sẽ trả về lỗi và giao dịch đặt đơn hàng sẽ bị rollback.
-- **Cách khắc phục:** Luôn tính toán và bổ sung trường `subtotal` (bằng `quantity * unit_price`) vào payload chèn cho `order_items` trong Server Action.
+### 5.12 Ép kiểu explicit cho trường Json Array (như `tags`) trong TypeScript Strict Mode
+- **Vấn đề:** Khi trường `tags` (kiểu dữ liệu `Json` từ bảng Supabase) được trả về thông qua tRPC client, trình biên dịch TypeScript nhận diện nó là `Json` chứ không phải mảng. Trong môi trường `strict` mode, việc gọi `.map(t => ...)` hoặc `.length` trực tiếp trên `item.tags` sẽ gây lỗi `Property 'length' does not exist on type 'Json'` hoặc lỗi `Parameter 't' implicitly has an 'any' type`.
+- **Cách khắc phục:** Luôn kiểm tra `Array.isArray(item.tags)` trước, sau đó ép kiểu an toàn: `(item.tags as string[]).map((t: string) => ...)` để TypeScript compiler nhận biết rõ ràng kiểu dữ liệu của phần tử.
+
 
 
