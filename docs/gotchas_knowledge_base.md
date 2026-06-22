@@ -80,3 +80,7 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 - **Vấn đề:** Nếu middleware module (ví dụ: `rbac.ts`) import `middleware` builder từ `trpc.ts`, và `trpc.ts` import functions từ middleware module → circular dependency → `TypeError: middleware is not a function` khi runtime.
 - **Cách khắc phục:** Middleware module export raw async functions (không import gì từ `trpc.ts`). Tại `trpc.ts`, wrap bằng `middleware()` khi dùng `.use()`. Ví dụ: `protectedProcedure.use(middleware(hasRole('platform_admin')))`.
 
+### 5.7 Mock supabase chain trong integration tests — dùng thenable builder
+- **Vấn đề:** Supabase-js dùng chain pattern: `from().select().eq().order()`. Kết quả của chain vừa là builder object vừa là thenable (Promise). Mock đơn giản dùng `mockReturnThis()` không hoạt động vì `await` trên non-thenable object trả về chính object đó, không phải `{ data, error }`.
+- **Cách khắc phục:** Tạo builder function vừa có methods chain (mock fn return `this`) vừa có `.then()/.catch()/.finally()` bind từ `Promise.resolve({ data: rows, error: null })`. Hàm `single()` trả về Promise riêng với `{ data: rows[0] ?? null }`. Ví dụ pattern trong `tests/integration/menu.test.ts`.
+
