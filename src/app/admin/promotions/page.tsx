@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
-import { getPromotions, createPromotion, deletePromotion, togglePromotionActive } from '@/lib/actions/shop';
+import { trpc } from '@/lib/trpc/client';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -14,8 +14,7 @@ import type { Promotion } from '@/lib/types/database';
 
 export default function AdminPromotionsPage() {
   const { shop, loading: shopLoading } = useAdminShop();
-  const [promos, setPromos] = useState<Promotion[]>([]);
-  const [loading, setLoading] = useState(true);
+  const utils = trpc.useUtils();
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -28,22 +27,39 @@ export default function AdminPromotionsPage() {
   const [promoEndsAt, setPromoEndsAt] = useState('');
   const [promoMaxUses, setPromoMaxUses] = useState('');
 
-  const fetchPromos = useCallback(async () => {
-    if (!shop) return;
-    setLoading(true);
-    try {
-      const res = await getPromotions(shop.id);
-      if (res.success && res.data) setPromos(res.data as Promotion[]);
-    } catch {
-      toast.error('Lỗi tải khuyến mãi');
-    } finally {
-      setLoading(false);
-    }
-  }, [shop]);
+  // tRPC Queries & Mutations
+  const { data: promos = [], isLoading: promosLoading } = trpc.shop.promotions.list.useQuery(
+    { shopId: shop?.id ?? '' },
+    { enabled: !!shop }
+  );
 
-  useEffect(() => {
-    if (shop) fetchPromos();
-  }, [shop, fetchPromos]);
+  const createMutation = trpc.shop.promotions.create.useMutation({
+    onSuccess: () => {
+      utils.shop.promotions.list.invalidate();
+      toast.success('Đã tạo khuyến mãi');
+      setModalOpen(false);
+      setSaving(false);
+    },
+    onError: (err) => {
+      toast.error(err.message);
+      setSaving(false);
+    },
+  });
+
+  const deleteMutation = trpc.shop.promotions.delete.useMutation({
+    onSuccess: () => {
+      utils.shop.promotions.list.invalidate();
+      toast.success('Đã xóa');
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const toggleMutation = trpc.shop.promotions.toggle.useMutation({
+    onSuccess: () => {
+      utils.shop.promotions.list.invalidate();
+    },
+    onError: (err) => toast.error(err.message),
+  });
 
   const openModal = () => {
     setPromoName('');
@@ -58,49 +74,29 @@ export default function AdminPromotionsPage() {
     setModalOpen(true);
   };
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!promoName.trim()) { toast.error('Nhập tên khuyến mãi'); return; }
     if (!shop) return;
     setSaving(true);
-    try {
-      const res = await createPromotion(shop.id, {
-        name: promoName,
-        description: promoDesc || undefined,
-        type: promoType,
-        discount_percent: promoPercent ? Number(promoPercent) : undefined,
-        starts_at: new Date(promoStartsAt).toISOString(),
-        ends_at: new Date(promoEndsAt).toISOString(),
-        max_uses: promoMaxUses ? Number(promoMaxUses) : undefined,
-      });
-      if (!res.success) throw new Error(res.error);
-      toast.success('Đã tạo khuyến mãi');
-      setModalOpen(false);
-      fetchPromos();
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi tạo khuyến mãi');
-    } finally {
-      setSaving(false);
-    }
+    createMutation.mutate({
+      shopId: shop.id,
+      name: promoName,
+      description: promoDesc || undefined,
+      type: promoType as any,
+      discount_percent: promoPercent ? Number(promoPercent) : undefined,
+      starts_at: new Date(promoStartsAt).toISOString(),
+      ends_at: new Date(promoEndsAt).toISOString(),
+      max_uses: promoMaxUses ? Number(promoMaxUses) : undefined,
+    });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('Xóa khuyến mãi này?')) return;
-    try {
-      await deletePromotion(id);
-      toast.success('Đã xóa');
-      fetchPromos();
-    } catch {
-      toast.error('Lỗi xóa');
-    }
+    deleteMutation.mutate({ id });
   };
 
-  const handleToggle = async (id: string, isActive: boolean) => {
-    try {
-      await togglePromotionActive(id, !isActive);
-      fetchPromos();
-    } catch {
-      toast.error('Lỗi cập nhật');
-    }
+  const handleToggle = (id: string, isActive: boolean) => {
+    toggleMutation.mutate({ id, isActive: !isActive });
   };
 
   const isPromoActive = (promo: Promotion) => {
@@ -108,7 +104,7 @@ export default function AdminPromotionsPage() {
     return promo.is_active && new Date(promo.starts_at) <= now && new Date(promo.ends_at) >= now;
   };
 
-  if (shopLoading || loading) {
+  if (shopLoading || promosLoading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
         <Spinner size="lg" />
