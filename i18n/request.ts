@@ -5,7 +5,7 @@ const defaultLocale = 'vi';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
-  const locale = locales.includes(requested) ? requested : defaultLocale;
+  const locale = requested && locales.includes(requested) ? requested : defaultLocale;
 
   return {
     locale,
