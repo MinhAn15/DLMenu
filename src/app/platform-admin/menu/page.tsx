@@ -97,7 +97,7 @@ export default function PlatformMenuPage() {
                         <div>
                           <p className="font-bold text-gray-900">{item.name}</p>
                           {item.is_featured && <Badge variant="warning" size="sm">Nổi bật</Badge>}
-                          {item.tags?.length > 0 && item.tags.map(t => <Badge key={t} size="sm" variant="default" style={{ marginLeft: 4, background: '#f3f4f6', color: '#4b5563' }}>{t}</Badge>)}
+                          {item.tags?.length > 0 && item.tags.map((t: string) => <Badge key={t} size="sm" variant="default" style={{ marginLeft: 4, background: '#f3f4f6', color: '#4b5563' }}>{t}</Badge>)}
                         </div>
                       </div>
                     </td>

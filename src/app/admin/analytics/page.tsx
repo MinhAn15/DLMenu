@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
-import { getShopAnalytics } from '@/lib/actions/analytics';
+import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import Skeleton from '@/components/ui/Skeleton';
 import { formatVND } from '@/lib/utils/format';
@@ -21,27 +21,12 @@ import {
 
 export default function AnalyticsPage() {
   const { shop, loading: shopLoading, error: shopError } = useAdminShop();
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [days, setDays] = useState(7);
 
-  useEffect(() => {
-    if (!shop) return;
-    
-    const fetchAnalytics = async () => {
-      setLoading(true);
-      const res = await getShopAnalytics(shop.id, days);
-      if (res.success) {
-        setData(res.data);
-      } else {
-        setError(res.error || 'Failed to load analytics');
-      }
-      setLoading(false);
-    };
-
-    fetchAnalytics();
-  }, [shop, days]);
+  const { data, isLoading, error } = trpc.shop.analytics.get.useQuery(
+    { shopId: shop?.id ?? '', days },
+    { enabled: !!shop },
+  );
 
   if (shopError) {
     return (
@@ -52,7 +37,7 @@ export default function AnalyticsPage() {
     );
   }
 
-  if (shopLoading || loading) {
+  if (shopLoading || isLoading) {
     return (
       <div className="flex flex-col gap-6 max-w-6xl mx-auto w-full">
         <div className="flex justify-between items-center mb-4">
@@ -75,7 +60,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <div className="text-center p-8">
-        <p className="text-red-500">{error || 'No data'}</p>
+        <p className="text-red-500">{error?.message || 'No data'}</p>
       </div>
     );
   }

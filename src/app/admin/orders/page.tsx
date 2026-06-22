@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
 import { useRealtimeOrders, OrderWithDetails } from '@/hooks/useRealtimeOrders';
-import { updateOrderStatus } from '@/lib/actions/orderAdmin';
+import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -50,22 +50,23 @@ export default function AdminOrdersPage() {
   const [orderToPrint, setOrderToPrint] = useState<any>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
-    setActionLoading(orderId);
-    try {
-      const res = await updateOrderStatus(orderId, newStatus);
-      if (!res.success) throw new Error(res.error || 'Lỗi cập nhật');
-      toast.success(`Đã cập nhật → ${ORDER_STATUS_LABELS[newStatus]}`);
+  const updateStatusMutation = trpc.order.updateStatus.useMutation({
+    onSuccess: (_, vars) => {
+      toast.success(`Đã cập nhật → ${ORDER_STATUS_LABELS[vars.status]}`);
       refetch();
-      // Update selected if viewing detail
-      if (selectedOrder?.id === orderId) {
-        setSelectedOrder(prev => prev ? { ...prev, status: newStatus as any } : null);
+      if (selectedOrder?.id === vars.orderId) {
+        setSelectedOrder(prev => prev ? { ...prev, status: vars.status as any } : null);
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi cập nhật');
-    } finally {
-      setActionLoading(null);
-    }
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    setActionLoading(orderId);
+    updateStatusMutation.mutate(
+      { orderId, status: newStatus as any },
+      { onSettled: () => setActionLoading(null) },
+    );
   };
 
   const filteredOrders = orders.filter(o => {

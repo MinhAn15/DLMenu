@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
-import { getTables, createTable, deleteTable, toggleTableActive } from '@/lib/actions/tables';
+import { trpc } from '@/lib/trpc/client';
 import QRGenerator from '@/components/admin/QRGenerator';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -10,69 +10,61 @@ import Badge from '@/components/ui/Badge';
 import Spinner from '@/components/ui/Spinner';
 import Skeleton from '@/components/ui/Skeleton';
 import toast from 'react-hot-toast';
-import type { ShopTable } from '@/lib/types/database';
 
 export default function AdminTablesPage() {
   const { shop, loading: shopLoading } = useAdminShop();
-  const [tables, setTables] = useState<ShopTable[]>([]);
-  const [loading, setLoading] = useState(true);
+  const utils = trpc.useUtils();
   const [addingTable, setAddingTable] = useState(false);
 
-  const fetchTables = useCallback(async () => {
-    if (!shop) return;
-    setLoading(true);
-    try {
-      const res = await getTables(shop.id);
-      if (res.success && res.data) setTables(res.data as ShopTable[]);
-    } catch {
-      toast.error('Lỗi tải danh sách bàn');
-    } finally {
-      setLoading(false);
-    }
-  }, [shop]);
+  const { data: tables = [], isLoading } = trpc.shop.tables.list.useQuery(
+    { shopId: shop?.id ?? '' },
+    { enabled: !!shop }
+  );
 
-  useEffect(() => {
-    if (shop) fetchTables();
-  }, [shop, fetchTables]);
+  const createMutation = trpc.shop.tables.create.useMutation({
+    onSuccess: (data) => {
+      utils.shop.tables.list.invalidate();
+      toast.success(`Đã thêm Bàn ${data.table_number}`);
+      setAddingTable(false);
+    },
+    onError: (err) => {
+      toast.error(err.message || 'Lỗi thêm bàn');
+      setAddingTable(false);
+    },
+  });
 
-  const handleAddTable = async () => {
+  const deleteMutation = trpc.shop.tables.delete.useMutation({
+    onSuccess: () => {
+      utils.shop.tables.list.invalidate();
+      toast.success('Đã xóa bàn');
+    },
+    onError: (err) => toast.error(err.message || 'Lỗi xóa bàn'),
+  });
+
+  const toggleMutation = trpc.shop.tables.toggle.useMutation({
+    onSuccess: () => {
+      utils.shop.tables.list.invalidate();
+    },
+    onError: () => toast.error('Lỗi cập nhật'),
+  });
+
+  const handleAddTable = () => {
     if (!shop) return;
     setAddingTable(true);
-    try {
-      const nextNum = tables.length > 0 ? Math.max(...tables.map(t => t.table_number)) + 1 : 1;
-      const res = await createTable(shop.id, shop.slug, nextNum);
-      if (!res.success) throw new Error(res.error);
-      toast.success(`Đã thêm Bàn ${nextNum}`);
-      fetchTables();
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi thêm bàn');
-    } finally {
-      setAddingTable(false);
-    }
+    const nextNum = tables.length > 0 ? Math.max(...tables.map(t => t.table_number)) + 1 : 1;
+    createMutation.mutate({ shopId: shop.id, shopSlug: shop.slug, tableNumber: nextNum });
   };
 
-  const handleDelete = async (tableId: string, num: number) => {
+  const handleDelete = (tableId: string, num: number) => {
     if (!confirm(`Xóa Bàn ${num}? Mã QR sẽ không còn hoạt động.`)) return;
-    try {
-      const res = await deleteTable(tableId);
-      if (!res.success) throw new Error(res.error);
-      toast.success(`Đã xóa Bàn ${num}`);
-      fetchTables();
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi xóa bàn');
-    }
+    deleteMutation.mutate({ id: tableId });
   };
 
-  const handleToggle = async (tableId: string, isActive: boolean) => {
-    try {
-      await toggleTableActive(tableId, !isActive);
-      fetchTables();
-    } catch {
-      toast.error('Lỗi cập nhật');
-    }
+  const handleToggle = (tableId: string, isActive: boolean) => {
+    toggleMutation.mutate({ id: tableId, isActive: !isActive });
   };
 
-  if (shopLoading || loading) {
+  if (shopLoading || isLoading) {
     return (
       <div className="flex flex-col gap-6 max-w-6xl mx-auto w-full">
         <div className="flex justify-between items-center mb-4">

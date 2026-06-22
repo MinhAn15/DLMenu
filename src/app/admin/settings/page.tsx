@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
-import { updateShopInfo, updateThemeConfig } from '@/lib/actions/shop';
+import { trpc } from '@/lib/trpc/client';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
@@ -33,6 +33,28 @@ export default function AdminSettingsPage() {
   const [accountName, setAccountName] = useState('');
   const [savingTheme, setSavingTheme] = useState(false);
 
+  const updateInfoMutation = trpc.shop.settings.updateInfo.useMutation({
+    onSuccess: () => {
+      toast.success('Đã cập nhật thông tin');
+      setSaving(false);
+    },
+    onError: (err) => {
+      toast.error(err.message || 'Lỗi lưu');
+      setSaving(false);
+    },
+  });
+
+  const updateThemeMutation = trpc.shop.settings.updateTheme.useMutation({
+    onSuccess: () => {
+      toast.success('Đã cập nhật giao diện');
+      setSavingTheme(false);
+    },
+    onError: (err) => {
+      toast.error(err.message || 'Lỗi lưu');
+      setSavingTheme(false);
+    },
+  });
+
   // Initialize from shop
   React.useEffect(() => {
     if (shop) {
@@ -50,30 +72,20 @@ export default function AdminSettingsPage() {
   const handleSaveInfo = async () => {
     if (!shop || !name.trim()) { toast.error('Tên cửa hàng không được trống'); return; }
     setSaving(true);
-    try {
-      const res = await updateShopInfo(shop.id, { name, description, phone, address });
-      if (!res.success) throw new Error(res.error);
-      toast.success('Đã cập nhật thông tin');
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi lưu');
-    } finally {
-      setSaving(false);
-    }
+    updateInfoMutation.mutate({ shopId: shop.id, name, description, phone, address });
   };
 
   const handleSaveTheme = async () => {
     if (!shop) return;
     setSavingTheme(true);
-    try {
-      const bankInfo = bankId && accountNo ? { bank_id: bankId, account_no: accountNo, account_name: accountName } : undefined;
-      const res = await updateThemeConfig(shop.id, { primary_color: primaryColor, font: shop.theme_config.font, bank_info: bankInfo });
-      if (!res.success) throw new Error(res.error);
-      toast.success('Đã cập nhật giao diện');
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi lưu');
-    } finally {
-      setSavingTheme(false);
-    }
+    updateThemeMutation.mutate({
+      shopId: shop.id,
+      primaryColor,
+      font: shop.theme_config.font,
+      bankId,
+      accountNo,
+      accountName,
+    });
   };
 
   if (shopLoading) {

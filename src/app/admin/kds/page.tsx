@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
 import { useRealtimeOrders, OrderWithDetails } from '@/hooks/useRealtimeOrders';
-import { updateOrderStatus } from '@/lib/actions/orderAdmin';
+import { trpc } from '@/lib/trpc/client';
 import { formatVND } from '@/lib/utils/format';
 import { formatRelativeTime } from '@/lib/utils/date';
 import Spinner from '@/components/ui/Spinner';
@@ -21,33 +21,37 @@ export default function KitchenDisplaySystemPage() {
   const { orders, loading: ordersLoading, refetch } = useRealtimeOrders(shop?.id);
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const handleUpdateStatus = async (orderId: string, nextStatus: string) => {
-    setUpdating(orderId);
-    try {
-      const res = await updateOrderStatus(orderId, nextStatus);
-      if (!res.success) throw new Error(res.error);
+  const updateStatusMutation = trpc.order.updateStatus.useMutation({
+    onSuccess: () => {
       toast.success('Đã chuyển trạng thái');
-      refetch(); // Optimistic update would be better, but refetch is safer for now
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi chuyển trạng thái');
-    } finally {
-      setUpdating(null);
-    }
-  };
+      refetch();
+    },
+    onError: (err) => toast.error(err.message || 'Lỗi chuyển trạng thái'),
+  });
 
-  const handleCancel = async (orderId: string) => {
-    if (!window.confirm('Bạn có chắc chắn muốn hủy đơn này?')) return;
-    setUpdating(orderId);
-    try {
-      const res = await updateOrderStatus(orderId, 'cancelled');
-      if (!res.success) throw new Error(res.error);
+  const cancelMutation = trpc.order.updateStatus.useMutation({
+    onSuccess: () => {
       toast.success('Đã hủy đơn');
       refetch();
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi hủy đơn');
-    } finally {
-      setUpdating(null);
-    }
+    },
+    onError: (err) => toast.error(err.message || 'Lỗi hủy đơn'),
+  });
+
+  const handleUpdateStatus = (orderId: string, nextStatus: string) => {
+    setUpdating(orderId);
+    updateStatusMutation.mutate(
+      { orderId, status: nextStatus as any },
+      { onSettled: () => setUpdating(null) },
+    );
+  };
+
+  const handleCancel = (orderId: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn hủy đơn này?')) return;
+    setUpdating(orderId);
+    cancelMutation.mutate(
+      { orderId, status: 'cancelled' as any },
+      { onSettled: () => setUpdating(null) },
+    );
   };
 
   if (shopLoading || ordersLoading) {
