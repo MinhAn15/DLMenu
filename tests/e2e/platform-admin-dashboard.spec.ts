@@ -34,9 +34,9 @@ test.describe('Platform Admin Dashboard — tRPC Migration', () => {
   test('Sidebar navigation links are visible', async ({ page }) => {
     await page.goto('/platform-admin', { waitUntil: 'domcontentloaded' });
     // PlatformSidebar renders navigation links
-    await expect(page.getByText('Dashboard')).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText('Quán')).toBeVisible();
-    await expect(page.getByText('Menu')).toBeVisible();
+    await expect(page.locator('aside').getByText('Bảng điều khiển')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('aside').getByText('Tất cả quán')).toBeVisible();
+    await expect(page.locator('aside').getByText('Kho Menu')).toBeVisible();
   });
 
   test('Users page loads data via tRPC', async ({ page }) => {
@@ -60,7 +60,7 @@ test.describe('Platform Admin Dashboard — tRPC Migration', () => {
     await expect(page.getByRole('heading', { name: /Giám sát Đơn hàng/i }))
       .toBeVisible({ timeout: 15000 });
     // Status filter buttons rendered
-    await expect(page.getByText('Tất cả')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: /Tất cả/i }).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('Tables page loads data via tRPC', async ({ page }) => {
@@ -76,13 +76,13 @@ test.describe('Platform Admin Dashboard — tRPC Migration', () => {
     await expect(page.getByRole('heading', { name: /Kho Menu Toàn Cục/i }))
       .toBeVisible({ timeout: 15000 });
     // Tabs are rendered
-    await expect(page.getByText('Danh mục')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('button', { name: /Danh mục/i })).toBeVisible({ timeout: 10000 });
   });
 
   test('ShopSelector dropdown is functional', async ({ page }) => {
     await page.goto('/platform-admin', { waitUntil: 'domcontentloaded' });
     // ShopSelector renders in header — look for "Tất cả quán" or similar
-    await expect(page.locator('header')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('header').first()).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Platform Control Center')).toBeVisible();
   });
 
@@ -91,14 +91,14 @@ test.describe('Platform Admin Dashboard — tRPC Migration', () => {
     await expect(page.getByRole('heading', { name: /Bảng điều khiển/i }))
       .toBeVisible({ timeout: 15000 });
 
-    // Click "Đơn hàng" in sidebar to navigate
+    // Click "Kho Menu" in sidebar to navigate
     await page.evaluate(() => {
       const links = Array.from(document.querySelectorAll('a'));
-      const target = links.find(a => a.textContent?.includes('Đơn hàng'));
+      const target = links.find(a => a.textContent?.includes('Kho Menu'));
       if (target) target.click();
     });
     await page.waitForTimeout(2000);
-    await expect(page.getByRole('heading', { name: /Giám sát Đơn hàng/i }))
+    await expect(page.getByRole('heading', { name: /Kho Menu Toàn Cục/i }))
       .toBeVisible({ timeout: 15000 });
   });
 });

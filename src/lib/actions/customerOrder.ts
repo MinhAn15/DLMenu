@@ -68,6 +68,7 @@ export async function createOrder(params: {
       menu_item_id: item.menuItemId,
       quantity: item.quantity,
       unit_price: item.unitPrice,
+      subtotal: item.quantity * item.unitPrice,
       note: item.note,
     }));
 

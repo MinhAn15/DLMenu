@@ -6,6 +6,30 @@
 
 ---
 
+## [2026-06-22] Session #7 — Supabase DDL Fix, E2E Test & Server Action Optimization (Antigravity)
+
+### Summary
+Antigravity resolved the Supabase migration error (`shop_tables` table constraints) and stabilized 100% of the E2E tests (25/25 passed). Sửa lỗi strict-mode và locale của browser trong Playwright. Khắc phục lỗi logic Server Action `createOrder` thiếu trường `subtotal` khi chèn chi tiết đơn hàng `order_items`.
+
+### Completed this session
+
+| Feature | Details | Status |
+|---|---|---|
+| Playwright E2E i18n Fix | Added `locale: 'vi-VN'` in `playwright.config.ts` to sync Chromium with local Vietnamese tests. | ✅ |
+| Platform Admin Sidebar Fix | Scoped selectors `Bảng điều khiển`, `Tất cả quán`, `Kho Menu` inside `aside` element to bypass Playwright strict-mode violations. | ✅ |
+| Server Action order_items Fix | Calculated and added `subtotal` to `order_items` insert payload in `createOrder` (`customerOrder.ts`) to fix NOT NULL constraint failure. | ✅ |
+| Shop Table short_code Migration | Successfully resolved migration blocks and configured `short_code` field generation with automated validation. | ✅ |
+
+### Git State
+- Branch: `main`
+- Modified files: `playwright.config.ts`, `tests/e2e/platform-admin-dashboard.spec.ts`, `src/lib/actions/customerOrder.ts`, `tests/setup/seed.ts`, `src/app/platform-admin/tables/page.tsx`, `src/app/platform-admin/menu/page.tsx`.
+
+### Next Steps
+1. Create tRPC routers for promotions, settings, tables, analytics according to `docs/superpowers/specs/2026-06-22-shop-trpc-router-design.md`.
+2. Migrate remaining admin pages to tRPC.
+
+---
+
 ## [2026-06-22] Session #6 — Admin Menu Migration to tRPC + Server Action Cleanup (OpenCode)
 
 ### Summary

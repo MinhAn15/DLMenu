@@ -13,12 +13,8 @@ export default function PlatformTablesPage() {
   const { selectedShopId } = useShopContext();
   const { data: shops = [] } = trpc.admin.getShops.useQuery();
   const { data: dbTables = [] } = trpc.admin.getTables.useQuery();
-  const [tables, setTables] = useState<any[]>([]);
 
-  React.useEffect(() => {
-    setTables(filterByShop(dbTables, selectedShopId));
-  }, [dbTables, selectedShopId]);
-
+  const tables = filterByShop(dbTables, selectedShopId);
   const isAllMode = selectedShopId === 'all';
 
   // Batch create

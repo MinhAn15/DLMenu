@@ -17,16 +17,8 @@ export default function PlatformMenuPage() {
   const { data: dbCats = [] } = trpc.admin.getCategories.useQuery();
   const { data: shops = [] } = trpc.admin.getShops.useQuery();
   const [activeTab, setActiveTab] = useState<'items' | 'categories'>('items');
-
-  // 1. Data Source
-  const [items, setItems] = useState<MenuItem[]>([]);
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
-
-  React.useEffect(() => {
-    setItems(filterByShop(dbItems, selectedShopId));
-    setCategories(filterByShop(dbCats, selectedShopId));
-  }, [dbItems, dbCats, selectedShopId]);
-  
+  const items = filterByShop(dbItems, selectedShopId);
+  const categories = filterByShop(dbCats, selectedShopId);
   const isAllMode = selectedShopId === 'all';
 
   // Clone modal

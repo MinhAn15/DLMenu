@@ -87,6 +87,7 @@ async function globalSetup() {
   await supabase.from('shop_tables').upsert({
     shop_id: shop.id,
     table_number: '1',
+    short_code: 'CPM-01',
     status: 'available'
   }, { onConflict: 'shop_id,table_number' });
 

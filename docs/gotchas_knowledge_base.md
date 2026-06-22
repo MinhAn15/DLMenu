@@ -88,3 +88,16 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 - **Vấn đề:** Xoá file `src/lib/actions/order.ts` vì tưởng không còn ai import, nhưng `orderAdmin.ts` import `completeOrder` từ `./order` gây lỗi build. Các file Server Actions trong cùng thư mục có thể import lẫn nhau.
 - **Cách khắc phục:** Trước khi xoá Server Action file, grep toàn bộ `src/` cho import từ file đó. Đặc biệt kiểm tra các file cùng thư mục `src/lib/actions/*` vì chúng thường import lẫn nhau bằng relative path `./file`.
 
+### 5.9 i18n locale trong E2E tests
+- **Vấn đề:** Trình duyệt mặc định của Playwright Chromium sử dụng locale tiếng Anh (`en-US`), khiến `next-intl` tự động render giao diện sang tiếng Anh (ví dụ: `"Table 1"`, nút `"Add"`), trong khi kịch bản test mong chờ các chuỗi tiếng Việt như `"Bàn 1"` hoặc `"Thêm"`.
+- **Cách khắc phục:** Thiết lập `locale: 'vi-VN'` trong cấu hình Chromium của tệp `playwright.config.ts` để đồng bộ ngôn ngữ chạy test.
+
+### 5.10 Xung đột Strict Mode trong Playwright
+- **Vấn đề:** Sử dụng `page.getByText('Bảng điều khiển')` hoặc `'Tất cả quán'` khớp với nhiều hơn một phần tử (như link điều hướng ở sidebar và tiêu đề h1 hoặc văn bản mô tả trong content chính), dẫn đến lỗi strict mode vi phạm của Playwright.
+- **Cách khắc phục:** Sử dụng bộ lọc phạm vi để chỉ định rõ vị trí của phần tử cần tìm, ví dụ: `page.locator('aside').getByText('Bảng điều khiển')`.
+
+### 5.11 Ràng buộc NOT NULL của cột subtotal trong order_items
+- **Vấn đề:** Cột `subtotal` trong bảng `order_items` là `NOT NULL` và không có default value. Nếu Server Action `createOrder` chèn dữ liệu mà thiếu trường `subtotal`, PostgreSQL sẽ trả về lỗi và giao dịch đặt đơn hàng sẽ bị rollback.
+- **Cách khắc phục:** Luôn tính toán và bổ sung trường `subtotal` (bằng `quantity * unit_price`) vào payload chèn cho `order_items` trong Server Action.
+
+
