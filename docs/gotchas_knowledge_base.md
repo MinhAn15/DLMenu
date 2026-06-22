@@ -75,3 +75,8 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 ### 5.5 Integration tests cho tRPC — dùng createCaller() không cần MSW
 - **Vấn đề:** MSW thêm 1 lớp HTTP stack phải mock. tRPC procedures test qua HTTP cần request/response serialization, tăng độ phức tạp.
 - **Cách khắc phục:** Dùng `router.createCaller(ctx)` in-process + `vi.mock('@supabase/ssr')`. Nhanh hơn, đơn giản hơn, test đúng business logic. MSW chỉ cần nếu test middleware HTTP-specific.
+
+### 5.6 Circular dependency: trpc.ts ↔ middleware modules
+- **Vấn đề:** Nếu middleware module (ví dụ: `rbac.ts`) import `middleware` builder từ `trpc.ts`, và `trpc.ts` import functions từ middleware module → circular dependency → `TypeError: middleware is not a function` khi runtime.
+- **Cách khắc phục:** Middleware module export raw async functions (không import gì từ `trpc.ts`). Tại `trpc.ts`, wrap bằng `middleware()` khi dùng `.use()`. Ví dụ: `protectedProcedure.use(middleware(hasRole('platform_admin')))`.
+
