@@ -12,6 +12,7 @@ interface MockAuthProfile {
   id: string;
   role: string;
   display_name: string;
+  shop_id?: string | null;
 }
 
 interface MockSupabaseOptions {
@@ -71,9 +72,9 @@ export function createMockContext(overrides: Record<string, unknown> = {}) {
 
 export const mockAuth = {
   user: { id: 'user-1' } as MockAuthUser,
-  profile: { id: 'user-1', role: 'shop_owner', display_name: 'Test' } as MockAuthProfile,
+  profile: { id: 'user-1', role: 'shop_owner', display_name: 'Test', shop_id: '00000000-0000-0000-0000-000000000001' } as MockAuthProfile,
   userAlt: { id: 'user-2' } as MockAuthUser,
-  profileAlt: { id: 'user-2', role: 'customer', display_name: 'Khách' } as MockAuthProfile,
+  profileAlt: { id: 'user-2', role: 'customer', display_name: 'Khách', shop_id: null } as MockAuthProfile,
 };
 
 export function createCaller(options?: {

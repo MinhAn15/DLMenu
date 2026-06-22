@@ -53,7 +53,8 @@ We have **three AI agents** working simultaneously:
 | **B** | Claude Code | **Phase B polish** — ActionInbox/ActivityFeed tests, PlatformSidebar | 🔄 In progress |
 | **B** | Claude Code | **Phase B E2E tests** (Playwright) | 📋 Pending |
 | **C** | Antigravity | **P7: RBAC middleware** (hasRole + ownsShop) with TDD | ✅ `9813da8` |
-| **C** | Antigravity | **Next: TBD** (P5 menu migration or auth optimization) | 📋 Pending |
+| **C** | Antigravity | **P5: Menu Router RBAC Integration** | ✅ Done |
+| **C** | Antigravity | **Next: TBD** (P5 client migration, P6, or P7 auth opt) | 📋 Pending |
 
 ### Communication Protocol
 
@@ -165,6 +166,8 @@ Build 2 Zustand stores with full TDD:
 |---|---|---|
 | P2 Zustand stores (TDD) | OpenCode | ✅ DONE `695a3ba` |
 | P4 Testing infrastructure helpers | OpenCode | ✅ DONE `8044966` |
+| P5 Menu Router (Backend) | OpenCode | ✅ DONE |
+| P5 Menu Router RBAC | **Antigravity** | ✅ DONE |
 | P3 next-intl integration | Claude Code | 🔄 In progress (next-intl installed, messages TBD) |
 | Phase B: Polish + E2E tests | Claude Code | 🔄 Uncommitted |
 | P7: RBAC middleware (hasRole + ownsShop) | **Antigravity** | ✅ DONE `9813da8` — 6 TDD tests, hasRole factory, ownsShop tenant isolation |
@@ -177,6 +180,8 @@ Build 2 Zustand stores with full TDD:
 | P2: ui-store | sidebarOpen toggle, selectedShopId, theme (light/dark/system), reset | 8 tests | `695a3ba` | ✅ |
 | P4: createCaller helpers | createMockSupabase, createCaller, mockAuth fixtures | 9 tests | `8044966` | ✅ |
 | P4: trpc.test.ts refactor | Using shared helpers (drier, reusable) | 3 tests | `8044966` | ✅ |
+| P5: menu.ts router | 7 procedures (categories + items CRUD) | 7 tests | Uncommitted | ✅ (OpenCode) |
+| P5: menu router RBAC | Thêm shopOwnerProcedure + ownsShop, 6 RBAC tests | 6 tests | Uncommitted | ✅ (Antigravity) |
 | P7: RBAC middleware | hasRole factory + ownsShop tenant isolation + adminProcedure + shopOwnerProcedure | 6 tests | `9813da8` | ✅ (Antigravity) |
 
 ### Git State

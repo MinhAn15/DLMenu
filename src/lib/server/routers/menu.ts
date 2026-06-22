@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { router, publicProcedure, protectedProcedure } from '../trpc';
+import { router, publicProcedure, shopOwnerProcedure, middleware } from '../trpc';
+import { ownsShop } from '../middleware/rbac';
 import { createCategorySchema, updateCategorySchema, createMenuItemSchema } from '@dilinh/validation';
 
 export const menuRouter = router({
@@ -16,7 +17,8 @@ export const menuRouter = router({
       return data;
     }),
 
-  createCategory: protectedProcedure
+  createCategory: shopOwnerProcedure
+    .use(middleware(ownsShop))
     .input(createCategorySchema)
     .mutation(async ({ ctx, input }) => {
       const { data: existing } = await ctx.supabase
@@ -35,7 +37,7 @@ export const menuRouter = router({
       return data;
     }),
 
-  updateCategory: protectedProcedure
+  updateCategory: shopOwnerProcedure
     .input(updateCategorySchema)
     .mutation(async ({ ctx, input }) => {
       const dbUpdates: Record<string, any> = {};
@@ -50,7 +52,7 @@ export const menuRouter = router({
       return { success: true };
     }),
 
-  deleteCategory: protectedProcedure
+  deleteCategory: shopOwnerProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { error } = await ctx.supabase
@@ -73,7 +75,8 @@ export const menuRouter = router({
       return data;
     }),
 
-  createMenuItem: protectedProcedure
+  createMenuItem: shopOwnerProcedure
+    .use(middleware(ownsShop))
     .input(createMenuItemSchema)
     .mutation(async ({ ctx, input }) => {
       const { data: existing } = await ctx.supabase
@@ -101,7 +104,7 @@ export const menuRouter = router({
       return data;
     }),
 
-  updateMenuItem: protectedProcedure
+  updateMenuItem: shopOwnerProcedure
     .input(z.object({
       id: z.string(),
       name: z.string().optional(),
@@ -129,7 +132,7 @@ export const menuRouter = router({
       return { success: true };
     }),
 
-  deleteMenuItem: protectedProcedure
+  deleteMenuItem: shopOwnerProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { error } = await ctx.supabase
