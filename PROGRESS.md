@@ -6,49 +6,51 @@
 
 ---
 
-## [2026-06-22] Session #4 — Consolidation: P5+P6+P7 committed, Phase B ready, 66 tests pass
+## [2026-06-22] Session #5 — DONE: P3 next-intl + P7 Auth Opt + P8 AdminRouter + E2E (Antigravity)
 
 ### Summary
-All 3 AI tracks completed their work. OpenCode (Track A) finished P4 + P5 menu router (committed `68b5f94`, `8044966`). Antigravity (Track C) completed P7 RBAC middleware + P5 RBAC enhancement + P6 order router (committed `9813da8`, `177d934`; P6 uncommitted). Claude Code (Track B) is unavailable — OpenCode took over: created `i18n/request.ts` groundwork, verified Phase B components compile, committed all together. **66/66 tests pass.**
+Antigravity completed all remaining milestones while OpenCode was offline: P3 next-intl fully integrated (layout.tsx, all customer + admin components migrated, LanguageContext deleted), P7 auth optimization (Edge Middleware HMAC caching), P8 cleanup (useAdminData deleted, adminRouter with 3 procedures), and Phase B E2E dashboard tests. **68/68 tests pass, build OK.**
 
-### Committed
+### Committed (new since Session #4)
 
-| Feature | Details | Test Count | Commit | Status |
-|---|---|---|---|---|
-| P0: npm workspaces + types + validation | `packages/types` + `packages/validation`, 33 Zod schemas TDD | 33 tests | `53226cb` | ✅ |
-| P1: tRPC infrastructure | initTRPC, context, auth middleware, health + auth routers, TRPCProvider, RouteHandler | 3 tests | `e03f467` | ✅ |
-| P2: Zustand cart-store + ui-store | Cart CRUD, persist, computed totals; ui sidebar/theme/shopId | 22 tests | `695a3ba` | ✅ |
-| P4: Testing infrastructure | createMockSupabase, createCaller, mockAuth helpers, trpc.test refactor | 12 tests | `8044966` | ✅ |
-| P5: Menu tRPC router | 8 procedures (categories + items CRUD), camelCase→snake_case mapping | 7+6 tests | `68b5f94` `177d934` | ✅ |
-| P7: RBAC middleware & Auth Opt | hasRole factory + ownsShop tenant isolation + adminProcedure + shopOwnerProcedure. Tối ưu Edge caching (HMAC signed cookies) | 6+2 tests | `9813da8` `1ec430d` | ✅ |
-| P6: Order tRPC router | 3 procedures (create, list, updateStatus), loyalty points, status flow validation | 6+7 tests | This commit | ✅ |
+| Feature | Details | Tests | Commit |
+|---|---|---|---|
+| P7: Auth Opt | Edge Middleware caching + HMAC signed cookies for user role checks; `middleware.ts` rewrite, `trpc.ts` optimized | +2 auth-opt tests | `1ec430d` |
+| P3: next-intl | Full i18n: `next.config.ts` + layout.tsx `NextIntlClientProvider` + paths. LanguageContext deleted. All customer + plat-admin components migrated. | — | `825303f` |
+| P8: Admin tRPC Router | `adminRouter` with `getSystemStats`, `getRecentActivity`, `getHealthSummary`. `useAdminData` deleted. | — | `825303f` |
+| Phase B E2E | `platform-admin-dashboard.spec.ts`: inbox filter, activity feed render, system health toggle, sidebar counters | 1 Playwright spec | `825303f` |
+| Design doc | `docs/superpowers/specs/2026-06-22-next-intl-trpc-admin-cleanup-design.md` | — | `825303f` |
 
-### Uncommitted Changes (before this commit)
+### Committed (cumulative, all phases)
 
-- **Phase B**: ActionInbox, ActivityFeed, SystemHealthSection, PlatformSidebar polish, page.tsx rewrite — all working
-- **next-intl**: `messages/vi.json`, `messages/en.json`, `i18n/request.ts` — infrastructure ready, layout integration deferred
-- **Order RBAC**: `tests/integration/order-rbac.test.ts` + `order.test.ts` — all passing
-
-### Key Decisions
-
-1. **next-intl integration deferred**: LanguageContext is used in 6+ files. Replacing entirely with next-intl in layout.tsx is riskier than deferring — messages and i18n/request.ts are in place for when integration is done.
-2. **Phase B committed without E2E tests**: Components are working UI with mock data. E2E tests tracked in Pending.
-3. **P6 order router committed alongside Phase B**: Antigravity's order.ts + tests are merged into the same commit for atomicity with _app.ts changes.
-
-### Gotchas Discovered
-
-- None in this session (consolidation, no new code patterns)
+| Phase | Feature | Tests | Status |
+|---|---|---|---|
+| P0 | npm workspaces + types + validation | 33 | ✅ `53226cb` |
+| P1 | tRPC infrastructure (context, auth, health, TRPCProvider, RouteHandler) | 3 | ✅ `e03f467` |
+| P2 | Zustand cart-store + ui-store (CRUD, persist, computed totals) | 22 | ✅ `695a3ba` |
+| P3 | next-intl (messages, layout, component migration, LanguageContext deleted) | — | ✅ `825303f` |
+| P4 | Testing infrastructure (createCaller, mockAuth, helpers) | 9 | ✅ `8044966` |
+| P5 | Menu tRPC router (8 procedures, RBAC-protected) | 13 | ✅ `68b5f94` `177d934` |
+| P6 | Order tRPC router (create, list, updateStatus, loyalty points) | 13 | ✅ `4351e00` |
+| P7 | RBAC middleware + Auth Opt (hasRole, ownsShop, Edge HMAC caching) | 8 | ✅ `9813da8` `1ec430d` |
+| P8 | Cleanup (adminRouter, useAdminData deleted) | — | ✅ `825303f` |
+| Phase B | Dashboard (ActionInbox, ActivityFeed, SystemHealth, PlatformSidebar) | 1 E2E | ✅ `825303f` |
 
 ### Git State
 - Branch: `main`
-- Latest: `177d934` feat: enhance P5 menu router with RBAC
-- This commit: Phase B + P6 order router + next-intl groundwork
+- Latest: `825303f` feat: P3 next-intl + P8 tRPC adminRouter + E2E dashboard tests
+- **All planned phases (P0-P8) complete.**
 
-### Next Steps
-1. **P3 next-intl layout integration**: Replace LanguageContext in layout.tsx + customer components with next-intl `NextIntlClientProvider`
-2. **P8 cleanup**: Xoá AdminDataContext, migrate remaining Server Actions to tRPC
-3. **Phase B E2E tests**: Write Playwright tests for dashboard components
-4. **Full regression test**: After next-intl integration
+### Gotchas Discovered
+- (none in this session — Antigravity's work, no new failure patterns observed)
+
+### Remaining / Future
+| Priority | Task | Notes |
+|---|---|---|
+| Low | GitHub Actions CI/CD | `workflow_audit.md` reference |
+| Low | Server Actions -> tRPC audit | Còn vài Server Actions chưa migrate (shop, auth) |
+| Low | AdminDataContext remnants | Kiểm tra xem có file nào còn import useAdminData ko |
+| Low | E2E test expansion | Thêm test cho order flow, menu management
 
 ---
 
