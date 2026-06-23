@@ -1,13 +1,24 @@
 'use client';
 
 import React, { useState } from 'react';
-import { createInitialShop } from '@/lib/actions/shopAdmin';
+import { trpc } from '@/lib/trpc/client';
+import toast from 'react-hot-toast';
 
 export default function OnboardingPrompt() {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const createShopMutation = trpc.admin.createShop.useMutation({
+    onSuccess: () => {
+      toast.success('Đã tạo quán thành công!');
+    },
+    onError: (err) => {
+      setError(err.message);
+      setLoading(false);
+    },
+  });
 
   // Auto-generate slug from name
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,14 +46,8 @@ export default function OnboardingPrompt() {
     setLoading(true);
     setError('');
 
-    const res = await createInitialShop(name, slug);
-    
-    if (res?.error) {
-      setError(res.error);
-      setLoading(false);
-    }
-    // If success, the revalidatePath in server action will refresh the layout,
-    // causing this component to unmount and the dashboard to show up!
+    createShopMutation.mutate({ name, slug });
+    // If success, toast shows and layout refreshes via revalidation
   };
 
   return (

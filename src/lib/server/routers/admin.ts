@@ -1,8 +1,43 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, adminProcedure } from '../trpc';
+import { slugSchema } from '@dilinh/validation';
 
 export const adminRouter = router({
+  createShop: adminProcedure
+    .input(z.object({ name: z.string().min(1).max(200), slug: slugSchema }))
+    .mutation(async ({ ctx, input }) => {
+      const { data: { user } } = await ctx.supabase.auth.getUser();
+
+      if (!user) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Chưa đăng nhập' });
+      }
+
+      const { data, error } = await ctx.supabase
+        .from('shops')
+        .insert({
+          owner_id: user.id,
+          name: input.name,
+          slug: input.slug,
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        if (error.code === '23505') {
+          throw new TRPCError({ code: 'CONFLICT', message: 'Đường dẫn (slug) này đã tồn tại, vui lòng chọn tên khác.' });
+        }
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message });
+      }
+
+      await ctx.supabase
+        .from('profiles')
+        .update({ role: 'shop_owner' })
+        .eq('id', user.id);
+
+      return { success: true, shopId: data.id };
+    }),
+
   getShops: adminProcedure
     .query(async ({ ctx }) => {
       const { data, error } = await ctx.supabase

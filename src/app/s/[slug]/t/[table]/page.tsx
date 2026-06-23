@@ -6,7 +6,7 @@ import { useShop } from '@/hooks/useShop';
 import { useCart } from '@/hooks/useCart';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '@/hooks/useAuth';
-import { createOrder } from '@/lib/actions/customerOrder';
+import { trpc } from '@/lib/trpc/client';
 import { resolveDiscount } from '@/lib/utils/discount';
 import Spinner from '@/components/ui/Spinner';
 import Skeleton from '@/components/ui/Skeleton';
@@ -104,6 +104,26 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
 
   const total = subtotal - discount.discountAmount;
 
+  const createOrderMutation = trpc.order.create.useMutation({
+    onSuccess: (data) => {
+      clearCart();
+      setIsCartOpen(false);
+      setOrderResult({
+        orderNumber: data.order_number,
+        total: data.total,
+        status: 'pending',
+        paymentMethod: lastPaymentMethod,
+      });
+      toast.success(t('customer.order.success'));
+    },
+    onError: (err) => {
+      toast.error(err.message || t('customer.order.error'));
+    },
+    onSettled: () => setIsCheckingOut(false),
+  });
+
+  const [lastPaymentMethod, setLastPaymentMethod] = useState('cash');
+
   const handleCheckoutClick = async (paymentMethod: string, customerNote: string = '') => {
     // Bỏ qua check login cho phép order ẩn danh (demo)
     // if (!user) {
@@ -112,41 +132,22 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
     // }
 
     setIsCheckingOut(true);
-    try {
-      const finalNote = `Thanh toán: ${paymentMethod === 'cash' ? 'Tiền mặt' : 'Chuyển khoản'}${customerNote ? `\nGhi chú: ${customerNote}` : ''}`;
-      const res = await createOrder({
-        shopId: shop.id,
-        tableId: table?.id || null,
-        items: cartItems.map(ci => ({
-          menuItemId: ci.menuItem.id,
-          quantity: ci.quantity,
-          unitPrice: ci.menuItem.price,
-          note: ci.note || null,
-        })),
-        subtotal,
-        discountAmount: discount.discountAmount,
-        discountType: discount.discountType,
-        total,
-        orderType: table ? 'dine_in' : 'takeaway',
-        customerNote: finalNote,
-      });
+    setLastPaymentMethod(paymentMethod);
 
-      if (!res.success) throw new Error(res.error);
+    const finalNote = `Thanh toán: ${paymentMethod === 'cash' ? 'Tiền mặt' : 'Chuyển khoản'}${customerNote ? `\nGhi chú: ${customerNote}` : ''}`;
 
-      clearCart();
-      setIsCartOpen(false);
-      setOrderResult({
-        orderNumber: res.data!.order_number,
-        total: res.data!.total,
-        status: 'pending',
-        paymentMethod: paymentMethod,
-      });
-      toast.success(t('customer.order.success'));
-    } catch (err: any) {
-      toast.error(err.message || t('customer.order.error'));
-    } finally {
-      setIsCheckingOut(false);
-    }
+    createOrderMutation.mutate({
+      shopId: shop.id,
+      tableId: table?.id,
+      orderType: table ? 'dine_in' : 'takeaway',
+      items: cartItems.map(ci => ({
+        menuItemId: ci.menuItem.id,
+        quantity: ci.quantity,
+        unitPrice: ci.menuItem.price,
+        note: ci.note || undefined,
+      })),
+      customerNote: finalNote,
+    });
   };
 
   return (

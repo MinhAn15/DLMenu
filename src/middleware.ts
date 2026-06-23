@@ -3,7 +3,10 @@ import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 const COOKIE_NAME = 'dilinh-user-role';
-const SECRET_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'default-dilinh-secret-key';
+const SECRET_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SECRET_KEY) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY must be set for HMAC cookie signing');
+}
 
 async function getHMACSignature(text: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -83,7 +86,7 @@ export async function middleware(request: NextRequest) {
     if (roleCookie) {
       const [roleVal, signature] = roleCookie.split('.');
       if (roleVal && signature) {
-        const expectedSig = await getHMACSignature(roleVal, SECRET_KEY);
+        const expectedSig = await getHMACSignature(roleVal, SECRET_KEY!);
         if (signature === expectedSig) {
           userRole = roleVal;
         }
@@ -118,7 +121,7 @@ export async function middleware(request: NextRequest) {
     });
 
     if (shouldSetCookie) {
-      const signature = await getHMACSignature(userRole, SECRET_KEY);
+      const signature = await getHMACSignature(userRole, SECRET_KEY!);
       response.cookies.set(COOKIE_NAME, `${userRole}.${signature}`, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
