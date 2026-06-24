@@ -127,6 +127,16 @@ export const orderRouter = router({
   create: publicProcedure
     .input(createOrderSchema)
     .mutation(async ({ ctx, input }) => {
+      if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+        const subtotal = input.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+        return {
+          id: `mock-order-${Date.now()}`,
+          order_number: `#M-${Date.now().toString().slice(-4)}`,
+          total: subtotal,
+          status: 'pending',
+        };
+      }
+
       const client = getSupabaseAdmin() || ctx.supabase;
       const { data: { user } } = await client.auth.getUser();
       const userId = user?.id || null;

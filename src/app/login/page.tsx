@@ -59,6 +59,7 @@ export default function LoginPage() {
           <div className={styles.logoIcon}>
             <Coffee size={32} strokeWidth={2.5} />
           </div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1 block">Dành cho Chủ quán & Đối tác</span>
           <h1 className={styles.authTitle}>Chào mừng trở lại</h1>
           <p className={styles.authSubtitle}>Đăng nhập để quản lý quán của bạn</p>
         </div>
@@ -69,7 +70,7 @@ export default function LoginPage() {
             <label className={styles.formLabel}>Email quản trị</label>
             <Input
               type="email"
-              placeholder="VD: admin@quanmai.com"
+              placeholder="Email (VD: admin@quanmai.com)"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}

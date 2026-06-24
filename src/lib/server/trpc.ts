@@ -26,7 +26,28 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
     profile?: AuthProfile | null; 
     headers?: Headers | null; 
   };
-  const user = ctxAuth.user ?? (await ctx.supabase.auth.getUser()).data.user;
+  let user = ctxAuth.user;
+  
+  if (!user && process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    const cookieHeader = ctxAuth.headers?.get ? ctxAuth.headers.get('cookie') : undefined;
+    if (cookieHeader) {
+      const match = cookieHeader.match(/dilinh-mock-user=([^;]+)/);
+      if (match && match[1]) {
+        try {
+          const parsed = JSON.parse(decodeURIComponent(match[1]));
+          user = {
+            id: parsed.id,
+            email: parsed.email,
+          };
+        } catch {}
+      }
+    }
+  }
+  
+  if (!user) {
+    user = (await ctx.supabase.auth.getUser()).data.user;
+  }
+
   if (!user) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Vui lòng đăng nhập' });
   }
@@ -40,6 +61,13 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
         id: user.id,
         role: roleHeader,
         display_name: user.email || 'Cached User',
+      } as AuthProfile;
+    } else if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      const userRole = (user.email?.includes('platform@') || user.email === 'admin@dlmenu.com') ? 'platform_admin' : 'shop_owner';
+      profile = {
+        id: user.id,
+        role: userRole,
+        display_name: user.email || 'Mock User',
       } as AuthProfile;
     } else {
       const { data } = await ctx.supabase

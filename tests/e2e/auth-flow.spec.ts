@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Authentication Flow & Rate Limiting', () => {
   test('Users can view landing page', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('h1')).toContainText('Quản Lý Quán');
-    await expect(page.getByText('Đăng ký dùng thử miễn phí')).toBeVisible();
+    await expect(page.locator('h1')).toContainText('Quản lý quán thông minh');
+    await expect(page.getByRole('link', { name: 'Bắt đầu miễn phí' })).toBeVisible();
   });
 
   test('Admin login successful', async ({ page }) => {

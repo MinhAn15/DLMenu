@@ -69,10 +69,19 @@ export function useAuth() {
   const signInWithEmail = async (email: string, password: string) => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       await new Promise(r => setTimeout(r, 1000));
+      // Validate credentials for testing wrong password E2E flow
+      if (email === 'admin@shop1.com' && password !== 'password123') {
+        throw new Error('Invalid login credentials');
+      }
+      if (email === 'admin@dlmenu.com' && password !== 'dlmenu2024') {
+        throw new Error('Invalid login credentials');
+      }
       // Try to find matching user or default to shop owner (index 1)
-      const foundProfile = email.includes('platform@') ? MOCK_USERS[0] : MOCK_USERS[1];
+      const foundProfile = (email.includes('platform@') || email === 'admin@dlmenu.com') ? MOCK_USERS[0] : MOCK_USERS[1];
       const fakeUser = { id: foundProfile.id, email, aud: 'authenticated', phone: foundProfile.phone } as unknown as User;
       localStorage.setItem('mock_user', JSON.stringify(fakeUser));
+      // Set the mock user cookie for server middleware validation
+      document.cookie = `dilinh-mock-user=${encodeURIComponent(JSON.stringify(fakeUser))}; path=/; max-age=86400; SameSite=Lax`;
       setUser(fakeUser);
       setProfile(foundProfile as Profile);
       return { user: fakeUser, session: {} };
@@ -106,6 +115,8 @@ export function useAuth() {
   const signOut = async () => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       localStorage.removeItem('mock_user');
+      // Clear the mock user cookie
+      document.cookie = 'dilinh-mock-user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
       setUser(null);
       setProfile(null);
       return;

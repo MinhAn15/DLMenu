@@ -7,8 +7,9 @@ test.describe('Landing Page UI & Theme Contrast Audit', () => {
     
     // 2. Verify Headline H1 contains correct texts
     const h1 = page.locator('h1');
-    await expect(h1).toContainText('Quản Lý Quán');
-    await expect(h1).toContainText('Đơn Giản & Mộc Mạc');
+    await expect(h1).toContainText('Quản lý quán thông minh');
+    await expect(h1).toContainText('Vận hành.');
+    await expect(h1).toContainText('Siêu tốc.');
 
     // 3. Verify Bento Box elements exist
     await expect(page.locator('[class*="bentoContainer"]')).toBeVisible();
@@ -30,7 +31,7 @@ test.describe('Landing Page UI & Theme Contrast Audit', () => {
       const el = document.querySelector('h1');
       return el ? window.getComputedStyle(el).color : '';
     });
-    expect(h1ColorLight).toBe('rgb(26, 26, 26)'); // Matches var(--color-text) #1A1A1A
+    expect(h1ColorLight).toBe('rgb(41, 28, 21)'); // Matches var(--color-text) #291C15
 
     await page.screenshot({ path: 'test-results/landing-page-light.png', fullPage: true });
 

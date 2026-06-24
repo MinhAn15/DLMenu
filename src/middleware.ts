@@ -32,6 +32,50 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.delete('x-user-role');
 
+  // Handle Mock Mode middleware bypass & headers replication
+  if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+    const mockUserCookie = request.cookies.get('dilinh-mock-user')?.value;
+    let userRole = 'customer';
+    let userEmail = '';
+    
+    if (mockUserCookie) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(mockUserCookie));
+        userEmail = parsed.email || '';
+        userRole = (userEmail.includes('platform@') || userEmail === 'admin@dlmenu.com') ? 'platform_admin' : 'shop_owner';
+      } catch (e) {
+        console.error('Error parsing mock user cookie in middleware:', e);
+      }
+    }
+
+    const hasUser = !!mockUserCookie;
+
+    // Protect /admin routes
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+      if (!hasUser) {
+        return NextResponse.redirect(new URL('/login', request.url));
+      }
+    }
+
+    // Protect /platform-admin
+    if (request.nextUrl.pathname.startsWith('/platform-admin')) {
+      if (!hasUser) {
+        return NextResponse.redirect(new URL('/login', request.url));
+      }
+      if (userRole !== 'platform_admin') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+    }
+
+    // Set x-user-role header so tRPC procedure knows the role
+    requestHeaders.set('x-user-role', userRole);
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+  }
+
   let response = NextResponse.next({
     request: {
       headers: requestHeaders,

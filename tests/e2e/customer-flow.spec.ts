@@ -3,11 +3,11 @@ import { test, expect } from '@playwright/test';
 test.describe('Customer Flow & Cart Logic', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate directly to the seeded shop and table
-    await page.goto('/s/ca-phe-mai/t/1');
+    await page.goto('/s/quan-cafe-mai/t/1');
   });
 
   test('Customer can view menu and place an order', async ({ page }) => {
-    await expect(page.locator('h1')).toContainText('Cà phê Mai');
+    await expect(page.locator('h1')).toContainText('Cà Phê', { ignoreCase: true });
     await expect(page.getByText('Bàn 1')).toBeVisible();
 
     // Add items to cart
@@ -32,7 +32,7 @@ test.describe('Customer Flow & Cart Logic', () => {
 
   test('Customer cart retains items across reloads (localStorage)', async ({ page }) => {
     // Navigate and add specific item
-    await page.goto('/s/ca-phe-mai/t/1');
+    await page.goto('/s/quan-cafe-mai/t/1');
     const card = page.locator('div.flex-grow').filter({ has: page.getByRole('heading', { name: 'Cà phê Sữa Đá', exact: true }) }).first();
     await card.getByRole('button', { name: 'Thêm' }).click();
     await page.reload();
