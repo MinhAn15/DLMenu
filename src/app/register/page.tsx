@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { Store } from 'lucide-react';
 
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
+import Input from '@/components/ui/Input';
 import toast from 'react-hot-toast';
+import styles from '../auth.module.css';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -61,99 +62,86 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[var(--color-primary)] opacity-5 z-0"></div>
-      
-      <div className="w-full max-w-md z-10 animate-fade-in">
-        <div className="text-center mb-8 flex flex-col items-center">
-          <Image src="/images/dilinhmenu_app_logo.png" alt="DiLinhMenu Logo" width={64} height={64} className="rounded-2xl shadow-lg mb-4 hover:scale-105 transition-transform" />
-          <h1 className="text-3xl font-heading font-bold text-[var(--color-text)] mb-2">
-            Đăng ký cửa hàng mới
-          </h1>
-          <p className="text-[var(--color-text-secondary)]">Bắt đầu dùng thử DiLinhMenu miễn phí</p>
+    <div className={styles.authPage}>
+      <div className={styles.authCard}>
+        {/* Header */}
+        <div className={styles.authHeader}>
+          <div className={styles.logoIcon}>
+            <Store size={32} strokeWidth={2.5} />
+          </div>
+          <h1 className={styles.authTitle}>Đăng ký quán mới</h1>
+          <p className={styles.authSubtitle}>Bắt đầu dùng thử DiLinhMenu miễn phí</p>
         </div>
 
-        <Card variant="glass" className="p-8 shadow-xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
-                Tên quán (Hiển thị cho khách)
-              </label>
-              <input
-                type="text"
-                name="shopName"
-                required
-                value={formData.shopName}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
-                placeholder="Ví dụ: Cà Phê Mai"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
-                Email quản trị
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
-                placeholder="admin@quancua-ban.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
-                Mật khẩu
-              </label>
-              <input
-                type="password"
-                name="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
-                placeholder="Tối thiểu 6 ký tự"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-1">
-                Xác nhận mật khẩu
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all"
-                placeholder="Nhập lại mật khẩu"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-full justify-center py-3 mt-6 shadow-md"
+        {/* Register Form */}
+        <form onSubmit={handleSubmit} className={styles.authForm}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Tên quán (Hiển thị cho khách)</label>
+            <Input
+              type="text"
+              name="shopName"
+              placeholder="VD: Cà Phê Mai"
+              value={formData.shopName}
+              onChange={handleChange}
               disabled={loading}
-            >
-              {loading ? 'Đang tạo cửa hàng...' : 'Đăng ký ngay'}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-[var(--color-text-secondary)]">
-              Đã có tài khoản?{' '}
-              <a
-                href="/login"
-                className="font-semibold text-[var(--color-primary)] hover:underline transition-all"
-              >
-                Đăng nhập
-              </a>
-            </p>
+              required
+              autoFocus
+            />
           </div>
-        </Card>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Email quản trị</label>
+            <Input
+              type="email"
+              name="email"
+              placeholder="admin@quancua-ban.com"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Mật khẩu</label>
+            <Input
+              type="password"
+              name="password"
+              placeholder="Tối thiểu 6 ký tự"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Xác nhận mật khẩu</label>
+            <Input
+              type="password"
+              name="confirmPassword"
+              placeholder="Nhập lại mật khẩu"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <div className="mt-2">
+            <Button type="submit" loading={loading} fullWidth size="lg">
+              Đăng ký ngay
+            </Button>
+          </div>
+        </form>
+
+        {/* Footer */}
+        <div className={styles.authFooter}>
+          <p>
+            Đã có tài khoản?{' '}
+            <a href="/login" className={styles.authLink}>Đăng nhập</a>
+          </p>
+        </div>
       </div>
     </div>
   );

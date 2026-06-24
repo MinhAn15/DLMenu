@@ -2,22 +2,27 @@
    DiLinhMenu — Design System (Enterprise)
    ========================================= */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  /* Brand Colors - Localized Di Linh Theme */
-  --color-primary: #8C4A26; /* Đất đỏ Bazan */
-  --color-primary-light: #A66542;
-  --color-primary-dark: #663216;
+  /* Brand Colors - Localized Di Linh Theme (F&B Premium) */
+  --color-primary: #D97706; /* Cam Nghệ / Amber 600 */
+  --color-primary-light: #F5A623;
+  --color-primary-dark: #B45309;
   --color-secondary: #2E8B57; /* Xanh Cao nguyên / Đồi chè */
   --color-secondary-light: #4CB077;
   --color-accent: #E85D4A;
   
-  /* Neutrals */
-  --color-bg: #FAFAF7;
+  /* Neutrals & F&B Premium Tones */
+  --color-bg: #FFFDF8; /* Trắng ngà / Floral White */
+  --color-hero-bg: #FFF8ED; /* Kem nhạt / Orange 50 */
   --color-surface: #FFFFFF;
   --color-surface-elevated: #FFFFFF;
-  --color-border: #E8E4E0;
-  --color-border-light: #F0ECE8;
-  --color-text: #1A1A1A;
+  --color-border: rgba(217, 119, 6, 0.15); /* Viền màu hổ phách siêu nhạt */
+  --color-border-light: rgba(217, 119, 6, 0.08);
+  --color-text: #291C15; /* Nâu Espresso cực đậm */
   --color-text-secondary: #6B6B6B;
   --color-text-muted: #9B9B9B;
 
@@ -63,11 +68,11 @@
   --radius-xl: 1rem;
   --radius-full: 9999px;
 
-  /* Shadows (Softer, Premium) */
-  --shadow-sm: 0 2px 8px rgba(140, 74, 38, 0.04);
-  --shadow-md: 0 4px 16px rgba(140, 74, 38, 0.08);
-  --shadow-lg: 0 8px 32px rgba(140, 74, 38, 0.12);
-  --shadow-xl: 0 32px 48px -12px rgba(0,0,0,0.1), 0 16px 24px -12px rgba(0,0,0,0.06);
+  /* Shadows (Softer, Premium F&B) */
+  --shadow-sm: 0 2px 8px rgba(217, 119, 6, 0.04);
+  --shadow-md: 0 4px 16px rgba(217, 119, 6, 0.08);
+  --shadow-lg: 0 8px 32px rgba(217, 119, 6, 0.12);
+  --shadow-xl: 0 25px 50px -12px rgba(217, 119, 6, 0.15), 0 10px 15px -3px rgba(217, 119, 6, 0.05);
 
   /* Glassmorphism */
   --glass-bg: rgba(255, 255, 255, 0.75);
@@ -136,7 +141,7 @@ img {
 
 /* Background Gradient for Body */
 .bg-gradient {
-  background: linear-gradient(135deg, #FFF9F2 0%, #FAEDDF 50%, #F5F7FA 100%);
+  background: linear-gradient(135deg, #FFFDF8 0%, #FFF8ED 50%, #F5F7FA 100%);
   background-attachment: fixed;
   transition: background var(--transition-slow);
 }
@@ -169,11 +174,21 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 /* Interactive Micro-animations */
 .hover-lift {
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .hover-lift:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+}
+
+/* Hide Scrollbar Utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .active-press {

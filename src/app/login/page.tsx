@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import toast from 'react-hot-toast';
-import styles from './page.module.css';
+import styles from '../auth.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,53 +52,55 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={styles.loginPage}>
-      {/* Decorative coffee beans */}
-      <div className={styles.beans}>
-        <span className={styles.bean}>☕</span>
-        <span className={styles.bean}>☕</span>
-        <span className={styles.bean}>☕</span>
-        <span className={styles.bean}>☕</span>
-        <span className={styles.bean}>☕</span>
-      </div>
-
-      <div className={styles.card}>
-        {/* Logo */}
-        <div className={styles.logo}>
-          <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary)] flex items-center justify-center text-white shadow-md mx-auto mb-4">
-            <Coffee size={32} />
+    <div className={styles.authPage}>
+      <div className={styles.authCard}>
+        {/* Header */}
+        <div className={styles.authHeader}>
+          <div className={styles.logoIcon}>
+            <Coffee size={32} strokeWidth={2.5} />
           </div>
-          <h1 className={styles.logoTitle}>
-            DiLinh<span className={styles.logoAccent}>Menu</span>
-          </h1>
-          <p className={styles.logoSubtitle}>Dành cho Chủ quán & Đối tác</p>
+          <h1 className={styles.authTitle}>Chào mừng trở lại</h1>
+          <p className={styles.authSubtitle}>Đăng nhập để quản lý quán của bạn</p>
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <Input
-            type="email"
-            placeholder="Nhập Email (VD: admin@quanmai.com)"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-            autoFocus
-          />
-          <Input
-            type="password"
-            placeholder="Nhập Mật khẩu"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
-          <Button type="submit" loading={loading} fullWidth size="lg">
-            Đăng nhập
-          </Button>
+        <form onSubmit={handleEmailLogin} className={styles.authForm}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Email quản trị</label>
+            <Input
+              type="email"
+              placeholder="VD: admin@quanmai.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              autoFocus
+            />
+          </div>
+          
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Mật khẩu</label>
+            <Input
+              type="password"
+              placeholder="Nhập mật khẩu"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+
+          <div className="mt-2">
+            <Button type="submit" loading={loading} fullWidth size="lg">
+              Đăng nhập
+            </Button>
+          </div>
         </form>
 
         {/* Footer */}
-        <div className={styles.footer}>
-          <p>© 2024 DiLinhMenu. Nền tảng quản lý quán thông minh.</p>
+        <div className={styles.authFooter}>
+          <p>
+            Chưa có tài khoản?{' '}
+            <a href="/register" className={styles.authLink}>Đăng ký ngay</a>
+          </p>
         </div>
       </div>
     </div>

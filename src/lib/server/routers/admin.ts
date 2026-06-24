@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, adminProcedure } from '../trpc';
-import { slugSchema } from '@dilinh/validation';
+// import { slugSchema } from '@dilinh/validation';
 
 export const adminRouter = router({
   createShop: adminProcedure
-    .input(z.object({ name: z.string().min(1).max(200), slug: slugSchema }))
+    .input(z.object({ name: z.string().min(1).max(200), slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/) }))
     .mutation(async ({ ctx, input }) => {
       const { data: { user } } = await ctx.supabase.auth.getUser();
 

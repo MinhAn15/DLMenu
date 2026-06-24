@@ -69,8 +69,9 @@ export function useAuth() {
   const signInWithEmail = async (email: string, password: string) => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       await new Promise(r => setTimeout(r, 1000));
-      const foundProfile = MOCK_USERS[0];
-      const fakeUser = { id: foundProfile.id, email, aud: 'authenticated' } as unknown as User;
+      // Try to find matching user or default to shop owner (index 1)
+      const foundProfile = email.includes('platform@') ? MOCK_USERS[0] : MOCK_USERS[1];
+      const fakeUser = { id: foundProfile.id, email, aud: 'authenticated', phone: foundProfile.phone } as unknown as User;
       localStorage.setItem('mock_user', JSON.stringify(fakeUser));
       setUser(fakeUser);
       setProfile(foundProfile as Profile);

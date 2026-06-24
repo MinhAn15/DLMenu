@@ -56,18 +56,27 @@ export default function AdminDashboardPage() {
   const recentOrders = orders.slice(0, 8);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', maxWidth: '1200px', margin: '0 auto' }}>
-      <div>
-        <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: '#111' }}>
-          Xin chào, {shop?.name || 'Admin'} 👋
-        </h1>
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
-          Cập nhật lúc {new Date().toLocaleTimeString('vi-VN')}
-        </p>
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 font-heading">
+            Xin chào, {shop?.name || 'Admin'} 👋
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Cập nhật lúc {new Date().toLocaleTimeString('vi-VN')}
+          </p>
+        </div>
+        <div className="bg-amber-50 text-amber-700 px-4 py-2 rounded-lg text-sm font-medium border border-amber-100 flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+          </span>
+          Hệ thống đang hoạt động
+        </div>
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'var(--space-4)' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="Doanh thu hôm nay" value={formatVND(todayRevenue)} icon="💰" />
         <StatCard title="Đơn hôm nay" value={String(todayOrders.length)} icon="🛒" />
         <StatCard title="Đang xử lý" value={String(pendingOrders.length)} icon="⏳" />

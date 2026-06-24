@@ -45,6 +45,24 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   const [orderResult, setOrderResult] = useState<{ orderNumber: string; total: number; status: string; paymentMethod: string } | null>(null);
   const [lastPaymentMethod, setLastPaymentMethod] = useState('cash');
 
+  const createOrderMutation = trpc.order.create.useMutation({
+    onSuccess: (data) => {
+      clearCart();
+      setIsCartOpen(false);
+      setOrderResult({
+        orderNumber: data.order_number,
+        total: data.total,
+        status: 'pending',
+        paymentMethod: lastPaymentMethod,
+      });
+      toast.success(t('customer.order.success'));
+    },
+    onError: (err) => {
+      toast.error(err.message || t('customer.order.error'));
+    },
+    onSettled: () => setIsCheckingOut(false),
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--color-bg)]">
@@ -103,23 +121,6 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
     ? resolveDiscount(subtotal, membership.rank, shop.loyalty_config, promotions)
     : { discountAmount: 0, discountType: null, discountLabel: null };
 
-  const createOrderMutation = trpc.order.create.useMutation({
-    onSuccess: (data) => {
-      clearCart();
-      setIsCartOpen(false);
-      setOrderResult({
-        orderNumber: data.order_number,
-        total: data.total,
-        status: 'pending',
-        paymentMethod: lastPaymentMethod,
-      });
-      toast.success(t('customer.order.success'));
-    },
-    onError: (err) => {
-      toast.error(err.message || t('customer.order.error'));
-    },
-    onSettled: () => setIsCheckingOut(false),
-  });
 
   const handleCheckoutClick = async (paymentMethod: string, customerNote: string = '') => {
     // Bỏ qua check login cho phép order ẩn danh (demo)

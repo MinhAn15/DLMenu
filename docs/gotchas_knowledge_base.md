@@ -26,6 +26,12 @@ Tài liệu này lưu trữ các kinh nghiệm (Gotchas) và những vấn đề
 - **Vấn đề:** Grid thẻ món ăn (Customer Menu) hoặc Quản lý Đơn hàng (Admin Orders) thường mặc định `flex-col` (1 cột), khiến PC có màn hình rộng bị kéo giãn nút và ảnh rất to.
 - **Cách khắc phục:** Luôn định nghĩa grid đa phân giải: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4`.
 
+### 2.3 Abstract UI Design Pattern (Tránh lạm dụng ảnh lớn trên Landing Page)
+- **Vấn đề:** Các trang giới thiệu (Landing Page) thường dùng ảnh chụp màn hình (PNG/JPG/WebP) hoặc GIF độ phân giải cao để mô tả sản phẩm. Điều này làm tăng thời gian tải trang đáng kể và bị mờ/vỡ hạt trên các màn hình Retina hoặc thiết bị kích thước dị (Ultrawide, Mobile nhỏ).
+- **Cách khắc phục (Best Practice):** Áp dụng pattern **"Abstract UI"** — sử dụng thuần CSS Modules (Flexbox, Gradients, Shadows) kết hợp `framer-motion` để "vẽ" lại giao diện giả lập (Mockup).
+  - Ưu điểm: Dung lượng tải cực nhẹ (chỉ vài KB thay vì vài MB), sắc nét vô hạn (Vector/CSS-based), và có thể gắn các hiệu ứng hover/ping/slide độc lập cho từng thành phần con trong ảnh.
+  - Áp dụng: Đã áp dụng thành công cho phần `LiveDemoBento` và `InteractiveStepper`.
+
 ## 3. Business Logic & Supabase RLS Gotchas
 
 ### 3.1 Customer Notes (Ghi chú đơn hàng)

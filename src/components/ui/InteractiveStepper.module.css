@@ -1,32 +1,25 @@
 .container {
-  max-width: 1024px;
+  max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
   align-items: center;
   width: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .container {
-    flex-direction: row;
-    gap: 4rem;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem;
   }
 }
 
-/* Left: Tabs List */
 .tabsList {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-@media (min-width: 768px) {
-  .tabsList {
-    width: 41.666667%;
-  }
 }
 
 .tabItem {
@@ -44,9 +37,9 @@
 }
 
 .tabItemActive {
-  background-color: white;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  border-color: #f1f5f9;
+  background-color: rgba(245, 166, 35, 0.04);
+  box-shadow: none;
+  border-color: rgba(245, 166, 35, 0.08);
 }
 
 .progressLine {
@@ -126,11 +119,11 @@
 .mockupWindow {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 450px;
-  background-color: #f8fafc;
+  max-height: 500px;
+  background-color: #FFFDF8;
   border-radius: 2rem;
-  border: 1px solid #f1f5f9;
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(217, 119, 6, 0.15);
+  box-shadow: inset 0 2px 4px 0 rgba(217, 119, 6, 0.05);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -147,7 +140,6 @@
 
 @media (min-width: 768px) {
   .mockupWindow {
-    width: 58.333333%;
     aspect-ratio: 1 / 1;
   }
 }
@@ -639,7 +631,7 @@
 
 .m3Body {
   padding: 0.75rem;
-  background-color: #f8fafc;
+  background-color: #FFFDF8;
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
