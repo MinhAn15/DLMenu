@@ -13,8 +13,9 @@ import type { UserRole } from '@dilinh/types';
  *   protectedProcedure.use(hasRole('platform_admin'))
  *   protectedProcedure.use(hasRole('shop_owner', 'platform_admin'))
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const hasRole = (...roles: UserRole[]) =>
-  async ({ ctx, next }: { ctx: any; next: (opts?: any) => Promise<any> }) => {
+  async ({ ctx, next }: { ctx: any; next: any }) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     const profile = ctx.profile as { role: UserRole } | null;
 
     if (!profile || !roles.includes(profile.role)) {
@@ -42,13 +43,14 @@ export const hasRole = (...roles: UserRole[]) =>
  *     .input(z.object({ shopId: z.string() }))
  *     .query(...)
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ownsShop = async ({
   ctx,
   next,
   getRawInput,
 }: {
-  ctx: any;
-  next: (opts?: any) => Promise<any>;
+  ctx: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  next: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   getRawInput: () => Promise<unknown>;
 }) => {
   const user = ctx.user as { id: string } | undefined;

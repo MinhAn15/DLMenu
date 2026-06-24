@@ -170,7 +170,7 @@ export default function PlatformMenuPage() {
             <label className="block text-sm font-semibold text-gray-600 mb-1">Chọn quán đích</label>
             <select value={cloneTargetShop} onChange={e => setCloneTargetShop(e.target.value)} className="w-full p-3 border border-gray-200 rounded-lg text-sm bg-white cursor-pointer">
               <option value="">-- Chọn quán --</option>
-              {(shops as any[]).filter(s => s.status === 'active' || s.is_active).map(s => (
+              {(shops as { id: string; name: string; status?: string; is_active?: boolean }[]).filter(s => s.status === 'active' || s.is_active).map(s => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>

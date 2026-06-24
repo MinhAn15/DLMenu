@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, shop: shopData });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Registration Error:', error);
     return NextResponse.json({ error: 'Lỗi hệ thống nội bộ' }, { status: 500 });
   }

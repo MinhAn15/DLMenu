@@ -39,8 +39,8 @@ export default function CustomerAuthModal({ isOpen, onClose, onSuccess }: Custom
       }
       onSuccess();
       onClose();
-    } catch (error: any) {
-      toast.error(error.message || 'Có lỗi xảy ra');
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Có lỗi xảy ra');
     } finally {
       setLoading(false);
     }

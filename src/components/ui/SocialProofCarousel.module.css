@@ -1,0 +1,86 @@
+.carouselContainer {
+  position: relative;
+  width: 100vw;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 2rem 0;
+  margin-left: calc(-50vw + 50%); /* Full bleed trick */
+  margin-right: calc(-50vw + 50%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(248, 250, 252, 0.5) 100%);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.carouselTrack {
+  display: flex;
+  width: max-content;
+  gap: 2rem;
+  animation: scroll 40s linear infinite;
+  padding: 0 1rem;
+}
+
+.carouselTrack:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 1rem));
+  }
+}
+
+.card {
+  width: 320px;
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05), 0 0 1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background: #f1f5f9;
+}
+
+.cardContent {
+  padding: 1.25rem;
+}
+
+.merchantName {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.rating {
+  display: flex;
+  gap: 2px;
+}
+
+.merchantType {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+.review {
+  font-size: 0.9375rem;
+  color: #475569;
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0;
+}

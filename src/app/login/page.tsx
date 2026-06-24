@@ -39,8 +39,8 @@ export default function LoginPage() {
       await signInWithEmail(email, password);
       toast.success('Đăng nhập thành công!');
       // Redirection is handled by useEffect when profile is loaded
-    } catch (error: any) {
-      const errMsg = error.message;
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : 'Đã xảy ra lỗi khi đăng nhập';
       if (errMsg === 'Invalid login credentials') {
         toast.error('Tài khoản hoặc mật khẩu không chính xác');
       } else {

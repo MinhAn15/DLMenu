@@ -85,7 +85,7 @@ export const shopRouter = router({
         address: z.string().max(500).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const updates: Record<string, any> = { name: input.name, updated_at: new Date().toISOString() };
+        const updates: Record<string, string | number | boolean | null> = { name: input.name, updated_at: new Date().toISOString() };
         if (input.description !== undefined) updates.description = input.description;
         if (input.phone !== undefined) updates.phone = input.phone;
         if (input.address !== undefined) updates.address = input.address;
@@ -111,7 +111,7 @@ export const shopRouter = router({
         const bankInfo = input.bankId && input.accountNo
           ? { bank_id: input.bankId, account_no: input.accountNo, account_name: input.accountName }
           : undefined;
-        const themeConfig: any = { primary_color: input.primaryColor, font: input.font || 'Inter' };
+        const themeConfig: Record<string, unknown> = { primary_color: input.primaryColor, font: input.font || 'Inter' };
         if (bankInfo) themeConfig.bank_info = bankInfo;
         const { error } = await ctx.supabase
           .from('shops')
@@ -239,6 +239,7 @@ export const shopRouter = router({
           if (itemsError) throw new Error(itemsError.message);
 
           const itemCounts: Record<string, number> = {};
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           orderItems.forEach((item: any) => {
             const itemName = item.menu_items?.name;
             if (itemName) {
@@ -256,8 +257,8 @@ export const shopRouter = router({
             revenueChart: revenueChartData,
             topItems: topItemsData,
           };
-        } catch (error: any) {
-          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error.message });
+        } catch (error: unknown) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: error instanceof Error ? error.message : 'Unknown error' });
         }
       }),
   }),

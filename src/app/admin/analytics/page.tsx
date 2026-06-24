@@ -16,7 +16,6 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  Legend
 } from 'recharts';
 
 export default function AnalyticsPage() {
@@ -140,8 +139,8 @@ export default function AnalyticsPage() {
                   axisLine={false} 
                   width={60}
                 />
-                <Tooltip 
-                  formatter={(value: any) => [formatVND(value || 0), 'Doanh thu']}
+                <Tooltip
+                  formatter={(value) => [formatVND(Number(value) || 0), 'Doanh thu'] as [string, string]}
                   labelStyle={{color: '#111', fontWeight: 'bold'}}
                   contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
                 />
@@ -165,7 +164,7 @@ export default function AnalyticsPage() {
                   <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#333', fontWeight: 500}} width={120} />
                   <Tooltip 
                     cursor={{fill: '#f3f4f6'}}
-                    formatter={(value: any) => [value || 0, 'Đã bán']}
+                    formatter={(value) => [Number(value) || 0, 'Đã bán'] as [number | string, string]}
                     contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
                   />
                   <Bar dataKey="sold" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={32} />

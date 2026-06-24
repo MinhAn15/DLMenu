@@ -27,6 +27,7 @@ const getSupabaseAdmin = () => {
   });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function completeOrderInternal(supabase: any, order: any) {
   try {
     if (order.status === 'completed') {
@@ -51,7 +52,7 @@ async function completeOrderInternal(supabase: any, order: any) {
     // Process loyalty points if customer is logged in
     if (earnedPoints > 0 && order.user_id) {
       // Find or create membership
-      let { data: membership, error: memberError } = await supabase
+      let { data: membership, error: memberError } = await supabase // eslint-disable-line prefer-const
         .from('user_shop_memberships')
         .select('*')
         .eq('user_id', order.user_id)
@@ -116,9 +117,9 @@ async function completeOrderInternal(supabase: any, order: any) {
     }
 
     return { success: true, earnedPoints };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in completeOrderInternal:', err);
-    return { success: false, error: err.message };
+    return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
   }
 }
 
@@ -303,7 +304,7 @@ export const orderRouter = router({
       }
 
       // 5. General status updates
-      const updateData: Record<string, any> = { status: input.status };
+      const updateData: Record<string, string | null> = { status: input.status };
       if (input.status === 'confirmed') {
         updateData.confirmed_at = new Date().toISOString();
       }

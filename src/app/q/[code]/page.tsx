@@ -31,6 +31,5 @@ export default async function QrRedirectPage({ params }: { params: { code: strin
   }
 
   // Redirect to the shop's table page
-  // @ts-ignore
   redirect(`/s/${table.shops.slug}/t/${table.table_number}`);
 }

@@ -33,7 +33,32 @@ Moved all remaining Server Actions to tRPC: created `shopRouter` (promotions, se
 - Branch: `main`
 - Latest: `9789c15` — refactor: migrate admin/settings, tables, analytics, orders, kds to tRPC
 
+---
+
+## [2026-06-24] Session #8 — Security Fixes + Full SA Cleanup (OpenCode)
+
+### Summary
+Fixed 2 critical security vulnerabilities and completed full Server Action migration. Removed all SA files from `src/lib/actions/`. Added `adminRouter.createShop` for shop onboarding. **73 tests pass, build OK, zero TS errors.**
+
+### Committed this session
+
+| Feature | Details | Tests | Commit |
+|---|---|---|---|
+| Security fix: customerOrder.ts | Migrated `createCustomerOrder` to `orderRouter.create` (publicProcedure). Removed `SUPABASE_SERVICE_ROLE_KEY` from client-side code. | — | `156ac0f` |
+| Security fix: middleware.ts HMAC | Removed fallback to public `SUPABASE_ANON_KEY`. Now throws if `SUPABASE_SERVICE_ROLE_KEY` is unset. Fail-fast = no auth bypass. | — | `156ac0f` |
+| adminRouter.createShop | Added `adminRouter.createShop` procedure + migrated `OnboardingPrompt.tsx` to `trpc.admin.createShop` | — | `156ac0f` |
+| SA cleanup | Deleted all files in `src/lib/actions/`: `shop.ts`, `tables.ts`, `analytics.ts`, `orderAdmin.ts`, `customerOrder.ts`, `shopAdmin.ts` | — | `156ac0f` |
+
+### Server Actions Remaining
+- **NONE** — `src/lib/actions/` is now empty (all SA migrated or deleted)
+- Auth operations (Supabase SDK) remain in `src/lib/supabase/` — by design per rule §5.3
+
+### Git State
+- Branch: `main`
+- Latest: `156ac0f` — security: fix 2 critical vulnerabilities
+
 ### Next Steps
-- Customer order migration (`customerOrder.ts` → possibly extend `orderRouter`)
-- GitHub Actions CI/CD pipeline
+- ESLint cleanup (81 errors + 43 warnings — `no-explicit-any`, `set-state-in-effect`, `no-unescaped-entities`)
+- i18n deduplication (Admin/Admin + Customer/Customer sections in messages vi/en)
+- GitHub Actions CI/CD pipeline (`workflow_audit.md` reference)
 - E2E test expansion

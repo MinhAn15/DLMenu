@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
                 <YAxis tickFormatter={(val) => `${val / 1000}k`} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
                 <RechartsTooltip 
-                  formatter={(value: any) => [formatVND(Number(value) || 0), 'Doanh thu']}
+                  formatter={(value) => [formatVND(Number(value) || 0), 'Doanh thu'] as [string, string]}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-lg)', backdropFilter: 'blur(8px)', background: 'rgba(255, 255, 255, 0.9)' }}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="var(--color-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />

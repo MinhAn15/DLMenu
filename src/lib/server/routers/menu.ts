@@ -40,7 +40,7 @@ export const menuRouter = router({
   updateCategory: shopOwnerProcedure
     .input(updateCategorySchema)
     .mutation(async ({ ctx, input }) => {
-      const dbUpdates: Record<string, any> = {};
+      const dbUpdates: Record<string, string | number | boolean | null> = {};
       if (input.name !== undefined) dbUpdates.name = input.name;
       if (input.description !== undefined) dbUpdates.description = input.description;
       if (input.isActive !== undefined) dbUpdates.is_active = input.isActive;
@@ -116,7 +116,7 @@ export const menuRouter = router({
       isFeatured: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const dbUpdates: Record<string, any> = {};
+      const dbUpdates: Record<string, string | number | boolean | null> = {};
       if (input.name !== undefined) dbUpdates.name = input.name;
       if (input.categoryId !== undefined) dbUpdates.category_id = input.categoryId;
       if (input.price !== undefined) dbUpdates.price = input.price;

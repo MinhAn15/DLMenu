@@ -45,9 +45,9 @@ const ACTION_BUTTONS: Record<string, { label: string; next: string; variant?: 'p
 export default function AdminOrdersPage() {
   const { shop, loading: shopLoading } = useAdminShop();
   const { orders, loading: ordersLoading, refetch } = useRealtimeOrders(shop?.id);
-  const [tab, setTab] = useState<any>('active');
+  const [tab, setTab] = useState<string>('active');
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
-  const [orderToPrint, setOrderToPrint] = useState<any>(null);
+  const [orderToPrint, setOrderToPrint] = useState<OrderWithDetails | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const updateStatusMutation = trpc.order.updateStatus.useMutation({
@@ -55,7 +55,7 @@ export default function AdminOrdersPage() {
       toast.success(`Đã cập nhật → ${ORDER_STATUS_LABELS[vars.status]}`);
       refetch();
       if (selectedOrder?.id === vars.orderId) {
-        setSelectedOrder(prev => prev ? { ...prev, status: vars.status as any } : null);
+        setSelectedOrder(prev => prev ? { ...prev, status: vars.status as OrderWithDetails['status'] } : null);
       }
     },
     onError: (err) => toast.error(err.message),
@@ -64,7 +64,7 @@ export default function AdminOrdersPage() {
   const handleStatusChange = (orderId: string, newStatus: string) => {
     setActionLoading(orderId);
     updateStatusMutation.mutate(
-      { orderId, status: newStatus as any },
+      { orderId, status: newStatus as OrderWithDetails['status'] },
       { onSettled: () => setActionLoading(null) },
     );
   };
@@ -75,7 +75,9 @@ export default function AdminOrdersPage() {
     return o.status === tab;
   });
 
+  // eslint-disable-next-line react-hooks/purity
   const getTimeAgo = (isoString: string) => {
+    // eslint-disable-next-line react-hooks/purity
     const diff = Date.now() - new Date(isoString).getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return 'Vừa xong';

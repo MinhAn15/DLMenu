@@ -3,17 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { formatVND, formatDate } from '@/lib/utils/format';
-import type { Order, OrderItem } from '@/lib/types/database';
+import type { OrderItem } from '@/lib/types/database';
 
 interface PrintableReceiptProps {
-  order: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  order: Record<string, any>;
   shopName: string;
 }
 
 export default function PrintableReceipt({ order, shopName }: PrintableReceiptProps) {
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     return () => setMounted(false);
   }, []);
@@ -47,7 +50,7 @@ export default function PrintableReceipt({ order, shopName }: PrintableReceiptPr
             </tr>
           </thead>
           <tbody>
-            {order.order_items?.map((item: any, idx: number) => (
+            {order.order_items?.map((item: OrderItem & { menu_items?: { name: string } | null }, idx: number) => (
               <tr key={idx}>
                 <td style={{ paddingBottom: '4px' }}>
                   <div style={{ fontWeight: 'bold' }}>{item.menu_items?.name || 'Món'}</div>

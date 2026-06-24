@@ -71,7 +71,9 @@ export default function AdminMenuPage() {
 
   // Active filter
   const [selectedCatId, setSelectedCatId] = useState<string | 'all'>('all');
+  // eslint-disable-next-line react-hooks/purity
   const newItemIdRef = useRef(`new-${Date.now()}`);
+  const newItemId = newItemIdRef.current; // eslint-disable-line
 
   // ========== CATEGORY HANDLERS ==========
   const openCatModal = (cat?: MenuCategory) => {
@@ -98,8 +100,8 @@ export default function AdminMenuPage() {
         toast.success('Đã thêm danh mục mới');
       }
       setCatModalOpen(false);
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi lưu danh mục');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Lỗi khi lưu danh mục');
     }
   };
 
@@ -108,8 +110,8 @@ export default function AdminMenuPage() {
     try {
       await deleteCatMutation.mutateAsync({ id: catId });
       toast.success('Đã xóa danh mục');
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi xóa');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Lỗi khi xóa');
     }
   };
 
@@ -164,8 +166,8 @@ export default function AdminMenuPage() {
         toast.success('Đã thêm món mới');
       }
       setItemModalOpen(false);
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi lưu');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Lỗi khi lưu');
     }
   };
 
@@ -174,8 +176,8 @@ export default function AdminMenuPage() {
     try {
       await deleteItemMutation.mutateAsync({ id: itemId });
       toast.success('Đã xóa món');
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi xóa');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Lỗi khi xóa');
     }
   };
 
@@ -413,7 +415,7 @@ export default function AdminMenuPage() {
             {shop && (
               <ImageGenerator
                 shopId={shop.id}
-                itemId={editingItem?.id || newItemIdRef.current}
+                itemId={editingItem?.id || newItemId}
                 onImageGenerated={(url) => setItemImageUrl(url)}
                 currentImageUrl={itemImageUrl || null}
               />

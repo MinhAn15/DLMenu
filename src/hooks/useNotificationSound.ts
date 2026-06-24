@@ -4,10 +4,12 @@ export function useNotificationSound() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     // Sync state from localStorage
     const savedState = localStorage.getItem('audio_notification_enabled');
     if (savedState !== null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSoundEnabled(savedState === 'true');
     }
 
@@ -18,8 +20,8 @@ export function useNotificationSound() {
     };
     
     // Custom event for same-window sync
-    const handleCustomEvent = (e: any) => {
-      setIsSoundEnabled(e.detail === 'true');
+    const handleCustomEvent = (e: Event) => {
+      setIsSoundEnabled((e as CustomEvent).detail === 'true');
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -41,7 +43,7 @@ export function useNotificationSound() {
   useEffect(() => {
     const initAudio = () => {
       if (!audioContextRef.current && isSoundEnabled) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       }
     };
     

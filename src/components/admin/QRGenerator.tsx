@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -14,7 +14,6 @@ interface QRGeneratorProps {
 
 export default function QRGenerator({ shortCode, shopName, tableNumber, hideDownload }: QRGeneratorProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // In production, this URL points to the QR router: /q/[code]
   const targetUrl = typeof window !== 'undefined' 

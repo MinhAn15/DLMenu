@@ -31,7 +31,7 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Vui lòng đăng nhập' });
   }
 
-  const roleHeader = ctxAuth.headers?.get ? ctxAuth.headers.get('x-user-role') : (ctxAuth.headers as any)?.['x-user-role'];
+  const roleHeader = ctxAuth.headers?.get ? ctxAuth.headers.get('x-user-role') : undefined;
   let profile = ctxAuth.profile;
 
   if (!profile) {

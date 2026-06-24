@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useShopContext } from '@/hooks/useShopContext';
 import { trpc } from '@/lib/trpc/client';
-import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
@@ -21,7 +20,9 @@ export default function PlatformShopsPage() {
   const [shops, setShops] = useState<Shop[]>([]);
 
   // Update local state when dbShops changes
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (dbShops.length > 0) setShops(dbShops);
   }, [dbShops]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -181,7 +182,7 @@ export default function PlatformShopsPage() {
           <Input placeholder="Địa chỉ" value={formAddress} onChange={e => setFormAddress(e.target.value)} />
           <div>
             <label className="block text-sm font-semibold text-gray-600 mb-1">Gói cước</label>
-            <select value={formTier} onChange={e => setFormTier(e.target.value as any)} className="w-full p-3 border border-gray-200 rounded-lg text-sm font-medium bg-white cursor-pointer">
+            <select value={formTier} onChange={e => setFormTier(e.target.value as 'free' | 'pro' | 'premium')} className="w-full p-3 border border-gray-200 rounded-lg text-sm font-medium bg-white cursor-pointer">
               <option value="free">Free</option>
               <option value="pro">Pro</option>
               <option value="premium">Premium</option>

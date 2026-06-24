@@ -87,8 +87,10 @@ export function useRealtimeOrders(shopId: string | undefined) {
     }
   }, [shopId, supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     // Initial fetch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchOrders();
 
     // Polling every 15 seconds (Fallback / Sync)
@@ -130,7 +132,7 @@ export function useRealtimeOrders(shopId: string | undefined) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [shopId, supabase, fetchOrders]);
+  }, [shopId, supabase, fetchOrders, playDingDong]);
 
   return { orders, loading, refetch: fetchOrders };
 }

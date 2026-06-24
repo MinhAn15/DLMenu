@@ -5,60 +5,45 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Rocket, Smartphone, Trophy, ChartBar, Coffee, Beer, CupSoda, Soup, QrCode } from 'lucide-react';
-
-const steps = [
-  {
-    num: '1',
-    title: 'Khách quét QR tại bàn',
-    desc: 'Không cần tải App, khách quét mã QR để mở Menu tức thì.',
-  },
-  {
-    num: '2',
-    title: 'Chọn món & Tích điểm',
-    desc: 'Trải nghiệm chọn món cực mượt, tự động nhận biết khách quen để tích điểm.',
-  },
-  {
-    num: '3',
-    title: 'Quán nhận đơn ngay lập tức',
-    desc: 'Đơn hàng tự động báo về Dashboard quản lý, không lo nhầm món hay sót bill.',
-  },
-];
+import { LiveDemoBento } from '@/components/ui/LiveDemoBento';
+import { SocialProofCarousel } from '@/components/ui/SocialProofCarousel';
+import { InteractiveStepper } from '@/components/ui/InteractiveStepper';
 
 const features = [
   {
     icon: <Trophy size={24} />,
     className: 'featAmber',
-    title: 'Tích Điểm Tự Động',
-    desc: 'Tích điểm theo Số điện thoại, tự động lên hạng thành viên. Giữ chân khách hàng quay lại quán liên tục.'
+    title: 'Chương Trình Thành Viên',
+    desc: 'Thay thế thẻ giấy truyền thống bằng hệ thống tích điểm điện tử. Khuyến khích khách hàng quay lại thường xuyên bằng các hạng mức ưu đãi.'
   },
   {
     icon: <Smartphone size={24} />,
     className: 'featIndigo',
-    title: 'Quét Là Dùng',
-    desc: 'Menu hoạt động siêu mượt, khách chỉ cần quét mã là gọi món, không bắt ép khách phải tải App rườm rà.'
+    title: 'Trải Nghiệm Mượt Mà',
+    desc: 'Giao diện gọi món tối ưu hóa cho mọi thiết bị di động. Giảm tải áp lực cho nhân viên phục vụ trong các khung giờ cao điểm.'
   },
   {
     icon: <ChartBar size={24} />,
     className: 'featGreen',
-    title: 'Dashboard Quản Trị',
-    desc: 'Báo cáo doanh thu, món bán chạy, quản lý đơn hàng ngay lập tức. Mọi thứ trên một màn hình duy nhất.'
+    title: 'Báo Cáo Trực Quan',
+    desc: 'Kiểm soát số lượng đơn, mặt hàng bán chạy và biến động doanh thu theo thời gian thực từ bất kỳ đâu, ngay trên điện thoại.'
   }
 ];
 
 const pricing = [
   {
-    name: 'Gói Mở Quán (Miễn phí mãi mãi)',
+    name: 'Gói Cơ Bản (Miễn phí)',
     price: '0₫',
     period: '/tháng',
-    features: ['Quản lý 1 cửa hàng', 'Tối đa 5 bàn', 'Menu không giới hạn', 'Tích điểm cơ bản', 'Mã QR đặt món tiêu chuẩn'],
+    features: ['Phù hợp quán quy mô nhỏ', 'Tối đa 5 bàn', 'Thực đơn không giới hạn', 'Tích điểm cơ bản', 'Mã QR đặt món tiêu chuẩn'],
     popular: false,
-    cta: 'Bắt đầu miễn phí ngay',
+    cta: 'Bắt đầu miễn phí',
   },
   {
     name: 'Gói Chuyên Nghiệp',
     price: '299.000₫',
     period: '/tháng',
-    features: ['Quản lý 1 cửa hàng', 'Số bàn không giới hạn', 'Tùy biến thương hiệu', 'Khuyến mãi nâng cao (Flash sale, v.v)', 'Báo cáo doanh thu chi tiết', 'Hỗ trợ kỹ thuật 24/7'],
+    features: ['Quản lý bàn không giới hạn', 'Tùy biến nhận diện thương hiệu', 'Khuyến mãi & Voucher', 'Báo cáo doanh thu chi tiết', 'Hỗ trợ kỹ thuật 24/7'],
     popular: true,
     cta: 'Đăng ký ngay',
   },
@@ -92,17 +77,17 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className={styles.badge}><Coffee size={16} /> Thiết kế riêng cho Di Linh</div>
+            <div className={styles.badge}><Coffee size={16} /> Phát triển dành riêng cho quán tại Di Linh</div>
             <h1 className={`${styles.title} max-w-2xl`}>
               Quản Lý Quán <span className="block md:inline">&nbsp;</span>
-              <span className={styles.accent}>Đơn Giản & Mộc Mạc</span>
+              <span className={styles.accent}>Chuyên Nghiệp & Đơn Giản</span>
             </h1>
             <p className={`${styles.subtitle} max-w-xl`}>
-              Giải pháp quản lý quán cà phê, nhà hàng được thiết kế riêng cho người Di Linh. Đơn giản, mộc mạc, hiệu quả ngay trong ngày đầu. Tích hợp QR gọi món & Tích điểm thông minh.
+              Tối ưu hóa quy trình bán hàng với mã QR. Đơn hàng đồng bộ trực tiếp về quầy pha chế, doanh thu cập nhật tức thời trên điện thoại di động. Giải pháp đáng tin cậy giúp bạn vận hành dễ dàng hơn.
             </p>
             <div className={styles.ctas}>
               <Link href="/register" className={styles.ctaPrimary}>
-                Đăng ký dùng thử miễn phí
+                Bắt đầu miễn phí
               </Link>
               <a href="#how-it-works" className={styles.ctaSecondary}>
                 Xem cách hoạt động
@@ -117,112 +102,34 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           >
             {/* Removed mockupWrapper constraint to allow Bento Box to expand fully */}
-            <div className={styles.bentoContainer}>
-              
-              {/* 1. Large Card: Dashboard (2x2) */}
-              <div className={`${styles.bentoCard} ${styles.span2Cols} ${styles.span2Rows}`}>
-                <div className={styles.bentoLargeHeader}>
-                  <div>
-                    <h3 className={styles.bentoTitle}>Đơn hàng mới</h3>
-                    <p className={styles.bentoSubtitle}>Hôm nay, 10:30 AM</p>
-                  </div>
-                  <div className={styles.bentoBadge}>Hoạt động</div>
-                </div>
-                <div className={styles.bentoList}>
-                  <div className={styles.bentoListItem}>
-                    <div className={`${styles.bentoIconBg} ${styles.iconAmber}`}>☕</div>
-                    <div className={styles.bentoListItemInfo}>
-                      <h4 className={styles.bentoItemTitle}>Cà phê Mai</h4>
-                      <p className={styles.bentoItemSubtitle}>Bàn 01 • Cà phê sữa đá</p>
-                    </div>
-                    <span className={styles.bentoItemValue}>25K</span>
-                  </div>
-                  <div className={styles.bentoListItem}>
-                    <div className={`${styles.bentoIconBg} ${styles.iconOrange}`}>🧋</div>
-                    <div className={styles.bentoListItemInfo}>
-                      <h4 className={styles.bentoItemTitle}>Trà Đào Cam Sả</h4>
-                      <p className={styles.bentoItemSubtitle}>Bàn 04 • Mang đi</p>
-                    </div>
-                    <span className={styles.bentoItemValue}>35K</span>
-                  </div>
-                  <div className={styles.bentoListItem}>
-                    <div className={`${styles.bentoIconBg} ${styles.iconIndigo}`}>🍵</div>
-                    <div className={styles.bentoListItemInfo}>
-                      <h4 className={styles.bentoItemTitle}>Trà Xanh Macchiato</h4>
-                      <p className={styles.bentoItemSubtitle}>Bàn 02</p>
-                    </div>
-                    <span className={styles.bentoItemValue}>40K</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. Small Card: QR Code (1x1) */}
-              <div className={styles.bentoCard}>
-                <h3 className={styles.bentoTitle}>Quét gọi món</h3>
-                <div className={styles.bentoQrIcon}>
-                  <QrCode size={48} strokeWidth={1.5} />
-                </div>
-              </div>
-
-              {/* 3. Small Card: Tích Điểm (1x1) */}
-              <div className={`${styles.bentoCard} ${styles.bentoCardPrimary}`}>
-                <h3 className={styles.bentoCardPrimaryTitle}>Tích điểm</h3>
-                <p className={styles.bentoCardPrimarySubtitle}>Thành viên Vàng</p>
-                <div className={styles.bentoCardPrimaryValue}>1,450 pt</div>
-              </div>
-
-              {/* 4. Medium Card: Doanh thu (2x1) */}
-              <div className={`${styles.bentoCard} ${styles.span2Cols}`}>
-                <h3 className={styles.bentoTitle}>Doanh thu hôm nay</h3>
-                <p className={styles.bentoSubtitle}>+24% so với hôm qua</p>
-                <div className={styles.bentoChart}>
-                  <div className={`${styles.bentoBar} ${styles.bar40}`}></div>
-                  <div className={`${styles.bentoBar} ${styles.bar60}`}></div>
-                  <div className={`${styles.bentoBar} ${styles.bar30}`}></div>
-                  <div className={`${styles.bentoBar} ${styles.bar80}`}></div>
-                  <div className={`${styles.bentoBar} ${styles.bentoBarActive} ${styles.bar100}`}></div>
-                </div>
-              </div>
-
-            </div>
+            <LiveDemoBento />
           </motion.div>
         </div>
       </main>
 
-      {/* Social Proof / Logos */}
+      {/* Social Proof Carousel */}
       <section className={styles.logos}>
-        <p className={styles.logosTitle}>ĐƯỢC TIN DÙNG BỞI HƠN 50+ QUÁN TẠI DI LINH</p>
-        <div className={styles.logoGrid}>
-          <span className="flex items-center gap-2 font-medium text-slate-700"><Coffee size={20} /> Cà Phê Mai</span>
-          <span className="flex items-center gap-2 font-medium text-slate-700"><Beer size={20} /> Quán Nhậu Ba Miền</span>
-          <span className="flex items-center gap-2 font-medium text-slate-700"><CupSoda size={20} /> Trà Sữa Hoa Hồng</span>
-          <span className="flex items-center gap-2 font-medium text-slate-700"><Soup size={20} /> Phở Gia Truyền</span>
-        </div>
+        <p className={styles.logosTitle}>ĐƯỢC TIN DÙNG BỞI HƠN 50 CƠ SỞ KINH DOANH TẠI DI LINH</p>
+        <SocialProofCarousel />
       </section>
 
       {/* How It Works */}
       <section id="how-it-works" className={styles.howItWorks}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Chỉ Với 3 Bước Đơn Giản</h2>
-          <p className={styles.sectionSub}>Không tải App, không đăng ký rườm rà. Mang lại trải nghiệm đặt món cực kỳ dễ chịu cho khách hàng của bạn.</p>
+          <h2 className={styles.sectionTitle}>Vận Hành Đơn Giản Trong 3 Bước</h2>
+          <p className={styles.sectionSub}>Giảm thiểu công việc thủ công, tự động hóa quy trình đặt món để mang lại trải nghiệm chuyên nghiệp cho khách hàng.</p>
         </div>
         
-        <div className={styles.stepsGrid}>
-          {steps.map((step, index) => (
-            <div key={index} className={styles.stepCard}>
-              <div className={styles.stepNum}>{step.num}</div>
-              <h3 className={styles.stepTitle}>{step.title}</h3>
-              <p className={styles.stepDesc}>{step.desc}</p>
-            </div>
-          ))}
+        <div className="mt-12 w-full">
+          <InteractiveStepper />
         </div>
       </section>
 
       {/* Features */}
       <section id="features" className={styles.features}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Lợi Ích Vượt Trội</h2>
-          <p className={styles.sectionSub}>Tất cả những công cụ bạn cần để vận hành chuyên nghiệp như một chuỗi cửa hàng lớn.</p>
+          <h2 className={styles.sectionTitle}>Nền Tảng Vững Chắc Cho Quán Của Bạn</h2>
+          <p className={styles.sectionSub}>Trang bị đầy đủ các công cụ quản trị cấp doanh nghiệp (enterprise-grade) nhưng được tinh chỉnh để dễ dàng tiếp cận.</p>
         </div>
         
         <div className={styles.featGrid}>
@@ -241,14 +148,14 @@ export default function HomePage() {
       {/* Pricing */}
       <section id="pricing" className={styles.pricing}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Bảng Giá Minh Bạch</h2>
-          <p className={styles.sectionSub}>Đầu tư nhỏ, sinh lời lớn. Miễn phí hoàn toàn để bạn có thể trải nghiệm ngay hôm nay.</p>
+          <h2 className={styles.sectionTitle}>Lựa Chọn Phù Hợp Mọi Quy Mô</h2>
+          <p className={styles.sectionSub}>Khởi đầu hoàn toàn miễn phí và chỉ nâng cấp khi hệ thống thực sự mang lại hiệu quả tăng trưởng cho cửa hàng.</p>
         </div>
         
         <div className={styles.priceGrid}>
           {pricing.map((plan, index) => (
             <div key={index} className={`${styles.priceCard} ${plan.popular ? styles.pricePopular : ''}`}>
-              {plan.popular && <div className={styles.pricePopularBadge}>Được ưu chuộng nhất</div>}
+              {plan.popular && <div className={styles.pricePopularBadge}>Được khuyên dùng</div>}
               <div className={styles.priceName}>{plan.name}</div>
               <div className={styles.priceAmount}>
                 {plan.price}
@@ -270,11 +177,11 @@ export default function HomePage() {
       {/* Final CTA */}
       <section className={styles.finalCta}>
         <div className={`${styles.sectionHeader} ${styles.sectionHeaderLargeMargin}`}>
-          <h2 className={styles.sectionTitle}>Sẵn Sàng Nâng Tầm Quán Của Bạn?</h2>
-          <p className={styles.sectionSub}>Tham gia cùng 50+ chủ quán khác đang sử dụng DiLinhMenu để tăng trưởng doanh thu.</p>
+          <h2 className={styles.sectionTitle}>Sẵn Sàng Chuyển Đổi Số Quán Của Bạn?</h2>
+          <p className={styles.sectionSub}>Tham gia cùng hơn 50 chủ kinh doanh tại Di Linh đang sử dụng hệ thống của chúng tôi để tối ưu vận hành.</p>
         </div>
         <Link href="/register" className={styles.ctaPrimary}>
-          Bắt đầu miễn phí ngay
+          Đăng ký hệ thống ngay
         </Link>
       </section>
 
@@ -284,13 +191,13 @@ export default function HomePage() {
           DL<span className={styles.footerBrandAccent}>Menu</span>
         </div>
         <p className={styles.footerDescription}>
-          Giải pháp công nghệ F&B số 1 tại Di Linh.
+          Giải pháp công nghệ quản lý F&B chuyên nghiệp tại Di Linh.
         </p>
         <div className={styles.footerLinks}>
-          <a href="#how-it-works">Cách hoạt động</a>
+          <a href="#how-it-works">Quy trình</a>
           <a href="#features">Tính năng</a>
-          <a href="#pricing">Bảng giá</a>
-          <a href="mailto:contact@dilinhmenu.vn">Liên hệ</a>
+          <a href="#pricing">Chi phí</a>
+          <a href="mailto:contact@dilinhmenu.vn">Hỗ trợ</a>
         </div>
         <p className={styles.footerCopyright}>
           © 2026 DiLinhMenu. Phục vụ với ☕ tại Di Linh.

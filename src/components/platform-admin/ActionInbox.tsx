@@ -4,7 +4,6 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
 import { useShopContext } from '@/hooks/useShopContext';
 import { Store, MessageSquare, AlertTriangle, TrendingUp, Clock, ArrowRight } from 'lucide-react';
 
@@ -26,6 +25,7 @@ const PRIORITY_CONFIG = {
   info: { dot: 'bg-blue-500', label: 'Đề xuất', bg: 'bg-blue-50 border-blue-100', icon: TrendingUp },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateMockInbox(shops: any[]): InboxItem[] {
   const items: InboxItem[] = [];
   const now = Date.now();
@@ -147,7 +147,6 @@ export default function ActionInbox() {
       <div className="divide-y divide-gray-50">
         {filtered.map(item => {
           const config = PRIORITY_CONFIG[item.priority];
-          const Icon = config.icon;
           return (
             <div key={item.id} className={`p-5 transition-colors hover:bg-gray-50`}>
               <div className="flex items-start gap-4">

@@ -82,7 +82,7 @@ export default function AdminPromotionsPage() {
       shopId: shop.id,
       name: promoName,
       description: promoDesc || undefined,
-      type: promoType as any,
+      type: promoType as 'flash_sale' | 'discount' | 'bogo',
       discount_percent: promoPercent ? Number(promoPercent) : undefined,
       starts_at: new Date(promoStartsAt).toISOString(),
       ends_at: new Date(promoEndsAt).toISOString(),

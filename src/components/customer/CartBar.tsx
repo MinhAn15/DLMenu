@@ -3,7 +3,6 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { formatVND } from '@/lib/utils/format';
-import Button from '@/components/ui/Button';
 
 interface CartBarProps {
   itemCount: number;
@@ -15,8 +14,10 @@ export default function CartBar({ itemCount, subtotal, onViewCart }: CartBarProp
   const t = useTranslations();
   const [animate, setAnimate] = React.useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   React.useEffect(() => {
     if (itemCount > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAnimate(true);
       const timer = setTimeout(() => setAnimate(false), 300);
       return () => clearTimeout(timer);

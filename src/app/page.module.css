@@ -190,10 +190,11 @@
 
 /* Logos Section */
 .logos {
-  padding: var(--space-8) var(--space-4);
+  padding: var(--space-8) 0;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border-light);
   text-align: center;
+  overflow: hidden;
 }
 
 .logosTitle {
@@ -202,16 +203,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: var(--space-6);
-}
-
-.logoGrid {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-8);
-  flex-wrap: wrap;
-  opacity: 0.5;
-  filter: grayscale(100%);
+  margin-bottom: 0;
 }
 
 .logoGrid span {
@@ -245,57 +237,7 @@
   color: var(--color-text-secondary);
 }
 
-.stepsGrid {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-8);
-}
 
-@media (min-width: 768px) {
-  .stepsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.stepCard {
-  text-align: center;
-  padding: var(--space-6);
-}
-
-.stepNum {
-  width: 64px;
-  height: 64px;
-  background: var(--step-num-bg, #FFF3E0);
-  color: var(--step-num-text, #D97706);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0 auto var(--space-6);
-  --step-num-bg: #FFF3E0;
-  --step-num-text: #D97706;
-}
-
-:global(.dark) .stepNum {
-  --step-num-bg: rgba(245, 166, 35, 0.15);
-  --step-num-text: #F5A623;
-}
-
-.stepTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin-bottom: var(--space-3);
-}
-
-.stepDesc {
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-}
 
 /* Features Section */
 .features {
@@ -326,10 +268,11 @@
 .featCard {
   padding: var(--space-8);
   border-radius: 24px;
-  background: var(--card-bg, #F9FAFB);
-  border: 1px solid var(--color-border-light);
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
-  --card-bg: #F9FAFB;
+  --card-bg: #FFFFFF;
 }
 
 :global(.dark) .featCard {
@@ -338,8 +281,8 @@
 
 .featCard:hover {
   transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-primary-light);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: rgba(140, 74, 38, 0.2);
 }
 
 .featIcon {
@@ -390,13 +333,15 @@
   background: var(--color-surface);
   border-radius: 32px;
   padding: 40px;
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   position: relative;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .priceCard:hover {
   transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .pricePopular {

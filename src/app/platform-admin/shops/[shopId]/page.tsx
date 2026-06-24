@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { trpc } from '@/lib/trpc/client';
 import { formatVND } from '@/lib/utils/format';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import { ArrowLeft, Store, ShoppingBag, TrendingUp, Users, Activity } from 'lucide-react';
+import { ArrowLeft, Store, ShoppingBag, TrendingUp, Activity } from 'lucide-react';
 
 const TABS = [
   { id: 'overview', label: 'Tổng quan' },
@@ -33,6 +32,8 @@ export default function ShopWorkspacePage() {
   const shopItems = dbItems.filter(i => i.shop_id === shopId);
   const shopOrders = dbOrders.filter(o => o.shop_id === shopId);
   const shopCategories = categories.filter(c => c.shop_id === shopId);
+  // eslint-disable-next-line react-hooks/purity
+  const createdAt = useMemo(() => Date.now(), []);
 
   if (!shop) {
     return (
@@ -107,6 +108,7 @@ export default function ShopWorkspacePage() {
           shopItems={shopItems}
           shopCategories={shopCategories}
           shopOrders={shopOrders}
+          createdAt={createdAt}
         />
       )}
 
@@ -115,7 +117,7 @@ export default function ShopWorkspacePage() {
       )}
 
       {activeTab === 'promotions' && (
-        <PromotionsTab shopId={shopId} shopName={shop.name} />
+        <PromotionsTab shopName={shop.name} />
       )}
 
       {activeTab === 'settings' && (
@@ -133,12 +135,19 @@ export default function ShopWorkspacePage() {
    TAB: TỔNG QUAN
    ============================================================= */
 function OverviewTab({
-  shop, totalRevenue, completedOrders, todayOrders, shopItems, shopCategories, shopOrders,
+  shop, totalRevenue, completedOrders, todayOrders, shopItems, shopCategories, shopOrders, createdAt,
 }: {
-  shop: any; totalRevenue: number; completedOrders: any[]; todayOrders: any[]; shopItems: any[]; shopCategories: any[]; shopOrders: any[];
+  shop: { name: string; created_at: string | null; subscription_tier: string | null; is_active: boolean };
+  totalRevenue: number;
+  completedOrders: { id: string }[];
+  todayOrders: { id: string }[];
+  shopItems: { id: string; is_available: boolean }[];
+  shopCategories: { id: string }[];
+  shopOrders: { id: string; created_at: string; order_number?: string; total: number; status: string; shop_tables?: { table_number: number } | null }[];
+  createdAt: number;
 }) {
   const avgOrderValue = completedOrders.length ? Math.round(totalRevenue / completedOrders.length) : 0;
-  const daysWithOrders = Math.max(1, Math.ceil((Date.now() - new Date(shop.created_at || Date.now()).getTime()) / 86400000));
+  const daysWithOrders = Math.max(1, Math.ceil((createdAt - new Date(shop.created_at || createdAt).getTime()) / 86400000));
   const ordersPerDay = Math.round(shopOrders.length / daysWithOrders);
 
   return (
@@ -253,7 +262,7 @@ function OverviewTab({
 /* =============================================================
    TAB: MENU
    ============================================================= */
-function MenuTab({ items, categories, shopName }: { items: any[]; categories: any[]; shopName: string }) {
+function MenuTab({ items, categories, shopName }: { items: { id: string; name: string; price: number; category_id: string; image_url: string | null; is_available: boolean }[]; categories: { id: string; name: string }[]; shopName: string }) {
   const [selectedCat, setSelectedCat] = useState<string | 'all'>('all');
   const filtered = selectedCat === 'all' ? items : items.filter(i => i.category_id === selectedCat);
 
@@ -332,7 +341,7 @@ function MenuTab({ items, categories, shopName }: { items: any[]; categories: an
 /* =============================================================
    TAB: KHUYẾN MÃI
    ============================================================= */
-function PromotionsTab({ shopId, shopName }: { shopId: string; shopName: string }) {
+function PromotionsTab({ shopName }: { shopName: string }) {
   return (
     <Card className="p-12 text-center">
       <span className="text-4xl block mb-4">🎟️</span>
@@ -348,7 +357,7 @@ function PromotionsTab({ shopId, shopName }: { shopId: string; shopName: string 
 /* =============================================================
    TAB: CÀI ĐẶT
    ============================================================= */
-function SettingsTab({ shop }: { shop: any }) {
+function SettingsTab({ shop }: { shop: { name: string; slug: string; subscription_tier: string | null; is_active: boolean; theme_config: Record<string, string> | null } }) {
   const theme = shop.theme_config || {};
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -398,7 +407,7 @@ function SettingsTab({ shop }: { shop: any }) {
 /* =============================================================
    TAB: HOẠT ĐỘNG
    ============================================================= */
-function ActivityTab({ orders }: { orders: any[] }) {
+function ActivityTab({ orders }: { orders: { id: string; status: string; created_at: string; total: number; order_number: string; shop_tables?: { table_number: number } | null }[] }) {
   return (
     <Card className="p-6">
       <h3 className="font-bold text-gray-900 mb-4">Nhật ký hoạt động</h3>

@@ -21,8 +21,7 @@ export default function PlatformTablesPage() {
   const [batchModalOpen, setBatchModalOpen] = useState(false);
   const [batchShopId, setBatchShopId] = useState('');
   const [batchCount, setBatchCount] = useState('10');
-  const [batchPrefix, setBatchPrefix] = useState('B');
-
+  const batchPrefix = 'B';
   const handleBatchCreate = () => {
     if (!batchShopId || !batchPrefix || !batchCount) { toast.error('Điền đủ thông tin'); return; }
     const count = parseInt(batchCount);
@@ -107,7 +106,7 @@ export default function PlatformTablesPage() {
             <label className="block text-sm font-semibold text-gray-600 mb-1">Chọn quán</label>
             <select value={batchShopId} onChange={e => setBatchShopId(e.target.value)} className="w-full p-3 border border-gray-200 rounded-lg text-sm bg-white cursor-pointer">
               <option value="">-- Chọn quán --</option>
-              {(shops as any[]).filter(s => s.status === 'active' || s.is_active).map(s => (
+              {(shops as { id: string; name: string; status?: string; is_active?: boolean }[]).filter(s => s.status === 'active' || s.is_active).map(s => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>

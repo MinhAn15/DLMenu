@@ -53,8 +53,8 @@ export default function RegisterPage() {
 
       toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
       router.push('/login');
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi kết nối máy chủ.');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Lỗi kết nối máy chủ.');
     } finally {
       setLoading(false);
     }

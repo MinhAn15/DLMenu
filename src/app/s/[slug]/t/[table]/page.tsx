@@ -37,12 +37,13 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   const t = useTranslations();
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
-
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [orderResult, setOrderResult] = useState<{ orderNumber: string; total: number; status: string; paymentMethod: string } | null>(null);
+  const [lastPaymentMethod, setLastPaymentMethod] = useState('cash');
 
   if (loading) {
     return (
@@ -102,8 +103,6 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
     ? resolveDiscount(subtotal, membership.rank, shop.loyalty_config, promotions)
     : { discountAmount: 0, discountType: null, discountLabel: null };
 
-  const total = subtotal - discount.discountAmount;
-
   const createOrderMutation = trpc.order.create.useMutation({
     onSuccess: (data) => {
       clearCart();
@@ -121,8 +120,6 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
     },
     onSettled: () => setIsCheckingOut(false),
   });
-
-  const [lastPaymentMethod, setLastPaymentMethod] = useState('cash');
 
   const handleCheckoutClick = async (paymentMethod: string, customerNote: string = '') => {
     // Bỏ qua check login cho phép order ẩn danh (demo)

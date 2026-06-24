@@ -18,13 +18,11 @@ export function useAuth() {
         .eq('id', userId)
         .single();
       if (data) {
-        // eslint-disable-next-line
         setProfile(data as Profile);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
-      // eslint-disable-next-line
       setLoading(false);
     }
   }, [supabase]);
@@ -71,7 +69,7 @@ export function useAuth() {
   const signInWithEmail = async (email: string, password: string) => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
       await new Promise(r => setTimeout(r, 1000));
-      let foundProfile = MOCK_USERS[0];
+      const foundProfile = MOCK_USERS[0];
       const fakeUser = { id: foundProfile.id, email, aud: 'authenticated' } as unknown as User;
       localStorage.setItem('mock_user', JSON.stringify(fakeUser));
       setUser(fakeUser);

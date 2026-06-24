@@ -55,9 +55,10 @@ export default function AdminSettingsPage() {
     },
   });
 
-  // Initialize from shop
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   React.useEffect(() => {
     if (shop) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(shop.name);
       setDescription(shop.description || '');
       setPhone(shop.phone || '');

@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import { useAdminShop } from '@/hooks/useAdminShop';
-import { useRealtimeOrders, OrderWithDetails } from '@/hooks/useRealtimeOrders';
+import { useRealtimeOrders } from '@/hooks/useRealtimeOrders';
 import { trpc } from '@/lib/trpc/client';
-import { formatVND } from '@/lib/utils/format';
 import { formatRelativeTime } from '@/lib/utils/date';
 import Spinner from '@/components/ui/Spinner';
 import toast from 'react-hot-toast';
@@ -40,7 +39,7 @@ export default function KitchenDisplaySystemPage() {
   const handleUpdateStatus = (orderId: string, nextStatus: string) => {
     setUpdating(orderId);
     updateStatusMutation.mutate(
-      { orderId, status: nextStatus as any },
+      { orderId, status: nextStatus as 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled' },
       { onSettled: () => setUpdating(null) },
     );
   };
@@ -49,7 +48,7 @@ export default function KitchenDisplaySystemPage() {
     if (!window.confirm('Bạn có chắc chắn muốn hủy đơn này?')) return;
     setUpdating(orderId);
     cancelMutation.mutate(
-      { orderId, status: 'cancelled' as any },
+      { orderId, status: 'cancelled' as const },
       { onSettled: () => setUpdating(null) },
     );
   };
@@ -119,7 +118,7 @@ export default function KitchenDisplaySystemPage() {
                             <span className="font-bold text-[var(--color-primary)] mr-1">{item.quantity}x</span>
                             {item.menu_items?.name || 'Món đã xóa'}
                           </div>
-                          {item.note && <div className="text-xs text-red-500 ml-2 italic max-w-[40%] text-right line-clamp-2">"{item.note}"</div>}
+                          {item.note && <div className="text-xs text-red-500 ml-2 italic max-w-[40%] text-right line-clamp-2">&ldquo;{item.note}&rdquo;</div>}
                         </div>
                       ))}
                     </div>

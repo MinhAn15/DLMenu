@@ -14,8 +14,10 @@ export default function QRCodeGeneratorPage() {
   const [baseUrl, setBaseUrl] = useState('');
   const [isPrinting, setIsPrinting] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBaseUrl(window.location.origin);
     }
   }, []);

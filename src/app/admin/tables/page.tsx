@@ -115,7 +115,7 @@ export default function AdminTablesPage() {
             {tables.length === 0 ? (
               <tr>
                 <td colSpan={4} className="p-12 text-center text-gray-500">
-                  Chưa có bàn nào. Nhấn "+ Thêm bàn" để tạo mã QR.
+                  Chưa có bàn nào. Nhấn &ldquo;+ Thêm bàn&rdquo; để tạo mã QR.
                 </td>
               </tr>
             ) : (

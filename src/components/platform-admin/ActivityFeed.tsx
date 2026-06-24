@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { trpc } from '@/lib/trpc/client';
 import Card from '@/components/ui/Card';
 import { formatVND } from '@/lib/utils/format';
-import { ArrowRight, ShoppingBag, TicketPercent, Settings, Download } from 'lucide-react';
+import { ArrowRight, ShoppingBag, TicketPercent, Settings } from 'lucide-react';
 
 interface Activity {
   id: string;
@@ -17,6 +17,7 @@ interface Activity {
   detail?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function generateMockActivity(orders: any[], shops: any[]): Activity[] {
   const items: Activity[] = [];
   const now = Date.now();
@@ -83,7 +84,7 @@ export default function ActivityFeed() {
         <div className="relative">
           <div className="absolute left-[15px] top-2 bottom-2 w-px bg-gray-200" />
           <div className="flex flex-col gap-4">
-            {activities.map((act, i) => (
+            {activities.map((act) => (
               <div key={act.id} className="flex gap-4">
                 <div className="flex-shrink-0 relative z-10">
                   <div className="w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center"
