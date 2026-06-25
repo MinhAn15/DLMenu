@@ -68,6 +68,7 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
         id: user.id,
         role: userRole,
         display_name: user.email || 'Mock User',
+        shop_id: userRole === 'shop_owner' ? 'mock-shop-123' : null,
       } as AuthProfile;
     } else {
       const { data } = await ctx.supabase

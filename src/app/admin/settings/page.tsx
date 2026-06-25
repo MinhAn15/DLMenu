@@ -8,6 +8,7 @@ import Card from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Spinner from '@/components/ui/Spinner';
 import toast from 'react-hot-toast';
+import { Store, Palette, CreditCard, Crown, Smartphone } from 'lucide-react';
 
 const PRESET_COLORS = [
   '#6B4226', '#8B4513', '#D2691E', '#A0522D',
@@ -35,30 +36,29 @@ export default function AdminSettingsPage() {
 
   const updateInfoMutation = trpc.shop.settings.updateInfo.useMutation({
     onSuccess: () => {
-      toast.success('Đã cập nhật thông tin');
+      toast.success('Đã cập nhật thông tin thành công');
       setSaving(false);
     },
     onError: (err) => {
-      toast.error(err.message || 'Lỗi lưu');
+      toast.error(err.message || 'Có lỗi xảy ra khi lưu');
       setSaving(false);
     },
   });
 
   const updateThemeMutation = trpc.shop.settings.updateTheme.useMutation({
     onSuccess: () => {
-      toast.success('Đã cập nhật giao diện');
+      toast.success('Đã cập nhật cấu hình giao diện & thanh toán');
       setSavingTheme(false);
     },
     onError: (err) => {
-      toast.error(err.message || 'Lỗi lưu');
+      toast.error(err.message || 'Có lỗi xảy ra khi lưu');
       setSavingTheme(false);
     },
   });
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
     if (shop) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(shop.name);
       setDescription(shop.description || '');
       setPhone(shop.phone || '');
@@ -71,7 +71,10 @@ export default function AdminSettingsPage() {
   }, [shop]);
 
   const handleSaveInfo = async () => {
-    if (!shop || !name.trim()) { toast.error('Tên cửa hàng không được trống'); return; }
+    if (!shop || !name.trim()) { 
+      toast.error('Tên cửa hàng không được để trống'); 
+      return; 
+    }
     setSaving(true);
     updateInfoMutation.mutate({ shopId: shop.id, name, description, phone, address });
   };
@@ -91,150 +94,255 @@ export default function AdminSettingsPage() {
 
   if (shopLoading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
-        <Spinner size="lg" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Spinner size="lg" className="text-blue-600" />
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', maxWidth: '800px', margin: '0 auto' }}>
-      <div>
-        <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: '#111' }}>Cài đặt cửa hàng</h1>
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
-          Cập nhật thông tin và giao diện
-        </p>
+    <div className="max-w-5xl mx-auto flex flex-col gap-10 pb-16">
+      
+      {/* Page Header */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Cài đặt</h1>
+        <p className="text-gray-500">Quản lý cấu hình, giao diện hiển thị và thông tin thanh toán của cửa hàng.</p>
       </div>
 
-      {/* Shop Info */}
-      <Card style={{ padding: 'var(--space-6)' }}>
-        <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700, marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          🏪 Thông tin cửa hàng
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Tên cửa hàng *</label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="VD: Quán Cà Phê Mai" />
+      <div className="w-full h-px bg-gray-200" />
+
+      {/* Section: Shop Info */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Store className="w-5 h-5 text-gray-700" />
+            <h2 className="text-lg font-semibold text-gray-900">Thông tin chung</h2>
           </div>
-          <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Mô tả</label>
-            <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Giới thiệu ngắn về quán..." />
+          <p className="text-sm text-gray-500 leading-relaxed">
+            Tên quán, địa chỉ và thông tin liên hệ. Thông tin này sẽ hiển thị trên menu điện tử của khách hàng.
+          </p>
+        </div>
+        
+        <div className="md:col-span-2">
+          <Card className="flex flex-col gap-5 bg-white border-gray-100 shadow-sm" padding="lg">
+            <Input 
+              label="Tên cửa hàng" 
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+              placeholder="VD: Quán Cà Phê Mai" 
+              required
+            />
+            <Input 
+              label="Mô tả ngắn" 
+              value={description} 
+              onChange={e => setDescription(e.target.value)} 
+              placeholder="Giới thiệu không gian hoặc đặc sản của quán..." 
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <Input 
+                label="Số điện thoại" 
+                value={phone} 
+                onChange={e => setPhone(e.target.value)} 
+                placeholder="0901234567" 
+                type="tel" 
+              />
+              <Input 
+                label="Đường dẫn (Slug)" 
+                value={shop?.slug || ''} 
+                disabled 
+                className="bg-gray-50 opacity-70 cursor-not-allowed"
+              />
+            </div>
+            <Input 
+              label="Địa chỉ" 
+              value={address} 
+              onChange={e => setAddress(e.target.value)} 
+              placeholder="123 Đường Hùng Vương, Di Linh" 
+            />
+            <div className="pt-2 flex justify-end">
+              <Button onClick={handleSaveInfo} loading={saving} className="min-w-[140px]">
+                Lưu thông tin
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      <div className="w-full h-px bg-gray-200" />
+
+      {/* Section: Theme & UI */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Palette className="w-5 h-5 text-gray-700" />
+            <h2 className="text-lg font-semibold text-gray-900">Giao diện</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+          <p className="text-sm text-gray-500 leading-relaxed">
+            Tùy chỉnh màu sắc thương hiệu. Chọn một màu sắc nổi bật để tạo ấn tượng riêng cho menu của bạn.
+          </p>
+        </div>
+        
+        <div className="md:col-span-2">
+          <Card className="flex flex-col gap-6 bg-white border-gray-100 shadow-sm" padding="lg">
             <div>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Số điện thoại</label>
-              <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="0901234567" type="tel" />
+              <label className="block text-sm font-semibold text-gray-700 mb-3">Màu chủ đạo</label>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {PRESET_COLORS.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => setPrimaryColor(color)}
+                    className="w-10 h-10 rounded-full transition-transform active:scale-95 shadow-sm"
+                    style={{
+                      background: color, 
+                      border: primaryColor === color ? '3px solid #2563EB' : '1px solid #E5E7EB',
+                      transform: primaryColor === color ? 'scale(1.1)' : 'scale(1)',
+                    }}
+                    aria-label={`Chọn màu ${color}`}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="color" 
+                    value={primaryColor} 
+                    onChange={e => setPrimaryColor(e.target.value)}
+                    className="w-12 h-12 p-0 border-0 rounded-lg cursor-pointer bg-transparent" 
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500 font-medium">Mã HEX</span>
+                    <Input 
+                      value={primaryColor} 
+                      onChange={e => setPrimaryColor(e.target.value)} 
+                      className="w-32 uppercase text-sm font-mono mt-1" 
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Slug</label>
-              <Input value={shop?.slug || ''} disabled />
+
+            {/* Live Preview Banner */}
+            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-gray-400" />
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Xem trước hiển thị</span>
+              </div>
+              <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full shadow-inner flex items-center justify-center text-white font-bold text-lg" style={{ background: primaryColor }}>
+                    {name.charAt(0).toUpperCase() || 'M'}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900" style={{ color: primaryColor }}>{name || 'Tên Quán'}</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">Thực đơn điện tử</p>
+                  </div>
+                </div>
+                <div 
+                  className="px-4 py-2 rounded-lg text-white font-semibold text-sm shadow-sm opacity-90"
+                  style={{ background: primaryColor }}
+                >
+                  Gọi món
+                </div>
+              </div>
             </div>
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Địa chỉ</label>
-            <Input value={address} onChange={e => setAddress(e.target.value)} placeholder="123 Đường Hùng Vương, Di Linh" />
-          </div>
-          <Button onClick={handleSaveInfo} loading={saving}>Lưu thông tin</Button>
+          </Card>
         </div>
-      </Card>
+      </div>
 
-      {/* Theme */}
-      <Card style={{ padding: 'var(--space-6)' }}>
-        <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700, marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          🎨 Giao diện
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-2)', color: 'var(--color-text-secondary)' }}>Màu chủ đạo</label>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)', marginBottom: 'var(--space-3)' }}>
-              {PRESET_COLORS.map(color => (
-                <button
-                  key={color}
-                  onClick={() => setPrimaryColor(color)}
-                  style={{
-                    width: '36px', height: '36px', borderRadius: 'var(--radius-md)',
-                    background: color, border: primaryColor === color ? '3px solid var(--color-text)' : '2px solid var(--color-border)',
-                    cursor: 'pointer', transition: 'transform var(--transition-fast)',
-                    transform: primaryColor === color ? 'scale(1.15)' : 'scale(1)',
-                  }}
-                />
-              ))}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-              <input type="color" value={primaryColor} onChange={e => setPrimaryColor(e.target.value)}
-                style={{ width: '48px', height: '48px', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)' }} />
-              <Input value={primaryColor} onChange={e => setPrimaryColor(e.target.value)} style={{ maxWidth: '140px' }} />
-            </div>
+      <div className="w-full h-px bg-gray-200" />
+
+      {/* Section: Payment Config */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <div className="flex items-center gap-2 mb-2">
+            <CreditCard className="w-5 h-5 text-gray-700" />
+            <h2 className="text-lg font-semibold text-gray-900">Thanh toán (VietQR)</h2>
           </div>
-
-          {/* Preview */}
-          <div style={{ background: 'var(--color-bg)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)' }}>
-            <p style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-2)' }}>Xem trước</p>
-            <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', background: primaryColor }} />
-              <div>
-                <div style={{ fontWeight: 700, color: primaryColor }}>Tên quán</div>
-                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>Khách hàng sẽ thấy màu này</div>
-              </div>
-              <button style={{
-                marginLeft: 'auto', padding: 'var(--space-2) var(--space-4)',
-                background: primaryColor, color: 'white', border: 'none',
-                borderRadius: 'var(--radius-md)', fontWeight: 600, fontSize: 'var(--font-size-sm)',
-              }}>
-                Thêm món
-              </button>
-            </div>
-          </div>
-
-          <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: 'var(--space-2) 0' }} />
-          
-          <div>
-            <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600, marginBottom: 'var(--space-3)', color: 'var(--color-text)' }}>💳 Thông tin Nhận chuyển khoản (VietQR)</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Mã Ngân Hàng (VD: MB, VCB)</label>
-                <Input value={bankId} onChange={e => setBankId(e.target.value.toUpperCase())} placeholder="VD: MB" />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Số Tài Khoản</label>
-                <Input value={accountNo} onChange={e => setAccountNo(e.target.value)} placeholder="0901234567" />
-              </div>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-1)', color: 'var(--color-text-secondary)' }}>Tên Chủ Tài Khoản</label>
-                <Input value={accountName} onChange={e => setAccountName(e.target.value.toUpperCase())} placeholder="NGUYEN VAN A" />
-              </div>
-            </div>
-            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)', marginTop: 'var(--space-2)' }}>
-              * Thông tin này sẽ dùng để tạo mã VietQR tự động cho khách hàng khi thanh toán chuyển khoản.
-            </p>
-          </div>
-
-          <Button onClick={handleSaveTheme} loading={savingTheme}>Lưu Giao diện & Ngân hàng</Button>
+          <p className="text-sm text-gray-500 leading-relaxed">
+            Hệ thống sẽ tự động tạo mã QR chuyển khoản dựa trên thông tin này để khách hàng quét nhanh.
+          </p>
         </div>
-      </Card>
+        
+        <div className="md:col-span-2">
+          <Card className="flex flex-col gap-5 bg-white border-gray-100 shadow-sm" padding="lg">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <Input 
+                label="Mã Ngân Hàng (VD: MB, VCB, ACB)" 
+                value={bankId} 
+                onChange={e => setBankId(e.target.value.toUpperCase())} 
+                placeholder="VD: MB" 
+              />
+              <Input 
+                label="Số Tài Khoản" 
+                value={accountNo} 
+                onChange={e => setAccountNo(e.target.value)} 
+                placeholder="0901234567" 
+              />
+            </div>
+            <Input 
+              label="Tên Chủ Tài Khoản" 
+              value={accountName} 
+              onChange={e => setAccountName(e.target.value.toUpperCase())} 
+              placeholder="NGUYEN VAN A" 
+            />
+            
+            <div className="bg-blue-50 text-blue-800 text-sm p-4 rounded-xl mt-2 flex items-start gap-3">
+              <div className="mt-0.5 text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </div>
+              <p>Mã QR sẽ tự động được tạo động với số tiền chính xác trên mỗi đơn hàng nếu thông tin này được cung cấp đầy đủ.</p>
+            </div>
 
-      {/* Subscription Info */}
-      <Card style={{ padding: 'var(--space-6)' }}>
-        <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700, marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          💎 Gói dịch vụ
-        </h2>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <span style={{
-              display: 'inline-block', padding: 'var(--space-1) var(--space-3)',
-              borderRadius: 'var(--radius-full)', fontWeight: 700,
-              background: shop?.subscription_tier === 'premium' ? 'linear-gradient(135deg, #F59E0B, #D97706)' :
-                shop?.subscription_tier === 'pro' ? 'linear-gradient(135deg, #6B4226, #8B6842)' : 'var(--color-bg)',
-              color: shop?.subscription_tier === 'free' ? 'var(--color-text-secondary)' : 'white',
-              fontSize: 'var(--font-size-sm)',
-              textTransform: 'uppercase',
-            }}>
-              {shop?.subscription_tier || 'free'}
-            </span>
-          </div>
-          <Button variant="secondary" size="sm" disabled>Nâng cấp (Sắp có)</Button>
+            <div className="pt-4 flex justify-end">
+              <Button onClick={handleSaveTheme} loading={savingTheme} className="min-w-[200px]">
+                Lưu cấu hình hệ thống
+              </Button>
+            </div>
+          </Card>
         </div>
-      </Card>
+      </div>
+
+      <div className="w-full h-px bg-gray-200" />
+
+      {/* Section: Subscription */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Crown className="w-5 h-5 text-yellow-500" />
+            <h2 className="text-lg font-semibold text-gray-900">Gói dịch vụ</h2>
+          </div>
+          <p className="text-sm text-gray-500 leading-relaxed">
+            Xem gói dịch vụ hiện tại và hạn mức sử dụng.
+          </p>
+        </div>
+        
+        <div className="md:col-span-2">
+          <Card className="flex items-center justify-between bg-white border-gray-100 shadow-sm" padding="lg">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-medium text-gray-500">Trạng thái hiện tại</span>
+              <div className="flex items-center gap-3">
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wider
+                  ${shop?.subscription_tier === 'premium' ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-white shadow-md' :
+                    shop?.subscription_tier === 'pro' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md' : 
+                    'bg-gray-100 text-gray-700'
+                  }
+                `}>
+                  {shop?.subscription_tier === 'premium' ? 'PREMIUM (Early Adopter)' : shop?.subscription_tier || 'FREE'}
+                </span>
+                {shop?.subscription_tier === 'premium' && (
+                  <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-medium">
+                    Có hiệu lực 3 tháng
+                  </span>
+                )}
+              </div>
+            </div>
+            <Button variant="secondary" disabled>
+              Gia hạn gói
+            </Button>
+          </Card>
+        </div>
+      </div>
+
     </div>
   );
 }

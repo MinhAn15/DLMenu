@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { Plus, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { useAdminShop } from '@/hooks/useAdminShop';
 import { trpc } from '@/lib/trpc/client';
 import Button from '@/components/ui/Button';
@@ -221,149 +222,169 @@ export default function AdminMenuPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="flex flex-col gap-6 max-w-6xl mx-auto w-full">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: '#111' }}>Quản lý Thực đơn</h1>
-          <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' }}>
+          <h1 className="text-2xl font-bold text-gray-900">Quản lý Thực đơn</h1>
+          <p className="text-sm text-gray-500 mt-1">
             {categories.length} danh mục · {items.length} món
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          <Button variant="secondary" onClick={() => openCatModal()}>+ Danh mục</Button>
-          <Button onClick={() => openItemModal()}>+ Thêm món</Button>
+        <div className="flex gap-3">
+          <Button variant="secondary" onClick={() => openCatModal()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Danh mục
+          </Button>
+          <Button onClick={() => openItemModal()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Thêm món
+          </Button>
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div style={{ display: 'flex', gap: 'var(--space-2)', overflowX: 'auto', paddingBottom: 'var(--space-2)' }}>
-        <button
-          onClick={() => setSelectedCatId('all')}
-          style={{
-            padding: 'var(--space-2) var(--space-4)',
-            borderRadius: 'var(--radius-full)',
-            fontWeight: 600,
-            fontSize: 'var(--font-size-sm)',
-            border: 'none',
-            cursor: 'pointer',
-            background: selectedCatId === 'all' ? 'var(--color-primary)' : 'var(--color-bg)',
-            color: selectedCatId === 'all' ? 'white' : 'var(--color-text-secondary)',
-            transition: 'all var(--transition-fast)',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Tất cả ({items.length})
-        </button>
-        {categories.map(cat => {
-          const count = items.filter(i => i.category_id === cat.id).length;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCatId(cat.id)}
-              style={{
-                padding: 'var(--space-2) var(--space-4)',
-                borderRadius: 'var(--radius-full)',
-                fontWeight: 600,
-                fontSize: 'var(--font-size-sm)',
-                border: 'none',
-                cursor: 'pointer',
-                background: selectedCatId === cat.id ? 'var(--color-primary)' : 'var(--color-bg)',
-                color: selectedCatId === cat.id ? 'white' : 'var(--color-text-secondary)',
-                transition: 'all var(--transition-fast)',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {cat.name} ({count})
-            </button>
-          );
-        })}
+      {/* Main Layout */}
+      <div className="flex flex-col md:flex-row gap-8 items-start">
+        {/* Sidebar Categories */}
+        <div className="w-full md:w-64 flex flex-col gap-2 shrink-0">
+          <div className="font-semibold text-gray-900 mb-2 px-2">Danh mục</div>
+          <button
+            onClick={() => setSelectedCatId('all')}
+            className={`flex justify-between items-center px-4 py-3 rounded-xl text-left transition-all font-medium text-sm ${
+              selectedCatId === 'all' 
+                ? 'bg-[var(--color-primary)] text-white shadow-md' 
+                : 'hover:bg-gray-100 text-gray-700'
+            }`}
+          >
+            <span>Tất cả món</span>
+            <span className={`text-xs px-2 py-0.5 rounded-full ${selectedCatId === 'all' ? 'bg-white/20' : 'bg-gray-200 text-gray-600'}`}>
+              {items.length}
+            </span>
+          </button>
+          
+          {categories.map(cat => {
+            const count = items.filter(i => i.category_id === cat.id).length;
+            const isActive = selectedCatId === cat.id;
+            return (
+              <div key={cat.id} className="group relative flex items-center">
+                <button
+                  onClick={() => setSelectedCatId(cat.id)}
+                  className={`flex-1 flex justify-between items-center px-4 py-3 rounded-xl text-left transition-all font-medium text-sm ${
+                    isActive 
+                      ? 'bg-[var(--color-primary)] text-white shadow-md' 
+                      : 'hover:bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  <span className="truncate pr-2">{cat.name}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${isActive ? 'bg-white/20' : 'bg-gray-200 text-gray-600'}`}>
+                    {count}
+                  </span>
+                </button>
+                {/* Hover Actions */}
+                <div className={`absolute right-0 flex items-center pr-2 gap-1 opacity-0 group-hover:opacity-100 transition-opacity ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                  <button onClick={(e) => { e.stopPropagation(); openCatModal(cat); }} className="p-1.5 rounded hover:bg-black/10 transition-colors">
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDeleteCategory(cat.id); }} className="p-1.5 rounded hover:bg-black/10 transition-colors text-red-500">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          <button
+            onClick={() => openCatModal()}
+            className="flex items-center justify-center gap-2 px-4 py-3 mt-2 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all text-sm font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            Thêm danh mục
+          </button>
+        </div>
+
+        {/* Items List */}
+        <div className="flex-1 w-full min-w-0">
+          <Card className="shadow-sm border border-gray-200 overflow-hidden bg-white">
+            {filteredItems.length === 0 ? (
+              <EmptyState 
+                title="Chưa có món nào" 
+                description="Nhấn '+ Thêm món' để bắt đầu tạo thực đơn cho quán của bạn."
+                icon={<div className="w-16 h-16 bg-orange-100 text-orange-500 rounded-2xl flex items-center justify-center mb-4 mx-auto"><ImageIcon className="w-8 h-8" /></div>}
+                actionLabel="+ Thêm món"
+                onAction={() => openItemModal()}
+              />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50/50 border-b border-gray-100 text-gray-500 text-xs uppercase tracking-wider font-semibold">
+                      <th className="p-4 pl-6">Món ăn</th>
+                      <th className="p-4">Danh mục</th>
+                      <th className="p-4">Giá bán</th>
+                      <th className="p-4 text-center">Trạng thái</th>
+                      <th className="p-4 pr-6 text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {filteredItems.map(item => {
+                      const catName = categories.find(c => c.id === item.category_id)?.name;
+                      return (
+                        <tr key={item.id} className={`group hover:bg-gray-50/50 transition-colors ${!item.is_available ? 'opacity-60 bg-gray-50/30' : ''}`}>
+                          <td className="p-4 pl-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 border border-gray-200 shadow-sm">
+                                {item.image_url ? (
+                                  <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <ImageIcon className="w-5 h-5 text-gray-400" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="font-semibold text-gray-900 group-hover:text-[var(--color-primary)] transition-colors">{item.name}</p>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {item.is_featured && <span className="text-[10px] uppercase font-bold text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded">Hot</span>}
+                                  {(item.tags || []).map((tag: string) => (
+                                    <span key={tag} className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">{tag}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4 text-gray-600 text-sm font-medium">{catName || '—'}</td>
+                          <td className="p-4 font-bold text-gray-900">{formatVND(item.price)}</td>
+                          <td className="p-4">
+                            <div className="flex justify-center">
+                              <label className="relative inline-flex items-center cursor-pointer">
+                                <input 
+                                  type="checkbox" 
+                                  className="sr-only peer" 
+                                  checked={item.is_available} 
+                                  onChange={() => handleToggleAvailable(item)} 
+                                />
+                                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                              </label>
+                            </div>
+                          </td>
+                          <td className="p-4 pr-6 text-right">
+                            <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button onClick={() => openItemModal(item)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Sửa">
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => handleDeleteItem(item.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Xóa">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
-
-      {/* Category Management Row */}
-      {categories.length > 0 && (
-        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
-          {categories.map(cat => (
-            <Card key={cat.id} padding="sm" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-2) var(--space-4)' }}>
-              <span style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>{cat.name}</span>
-              <button onClick={() => openCatModal(cat)} style={{ cursor: 'pointer', fontSize: 'var(--font-size-xs)', color: 'var(--color-primary)', background: 'none', border: 'none' }}>✏️</button>
-              <button onClick={() => handleDeleteCategory(cat.id)} style={{ cursor: 'pointer', fontSize: 'var(--font-size-xs)', color: 'var(--color-error)', background: 'none', border: 'none' }}>🗑️</button>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {filteredItems.length === 0 ? (
-        <EmptyState 
-          title="Chưa có món nào" 
-          description="Nhấn '+ Thêm món' để bắt đầu tạo thực đơn cho quán của bạn."
-          icon={<span style={{ fontSize: '2rem' }}>🍽️</span>}
-          actionLabel="+ Thêm món"
-          onAction={() => openItemModal()}
-        />
-      ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-sm uppercase tracking-wider">
-                <th className="p-4 font-semibold">Món ăn</th>
-                <th className="p-4 font-semibold">Danh mục</th>
-                <th className="p-4 font-semibold">Giá</th>
-                <th className="p-4 font-semibold">Trạng thái</th>
-                <th className="p-4 font-semibold text-right">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filteredItems.map(item => {
-                const catName = categories.find(c => c.id === item.category_id)?.name;
-                return (
-                  <tr key={item.id} className={`hover:bg-gray-50 transition-colors ${!item.is_available ? 'opacity-60' : ''}`}>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
-                          {item.image_url ? (
-                            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-xl opacity-30">🍽️</span>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900">{item.name}</p>
-                          <div className="flex gap-1">
-                            {(item.tags || []).map((tag: string) => (
-                              <Badge key={tag} variant="default" size="sm">{tag}</Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 text-gray-600 text-sm">{catName || '—'}</td>
-                    <td className="p-4 font-bold text-[var(--color-primary)]">{formatVND(item.price)}</td>
-                    <td className="p-4">
-                      <Badge variant={item.is_available ? 'success' : 'error'} size="sm">
-                        {item.is_available ? 'Đang bán' : 'Hết hàng'}
-                      </Badge>
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => handleToggleAvailable(item)} className="p-2 text-gray-400 hover:text-gray-800 transition-colors" title={item.is_available ? 'Ẩn món' : 'Hiện món'}>
-                          {item.is_available ? '👁️' : '🚫'}
-                        </button>
-                        <button onClick={() => openItemModal(item)} className="p-2 text-blue-500 hover:text-blue-700 transition-colors" title="Sửa">
-                          ✏️
-                        </button>
-                        <button onClick={() => handleDeleteItem(item.id)} className="p-2 text-red-500 hover:text-red-700 transition-colors" title="Xóa">
-                          🗑️
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
 
       {/* Category Modal */}
       <Modal isOpen={catModalOpen} onClose={() => setCatModalOpen(false)} title={editingCategory ? 'Sửa danh mục' : 'Thêm danh mục'}>
