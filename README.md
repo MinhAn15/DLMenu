@@ -4,7 +4,7 @@ A multi-tenant order and loyalty platform for cafes and restaurants in Di Linh, 
 
 ## Tech Stack
 - **Framework:** Next.js 14 (App Router)
-- **Styling:** Vanilla CSS + CSS Modules
+- **Styling:** TailwindCSS + CSS Modules
 - **Database/Auth:** Supabase
 - **Language:** TypeScript
 - **Testing:** Jest

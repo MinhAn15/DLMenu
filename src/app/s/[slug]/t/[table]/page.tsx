@@ -15,6 +15,7 @@ import CartBar from '@/components/customer/CartBar';
 import Modal from '@/components/ui/Modal';
 import CartModalContent from '@/components/customer/CartModalContent';
 import CustomerAuthModal from '@/components/customer/CustomerAuthModal';
+import ItemOptionsSheet from '@/components/customer/ItemOptionsSheet';
 import LoyaltyBanner from '@/components/customer/LoyaltyBanner';
 import OrderStatusTracker from '@/components/customer/OrderStatusTracker';
 import toast from 'react-hot-toast';
@@ -42,6 +43,8 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [orderResult, setOrderResult] = useState<{ orderNumber: string; total: number; status: string; paymentMethod: string } | null>(null);
   const [lastPaymentMethod, setLastPaymentMethod] = useState('cash');
 
@@ -111,9 +114,14 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
     '--font-sans': shop.theme_config.font + ', sans-serif',
   } as React.CSSProperties;
 
-  const handleAddToCart = (item: MenuItem) => {
-    addItem(item);
-    toast.success(`${t('customer.menu.added_to_cart')} ${item.name}`, { duration: 1500, style: { fontSize: '0.875rem' } });
+  const handleItemClick = (item: MenuItem) => {
+    setSelectedItem(item);
+    setIsOptionsOpen(true);
+  };
+
+  const handleConfirmAddToCart = (item: MenuItem, quantity: number, note: string) => {
+    addItem(item, quantity, note);
+    toast.success(`Đã thêm ${quantity} ${item.name} vào giỏ`, { duration: 1500, style: { fontSize: '0.875rem' } });
   };
 
   // Calculate discount
@@ -180,6 +188,18 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
               </div>
             )}
             <div
+              className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition relative"
+              onClick={() => setIsCartOpen(true)}
+              title="Giỏ hàng"
+            >
+              🛒
+              {mounted && itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {itemCount}
+                </span>
+              )}
+            </div>
+            <div
               className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center border border-white/20 cursor-pointer text-white shadow-sm hover:bg-black/40 transition"
               onClick={() => !user && setIsLoginOpen(true)}
             >
@@ -219,13 +239,13 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
 
           return (
             <section key={cat.id} id={`cat-${cat.id}`} className="scroll-mt-32">
-              <h2 className="text-lg font-bold mb-4">{cat.name}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white px-1">{cat.name}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {categoryItems.map((item) => (
                   <MenuItemCard
                     key={item.id}
                     item={item}
-                    onAdd={handleAddToCart}
+                    onAdd={handleItemClick}
                   />
                 ))}
               </div>
@@ -306,6 +326,14 @@ export default function ShopMenuPage({ params }: { params: Promise<{ slug: strin
           />
         )}
       </Modal>
+
+      {/* Item Options Bottom Sheet */}
+      <ItemOptionsSheet
+        isOpen={isOptionsOpen}
+        onClose={() => setIsOptionsOpen(false)}
+        item={selectedItem}
+        onAddToCart={handleConfirmAddToCart}
+      />
     </div>
   );
 }

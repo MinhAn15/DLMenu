@@ -181,7 +181,36 @@ export interface PointsTransaction {
   created_at: string;
 }
 
+export interface ModifierGroup {
+  id: string;
+  shop_id: string;
+  name: string;
+  is_required: boolean;
+  max_selections: number | null;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface Modifier {
+  id: string;
+  group_id: string;
+  name: string;
+  price_delta: number;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface ItemModifierGroup {
+  item_id: string;
+  group_id: string;
+  sort_order: number;
+}
+
 // Joined types for queries
+export interface ModifierGroupWithModifiers extends ModifierGroup {
+  modifiers: Modifier[];
+}
+
 export interface OrderWithItems extends Order {
   order_items: (OrderItem & { menu_item: MenuItem })[];
   table?: ShopTable;
@@ -190,6 +219,7 @@ export interface OrderWithItems extends Order {
 
 export interface MenuItemWithCategory extends MenuItem {
   category: MenuCategory | null;
+  modifier_groups?: ModifierGroupWithModifiers[];
 }
 
 // Cart types (client-side only)
@@ -198,3 +228,4 @@ export interface CartItem {
   quantity: number;
   note: string;
 }
+

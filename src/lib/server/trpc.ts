@@ -45,7 +45,10 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
   }
   
   if (!user) {
-    user = (await ctx.supabase.auth.getUser()).data.user;
+    const supabaseUser = (await ctx.supabase.auth.getUser()).data.user;
+    if (supabaseUser) {
+      user = { id: supabaseUser.id, email: supabaseUser.email };
+    }
   }
 
   if (!user) {

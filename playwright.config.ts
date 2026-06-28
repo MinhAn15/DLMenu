@@ -15,6 +15,7 @@ export default defineConfig({
     trace: 'on',
     screenshot: 'on',
     video: 'on',
+    launchOptions: { slowMo: 700 },
   },
   globalSetup: require.resolve('./tests/setup/seed.ts'),
   globalTeardown: require.resolve('./tests/setup/teardown.ts'),

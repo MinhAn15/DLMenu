@@ -29,13 +29,23 @@ export function useAuth() {
 
   useEffect(() => {
     if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      // Check cookie for mock_user (e.g. from Zalo Login Mock)
+      const cookieMatch = document.cookie.match(/dilinh-mock-user=([^;]+)/);
+      let parsedUser = null;
+      if (cookieMatch && cookieMatch[1]) {
+        try {
+          parsedUser = JSON.parse(decodeURIComponent(cookieMatch[1]));
+          localStorage.setItem('mock_user', JSON.stringify(parsedUser)); // Sync cookie to localstorage
+        } catch {}
+      }
+
       const mockUserStr = localStorage.getItem('mock_user');
-      if (mockUserStr) {
-        const parsed = JSON.parse(mockUserStr) as User;
+      if (mockUserStr || parsedUser) {
+        const parsed = parsedUser || JSON.parse(mockUserStr as string) as User;
         setTimeout(() => {
           setUser(parsed);
           const foundProfile = MOCK_USERS.find(u => u.phone === parsed.phone) || MOCK_PROFILE;
-          setProfile(foundProfile);
+          setProfile({ ...foundProfile, ...parsed } as Profile); // Merge any new Zalo info
           setLoading(false);
         }, 0);
       } else {
@@ -125,12 +135,30 @@ export function useAuth() {
     if (error) throw error;
   };
 
+  const signInWithPhone = async (phone: string, name?: string) => {
+    if (process.env.NEXT_PUBLIC_USE_MOCK === 'true') {
+      await new Promise(r => setTimeout(r, 800));
+      const fakeId = `cust_${Math.floor(Math.random() * 1000000)}`;
+      const fakeUser = { id: fakeId, phone, email: `${phone}@mock.com`, aud: 'authenticated' } as unknown as User;
+      const fakeProfile = { id: fakeId, phone, display_name: name || 'Khách hàng', role: 'customer' } as Profile;
+      
+      localStorage.setItem('mock_user', JSON.stringify(fakeUser));
+      document.cookie = `dilinh-mock-user=${encodeURIComponent(JSON.stringify(fakeProfile))}; path=/; max-age=86400; SameSite=Lax`;
+      
+      setUser(fakeUser);
+      setProfile(fakeProfile);
+      return { user: fakeUser, session: {} };
+    }
+    throw new Error('Chưa hỗ trợ OTP thật ở bản Demo. Vui lòng bật NEXT_PUBLIC_USE_MOCK=true');
+  };
+
   return {
     user,
     profile,
     loading,
     signInWithEmail,
     signUpWithEmail,
+    signInWithPhone,
     signOut,
   };
 }

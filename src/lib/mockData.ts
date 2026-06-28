@@ -1,4 +1,4 @@
-import type { Shop, ShopTable, MenuCategory, MenuItem, Promotion, UserShopMembership, Profile } from './types/database';
+import type { Shop, ShopTable, MenuCategory, MenuItem, Promotion, UserShopMembership, Profile, ModifierGroupWithModifiers } from './types/database';
 
 const now = new Date().toISOString();
 
@@ -44,10 +44,48 @@ export const MOCK_CATEGORIES: MenuCategory[] = [
   { id: 'c3', shop_id: MOCK_SHOP.id, name: 'Bánh ngọt', description: null, sort_order: 3, is_active: true, created_at: now },
 ];
 
-export const MOCK_ITEMS: MenuItem[] = [
-  { id: 'i1', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Đen Đá', description: 'Cà phê nguyên chất', price: 20000, image_url: '/images/coffee_den_da.webp', is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now },
-  { id: 'i2', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Sữa Đá', description: 'Sữa đặc Ngôi sao phương Nam', price: 25000, image_url: '/images/coffee_sua_da.webp', is_available: true, is_featured: false, sort_order: 2, tags: [], created_at: now, updated_at: now },
-  { id: 'i3', shop_id: MOCK_SHOP.id, category_id: 'c2', name: 'Trà Đào Cam Sả', description: 'Trà thanh mát giải nhiệt', price: 35000, image_url: '/images/tea_dao_cam_sa.webp', is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now },
+export const MOCK_SIZE_GROUP: ModifierGroupWithModifiers = {
+  id: 'mg1', shop_id: MOCK_SHOP.id, name: 'Kích cỡ', is_required: true, max_selections: 1, sort_order: 1, created_at: now,
+  modifiers: [
+    { id: 'm1-1', group_id: 'mg1', name: 'Size M', price_delta: 0, sort_order: 1, created_at: now },
+    { id: 'm1-2', group_id: 'mg1', name: 'Size L', price_delta: 10000, sort_order: 2, created_at: now }
+  ]
+};
+
+export const MOCK_ICE_GROUP: ModifierGroupWithModifiers = {
+  id: 'mg2', shop_id: MOCK_SHOP.id, name: 'Lượng đá', is_required: true, max_selections: 1, sort_order: 2, created_at: now,
+  modifiers: [
+    { id: 'm2-1', group_id: 'mg2', name: '100%', price_delta: 0, sort_order: 1, created_at: now },
+    { id: 'm2-2', group_id: 'mg2', name: '50%', price_delta: 0, sort_order: 2, created_at: now },
+    { id: 'm2-3', group_id: 'mg2', name: 'Không đá', price_delta: 0, sort_order: 3, created_at: now }
+  ]
+};
+
+export const MOCK_SUGAR_GROUP: ModifierGroupWithModifiers = {
+  id: 'mg3', shop_id: MOCK_SHOP.id, name: 'Lượng đường', is_required: true, max_selections: 1, sort_order: 3, created_at: now,
+  modifiers: [
+    { id: 'm3-1', group_id: 'mg3', name: '100%', price_delta: 0, sort_order: 1, created_at: now },
+    { id: 'm3-2', group_id: 'mg3', name: '50%', price_delta: 0, sort_order: 2, created_at: now },
+    { id: 'm3-3', group_id: 'mg3', name: 'Không đường', price_delta: 0, sort_order: 3, created_at: now }
+  ]
+};
+
+export const MOCK_TOPPING_GROUP: ModifierGroupWithModifiers = {
+  id: 'mg4', shop_id: MOCK_SHOP.id, name: 'Topping', is_required: false, max_selections: null, sort_order: 4, created_at: now,
+  modifiers: [
+    { id: 'm4-1', group_id: 'mg4', name: 'Trân châu đen', price_delta: 8000, sort_order: 1, created_at: now },
+    { id: 'm4-2', group_id: 'mg4', name: 'Trân châu trắng', price_delta: 8000, sort_order: 2, created_at: now },
+    { id: 'm4-3', group_id: 'mg4', name: 'Thạch nha đam', price_delta: 8000, sort_order: 3, created_at: now },
+    { id: 'm4-4', group_id: 'mg4', name: 'Kem Macchiato', price_delta: 8000, sort_order: 4, created_at: now }
+  ]
+};
+
+const DRINK_MODIFIERS = [MOCK_SIZE_GROUP, MOCK_ICE_GROUP, MOCK_SUGAR_GROUP, MOCK_TOPPING_GROUP];
+
+export const MOCK_ITEMS: (MenuItem & { modifier_groups?: ModifierGroupWithModifiers[] })[] = [
+  { id: 'i1', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Đen Đá', description: 'Cà phê nguyên chất', price: 20000, image_url: '/images/coffee_den_da.webp', is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now, modifier_groups: DRINK_MODIFIERS },
+  { id: 'i2', shop_id: MOCK_SHOP.id, category_id: 'c1', name: 'Cà phê Sữa Đá', description: 'Sữa đặc Ngôi sao phương Nam', price: 25000, image_url: '/images/coffee_sua_da.webp', is_available: true, is_featured: false, sort_order: 2, tags: [], created_at: now, updated_at: now, modifier_groups: DRINK_MODIFIERS },
+  { id: 'i3', shop_id: MOCK_SHOP.id, category_id: 'c2', name: 'Trà Đào Cam Sả', description: 'Trà thanh mát giải nhiệt', price: 35000, image_url: '/images/tea_dao_cam_sa.webp', is_available: true, is_featured: true, sort_order: 1, tags: [], created_at: now, updated_at: now, modifier_groups: DRINK_MODIFIERS },
   { id: 'i4', shop_id: MOCK_SHOP.id, category_id: 'c3', name: 'Bánh Tiramisu', description: 'Bánh ngọt chuẩn Ý', price: 45000, image_url: null, is_available: true, is_featured: false, sort_order: 1, tags: [], created_at: now, updated_at: now },
 ];
 

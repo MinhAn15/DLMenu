@@ -28,7 +28,7 @@ test.describe('Admin Flow', () => {
     // Verify Admin Dashboard contents
     const content = await page.content();
     console.log("PAGE HTML CONTENT:", content);
-    await expect(page.locator('h1').first()).toBeVisible();
+    await expect(page.locator('h1:visible').first()).toBeVisible();
 
     // Navigate to Orders (use evaluate to bypass react-hot-toast z:9999 overlay)
     await page.evaluate(() => {
